@@ -38,7 +38,7 @@ Header Header::read(std::istream& s) {
     return out;
 }
 
-Byte Header::byte(std::size_t offset) const {
+Byte Header::byte(usize offset) const {
     return reinterpret_cast<const Byte*>(this)[offset];
 }
 

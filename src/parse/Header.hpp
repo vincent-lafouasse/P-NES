@@ -13,8 +13,7 @@ struct RomFormat {
 
     constexpr RomFormat(Kind k) : self(k) {}  // NOLINT(*-explicit-constructor)
 
-    [[nodiscard]]
-    const char* repr() const;
+    [[nodiscard]] const char* repr() const;
 
     friend std::ostream& operator<<(std::ostream& stream, const RomFormat& a);
     bool operator==(const RomFormat& o) const;
@@ -30,8 +29,7 @@ struct Arrangement {
     constexpr Arrangement(Kind k)  // NOLINT(*-explicit-constructor)
         : self(k) {}
 
-    [[nodiscard]]
-    const char* repr() const;
+    [[nodiscard]] const char* repr() const;
 
     friend std::ostream& operator<<(std::ostream& stream, const Arrangement& a);
 };
@@ -45,8 +43,7 @@ struct VideoFormat {
     constexpr VideoFormat(Kind k)  // NOLINT(*-explicit-constructor)
         : self(k) {}
 
-    [[nodiscard]]
-    const char* repr() const;
+    [[nodiscard]] const char* repr() const;
 
     friend std::ostream& operator<<(std::ostream& stream, const VideoFormat& a);
 };
@@ -64,25 +61,16 @@ struct Header {
 
     static Header read(std::istream& s);
 
-    [[nodiscard]]
-    RomFormat rom_format() const;
-    [[nodiscard]]
-    Arrangement arrangement() const;
-    [[nodiscard]]
-    bool has_persistent_memory() const;
-    [[nodiscard]]
-    bool has_trainer_data() const;
-    [[nodiscard]]
-    bool alternative_nametable_layout() const;
-    [[nodiscard]]
-    Byte mapper() const;
-    [[nodiscard]]
-    u32 number_of_8kB_RAM_banks() const;
-    [[nodiscard]]
-    VideoFormat video_format() const;
+    [[nodiscard]] RomFormat rom_format() const;
+    [[nodiscard]] Arrangement arrangement() const;
+    [[nodiscard]] bool has_persistent_memory() const;
+    [[nodiscard]] bool has_trainer_data() const;
+    [[nodiscard]] bool alternative_nametable_layout() const;
+    [[nodiscard]] Byte mapper() const;
+    [[nodiscard]] u32 number_of_8kB_RAM_banks() const;
+    [[nodiscard]] VideoFormat video_format() const;
 
    private:
-    [[nodiscard]]
-    Byte byte(std::size_t offset) const;
+    [[nodiscard]] Byte byte(usize offset) const;
     void verify_reserved_zeros() const;
 };

@@ -11,11 +11,11 @@ T kiloBytes(T n) {
     return n * (1 << 10);
 }
 
-Bank read_bank(std::ifstream& s, std::size_t sz) {
+Bank read_bank(std::ifstream& s, usize sz) {
     Bank bank;
 
     bank.reserve(sz);
-    for (std::size_t i = 0; i < sz; ++i) {
+    for (usize i = 0; i < sz; ++i) {
         Byte b = static_cast<Byte>(s.get());
         bank.push_back(b);
     }
@@ -37,19 +37,19 @@ GameData GameData::read(const std::string& path) {
     out.header = h;
 
     if (h.has_trainer_data()) {
-        std::size_t sz = 512;
+        usize sz = 512;
         out.trainer = read_bank(s, sz);
         assert(s.good() && "Failed to read trainer data");
     }
 
     {
-        std::size_t sz = h.prg_size * kiloBytes(16);
+        usize sz = h.prg_size * kiloBytes(16);
         out.prg = read_bank(s, sz);
         assert(s.good() && "Failed to read prg data");
     }
 
     {
-        std::size_t sz = h.chr_size * kiloBytes(8);
+        usize sz = h.chr_size * kiloBytes(8);
         out.chr = read_bank(s, sz);
         assert(s.good() && "Failed to read chr data");
     }
