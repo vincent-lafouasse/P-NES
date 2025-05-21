@@ -50,6 +50,9 @@ struct Header {
         LOG_NUM(out.number_of_8kB_RAM_banks());
 
         assert(out.format() != Format::VersionTwo && "iNes 2.0 unsupported");
+        if (out.format() != Format::VersionTwo) {
+            out.verify_reserved_zeros();
+        }
         return out;
     }
 
@@ -160,4 +163,18 @@ struct Header {
     }
 
     u32 number_of_8kB_RAM_banks() const { return byte(8) ? byte(8) : 1; }
+
+    void verify_reserved_zeros() const {
+        assert(!bit_is_set(byte(7), 1));
+        assert(!bit_is_set(byte(7), 2));
+        assert(!bit_is_set(byte(7), 3));
+
+        assert((byte(9) >> 1) == 0);
+        assert(byte(10) == 0);
+        assert(byte(11) == 0);
+        assert(byte(12) == 0);
+        assert(byte(13) == 0);
+        assert(byte(14) == 0);
+        assert(byte(15) == 0);
+    }
 };
