@@ -210,9 +210,9 @@ struct Game {
     }
 
     void dump_prg() const {
-        std::ofstream of("prg.out", std::ios::out|std::ios::binary);
+        std::ofstream of("prg.out", std::ios::out | std::ios::binary);
 
-        for (Byte b: this->prg) {
+        for (Byte b : this->prg) {
             of << b;
         }
     }
