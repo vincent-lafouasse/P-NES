@@ -2,8 +2,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "Header.hpp"
 #include "log.hpp"
+#include "parse/Header.hpp"
 #include "types.hpp"
 
 #define PATH "./dq1.nes"
