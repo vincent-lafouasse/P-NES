@@ -17,7 +17,7 @@ Header Header::read(ByteStream& s) {
 
     assert(s.good() && "Failed to read iNes header");
 
-    Byte id[4] = {'N', 'E', 'S', 0x1a};
+    constexpr Byte id[4] = {'N', 'E', 'S', 0x1a};
     assert(std::memcmp(out.id, id, 4) == 0 && "Invalid iNes header");
     assert(out.rom_format() != RomFormat::VersionTwo && "iNes 2.0 unsupported");
 
