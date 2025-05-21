@@ -16,6 +16,58 @@ bool bit_is_set(Byte b, u32 i) {
 }
 }  // namespace
 
+struct RomFormat {
+    enum Kind {
+        Archaic,
+        Standard,
+        VersionTwo,
+    } self;
+
+    constexpr RomFormat(Kind k) : self(k) {}
+
+    const char* repr() const {
+        switch (self) {
+            case Archaic:
+                return "Archaic iNes";
+            case Standard:
+                return "iNes";
+            case VersionTwo:
+                return "iNes 2.0";
+        }
+    }
+
+    friend std::ostream& operator<<(std::ostream& stream, const RomFormat& a) {
+        stream << a.repr();
+        return stream;
+    }
+    bool operator==(const RomFormat& o) { return self == o.self; }
+    bool operator!=(const RomFormat& o) { return self != o.self; }
+};
+
+struct Arrangement {
+    enum Kind {
+        Horizontal,
+        Vertical,
+    } self;
+
+    constexpr Arrangement(Kind k) : self(k) {}
+
+    const char* repr() const {
+        switch (self) {
+            case Horizontal:
+                return "Horizontal";
+            case Vertical:
+                return "Vertical";
+        }
+    }
+
+    friend std::ostream& operator<<(std::ostream& stream,
+                                    const Arrangement& a) {
+        stream << a.repr();
+        return stream;
+    }
+};
+
 struct Header {
     Byte id[4];
     Byte prg_size;  // in units of 16kB
@@ -62,35 +114,6 @@ struct Header {
         return reinterpret_cast<const Byte*>(this)[offset];
     }
 
-    struct RomFormat {
-        enum Kind {
-            Archaic,
-            Standard,
-            VersionTwo,
-        } self;
-
-        constexpr RomFormat(Kind k) : self(k) {}
-
-        const char* repr() const {
-            switch (self) {
-                case Archaic:
-                    return "Archaic iNes";
-                case Standard:
-                    return "iNes";
-                case VersionTwo:
-                    return "iNes 2.0";
-            }
-        }
-
-        friend std::ostream& operator<<(std::ostream& stream,
-                                        const RomFormat& a) {
-            stream << a.repr();
-            return stream;
-        }
-        bool operator==(const RomFormat& o) { return self == o.self; }
-        bool operator!=(const RomFormat& o) { return self != o.self; }
-    };
-
     constexpr RomFormat rom_format() const {
         if (flag7 && byte(0x0C) == 0x08) {
             return {RomFormat::VersionTwo};
@@ -114,30 +137,6 @@ struct Header {
     u32 chr_size_bytes() const { return this->chr_size * kiloBytes<u32>(8); }
 
     // flag 6:
-
-    struct Arrangement {
-        enum Kind {
-            Horizontal,
-            Vertical,
-        } self;
-
-        constexpr Arrangement(Kind k) : self(k) {}
-
-        const char* repr() const {
-            switch (self) {
-                case Horizontal:
-                    return "Horizontal";
-                case Vertical:
-                    return "Vertical";
-            }
-        }
-
-        friend std::ostream& operator<<(std::ostream& stream,
-                                        const Arrangement& a) {
-            stream << a.repr();
-            return stream;
-        }
-    };
 
     constexpr Arrangement arrangement() const {
         if (bit_is_set(flag6, 0)) {
