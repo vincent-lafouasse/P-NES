@@ -1,9 +1,7 @@
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
 
 #include "parse/GameData.hpp"
-#include "types.hpp"
 
 int main(int ac, char** av) {
     if (ac == 1) {
@@ -12,12 +10,6 @@ int main(int ac, char** av) {
     }
 
     const char* path = av[1];
-    ByteStream stream(path);
-    if (!stream.good()) {
-        std::cerr << "Failed to open file " << std::quoted(path) << '\n';
-        std::exit(1);
-    }
-
-    GameData g = GameData::read(stream);
+    GameData g = GameData::read(path);
     g.dump_prg();
 }

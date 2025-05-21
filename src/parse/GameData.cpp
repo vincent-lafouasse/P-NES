@@ -1,6 +1,9 @@
 #include "GameData.hpp"
 
 #include <cassert>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
 
 namespace {
 template <typename T>
@@ -20,7 +23,13 @@ Bank read_bank(ByteStream& s, std::size_t sz) {
 }
 }  // namespace
 
-GameData GameData::read(ByteStream& s) {
+GameData GameData::read(const std::string& path) {
+    ByteStream s(path);
+    if (!s.good()) {
+        std::cerr << "Failed to open file " << std::quoted(path) << '\n';
+        std::exit(1);
+    }
+
     Header h = Header::read(s);
     assert(s.good() && "Failed to read iNes header");
 
