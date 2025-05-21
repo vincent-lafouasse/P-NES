@@ -33,10 +33,10 @@ struct Header {
 
         s.read(reinterpret_cast<Byte*>(&out), 16);
 
-        assert(out.id[0] == 'N');
-        assert(out.id[1] == 'E');
-        assert(out.id[2] == 'S');
-        assert(out.id[3] == 0x1a);
+        assert(s.good() && "Failed to read iNes header");
+
+        Byte id[4] = {'N', 'E', 'S', 0x1a};
+        assert(std::memcmp(out.id, id, 4) == 0 && "Invalid iNes header");
 
         LOG(out.format());
         LOG(+out.prg_size);
