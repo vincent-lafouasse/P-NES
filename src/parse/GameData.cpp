@@ -11,7 +11,7 @@ T kiloBytes(T n) {
     return n * (1 << 10);
 }
 
-Bank read_bank(ByteStream& s, std::size_t sz) {
+Bank read_bank(std::ifstream& s, std::size_t sz) {
     Bank bank;
 
     bank.reserve(sz);
@@ -24,7 +24,7 @@ Bank read_bank(ByteStream& s, std::size_t sz) {
 }  // namespace
 
 GameData GameData::read(const std::string& path) {
-    ByteStream s(path);
+    std::ifstream s(path);
     if (!s.good()) {
         std::cerr << "Failed to open file " << std::quoted(path) << '\n';
         std::exit(1);

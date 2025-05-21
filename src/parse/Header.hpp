@@ -1,5 +1,7 @@
 #pragma once
 
+#include <istream>
+
 #include "types.hpp"
 
 struct RomFormat {
@@ -60,7 +62,7 @@ struct Header {
     Byte flag10;  // ΛΛΛΛΛΛ
     Byte padding[5];
 
-    static Header read(ByteStream& s);
+    static Header read(std::istream& s);
 
     [[nodiscard]]
     RomFormat rom_format() const;
@@ -82,8 +84,5 @@ struct Header {
    private:
     [[nodiscard]]
     Byte byte(std::size_t offset) const;
-
-    // flag 6:
-
     void verify_reserved_zeros() const;
 };

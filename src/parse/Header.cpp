@@ -10,7 +10,7 @@ bool bit_is_set(Byte b, u32 i) {
 }
 }  // namespace
 
-Header Header::read(ByteStream& s) {
+Header Header::read(std::istream& s) {
     Header out{};
 
     s.read(reinterpret_cast<char*>(&out), 16);
