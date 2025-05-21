@@ -124,6 +124,7 @@ const char* RomFormat::repr() const {
         case VersionTwo:
             return "iNes 2.0";
     }
+    return "Unreachable";
 }
 
 std::ostream& operator<<(std::ostream& stream, const RomFormat& a) {
