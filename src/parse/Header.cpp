@@ -28,9 +28,7 @@ Header Header::read(ByteStream& s) {
 
     LOG(out.rom_format());
     LOG_NUM(out.prg_size);
-    LOG_NUM(out.prg_size_bytes());
     LOG_NUM(out.chr_size);
-    LOG_NUM(out.chr_size_bytes());
     LOG(out.arrangement());
     LOG_BOOL(out.has_persistent_memory());
     LOG_BOOL(out.has_trainer_data());
@@ -65,14 +63,6 @@ RomFormat Header::rom_format() const {
     }
 
     return {RomFormat::Archaic};
-}
-
-u32 Header::prg_size_bytes() const {
-    return this->prg_size * kiloBytes<u32>(16);
-}
-
-u32 Header::chr_size_bytes() const {
-    return this->chr_size * kiloBytes<u32>(8);
 }
 
 // flag 6:

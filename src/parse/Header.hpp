@@ -54,12 +54,9 @@ struct Header {
     static Header read(ByteStream& s);
 
     RomFormat rom_format() const;
-    u32 prg_size_bytes() const;
-    u32 chr_size_bytes() const;
     Arrangement arrangement() const;
     bool has_persistent_memory() const;
     bool has_trainer_data() const;
-
     bool alternative_nametable_layout() const;
     Byte mapper() const;
     u32 number_of_8kB_RAM_banks() const;
