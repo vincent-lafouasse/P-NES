@@ -1,4 +1,4 @@
-set(targetName Nes)
+set(targetName Cpu)
 
 add_executable(${targetName})
 
@@ -11,7 +11,7 @@ PRIVATE
 		Cartridge/Cartridge.cpp
 		Cartridge/Cartridge.hpp
 
-        ./NES/Cpu.hpp
+		Cpu/Cpu.hpp
 
         ./log/log.hpp
         ./types/types.hpp

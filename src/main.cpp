@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "Cartridge/Cartridge.hpp"
-#include "NES/Cpu.hpp"
+#include "Cpu/Cpu.hpp"
 
 int main(int ac, char** av) {
     if (ac == 1) {
