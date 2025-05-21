@@ -68,6 +68,30 @@ struct Arrangement {
     }
 };
 
+struct VideoFormat {
+    enum Kind {
+        Ntsc,
+        Pal,
+    } self;
+
+    constexpr VideoFormat(Kind k) : self(k) {}
+
+    const char* repr() const {
+        switch (self) {
+            case Ntsc:
+                return "NTSC";
+            case Pal:
+                return "Pal";
+        }
+    }
+
+    friend std::ostream& operator<<(std::ostream& stream,
+                                    const VideoFormat& a) {
+        stream << a.repr();
+        return stream;
+    }
+};
+
 struct Header {
     Byte id[4];
     Byte prg_size;  // in units of 16kB
@@ -101,6 +125,7 @@ struct Header {
         LOG_BOOL(out.has_trainer_data());
         LOG_HEX(out.mapper());
         LOG_NUM(out.number_of_8kB_RAM_banks());
+        LOG(out.video_format());
 
         assert(out.rom_format() != RomFormat::VersionTwo &&
                "iNes 2.0 unsupported");
@@ -165,6 +190,14 @@ struct Header {
     }
 
     u32 number_of_8kB_RAM_banks() const { return byte(8) ? byte(8) : 1; }
+
+    VideoFormat video_format() const {
+        if (bit_is_set(byte(9), 0)) {
+            return {VideoFormat::Pal};
+        } else {
+            return {VideoFormat::Ntsc};
+        }
+    }
 
     void verify_reserved_zeros() const {
         assert(!bit_is_set(byte(7), 1));
