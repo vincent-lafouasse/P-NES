@@ -11,7 +11,7 @@ int main(int ac, char** av) {
     }
 
     const char* path = av[1];
-    Cartridge g = Cartridge::load(path);
+    Cartridge cartridge = Cartridge::load(path);
     g.dump_prg();
 
     Cpu cpu{};
