@@ -23,7 +23,13 @@ struct Game {
         out.header = h;
 
         if (h.has_trainer_data()) {
-            out.trainer.reserve(512);
+            constexpr std::size_t trainer_size = 512;
+            out.trainer.reserve(trainer_size);
+            for (u32 i = 0; i < trainer_size; ++i) {
+                Byte b = static_cast<Byte>(s.get());
+                out.trainer.push_back(b);
+            }
+            assert(s.good() && "Failed to read prg data");
         }
 
         u32 prg_size = h.prg_size_bytes();
