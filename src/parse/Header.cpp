@@ -11,7 +11,7 @@ bool bit_is_set(Byte b, u32 i) {
 }  // namespace
 
 Header Header::read(ByteStream& s) {
-    Header out;
+    Header out{};
 
     s.read(reinterpret_cast<Byte*>(&out), 16);
 
