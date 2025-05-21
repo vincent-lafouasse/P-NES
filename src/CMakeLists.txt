@@ -8,6 +8,8 @@ PRIVATE
 
         ./parse/Header.cpp
         ./parse/Header.hpp
+        ./parse/GameData.cpp
+        ./parse/GameData.hpp
 
         ./log/log.hpp
         ./types/types.hpp
