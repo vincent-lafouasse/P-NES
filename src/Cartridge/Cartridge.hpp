@@ -12,6 +12,6 @@ struct Cartridge {
     Bank prg;
     Bank chr;
 
-    static Cartridge read(const std::string& path);
+    static Cartridge load(const std::string& path);
     void dump_prg() const;
 };

@@ -23,7 +23,7 @@ Bank read_bank(std::ifstream& s, usize sz) {
 }
 }  // namespace
 
-Cartridge Cartridge::read(const std::string& path) {
+Cartridge Cartridge::load(const std::string& path) {
     std::ifstream s(path);
     if (!s.good()) {
         std::cerr << "Failed to open file " << std::quoted(path) << '\n';
