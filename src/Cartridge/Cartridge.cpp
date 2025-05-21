@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "log/log.hpp"
+
 namespace {
 template <typename T>
 T kiloBytes(T n) {
@@ -53,6 +55,10 @@ Cartridge Cartridge::load(const std::string& path) {
         out.chr = read_bank(s, sz);
         assert(s.good() && "Failed to read chr data");
     }
+
+#if LOGGING
+    out.dump_prg();
+#endif
 
     return out;
 }
