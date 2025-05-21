@@ -1,4 +1,6 @@
-# NesDisassembler
+# P-NES
+
+A NES except it's terrible and it doesn't work
 
 ## references
 
