@@ -10,6 +10,10 @@ template <typename T>
 T kiloBytes(T n) {
     return n * (1 << 10);
 }
+
+bool bit_is_set(Byte b, u32 i) {
+    return b & (1 << i);
+}
 }  // namespace
 
 struct Header {
@@ -32,6 +36,7 @@ struct Header {
 
         Byte id[4] = {'N', 'E', 'S', 0x1a};
         assert(std::memcmp(out.id, id, 4) == 0 && "Invalid iNes header");
+        assert(out.format() != Format::VersionTwo && "iNes 2.0 unsupported");
 
         LOG(out.format());
         LOG_NUM(out.prg_size);
@@ -42,7 +47,9 @@ struct Header {
         LOG_BOOL(out.has_persistent_memory());
         LOG_BOOL(out.has_trainer_data());
         LOG_HEX(out.mapper());
-        LOG_BOOL(out.is_pc10());
+        LOG_NUM(out.number_of_8kB_RAM_banks());
+
+        assert(out.format() != Format::VersionTwo && "iNes 2.0 unsupported");
         return out;
     }
 
@@ -74,6 +81,8 @@ struct Header {
             stream << a.repr();
             return stream;
         }
+        bool operator==(const Format& o) { return self == o.self; }
+        bool operator!=(const Format& o) { return self != o.self; }
     };
 
     constexpr Format format() const {
@@ -125,7 +134,7 @@ struct Header {
     };
 
     constexpr Arrangement arrangement() const {
-        if (this->flag6 & 1) {
+        if (bit_is_set(flag6, 0)) {
             return {Arrangement::Vertical};
         } else {
             return {Arrangement::Horizontal};
@@ -134,13 +143,13 @@ struct Header {
 
     // maybe battery-backed PRG-RAM at $6000
     constexpr bool has_persistent_memory() const {
-        return this->flag6 & (1 << 1);
+        return bit_is_set(flag6, 1);
     }
 
-    constexpr bool has_trainer_data() const { return this->flag6 & (1 << 2); }
+    constexpr bool has_trainer_data() const { return bit_is_set(flag6, 2); }
 
     constexpr bool alternative_nametable_layout() const {
-        return this->flag6 & (1 << 3);
+        return bit_is_set(flag6, 3);
     }
 
     Byte mapper() const {
@@ -150,5 +159,5 @@ struct Header {
         return lower | (upper << 4);
     }
 
-    constexpr bool is_pc10() const { return flag7 | (1 << 1); }
+    u32 number_of_8kB_RAM_banks() const { return byte(8) ? byte(8) : 1; }
 };
