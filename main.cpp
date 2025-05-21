@@ -168,6 +168,7 @@ struct Game {
 
     static Game read(ByteStream& s) {
         Header h = Header::read(s);
+        assert(s.good() && "Failed to read iNes header");
 
         Game out;
         out.header = h;
@@ -182,6 +183,7 @@ struct Game {
             Byte b = s.get();
             out.prg.push_back(b);
         }
+        assert(s.good() && "Failed to read prg data");
 
         u32 chr_size = h.chr_size_bytes();
         out.chr.reserve(chr_size);
@@ -189,6 +191,7 @@ struct Game {
             Byte b = s.get();
             out.chr.push_back(b);
         }
+        assert(s.good() && "Failed to read chr data");
 
         if (h.is_pc10()) {
             out.pc10_inst.reserve(1 << 13);  // 8kB
@@ -197,6 +200,7 @@ struct Game {
                 out.pc10_inst.push_back(b);
             }
         }
+        assert(s.good() && "Failed to read pc10 data");
 
         return out;
     }
