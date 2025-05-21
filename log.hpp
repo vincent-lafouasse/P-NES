@@ -10,8 +10,9 @@
 
 #if LOGGING
 #define LOG(expr) std::clog << #expr << ":\n\t" << expr << std::endl;
-#define LOG_HEX(expr) \
-    std::clog << #expr << ":\n\t" << "0x" << std::hex << +expr << std::endl;
+#define LOG_HEX(expr)             \
+    std::clog << #expr << ":\n\t" \
+              << "0x" << std::hex << +expr << std::endl;
 #define LOG_NUM(expr) std::clog << #expr << ":\n\t" << +expr << std::endl;
 #define LOG_BOOL(expr) \
     std::clog << #expr << ":\n\t" << static_cast<bool>(expr) << std::endl;

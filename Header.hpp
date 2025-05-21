@@ -36,9 +36,10 @@ struct Header {
 
         Byte id[4] = {'N', 'E', 'S', 0x1a};
         assert(std::memcmp(out.id, id, 4) == 0 && "Invalid iNes header");
-        assert(out.format() != Format::VersionTwo && "iNes 2.0 unsupported");
+        assert(out.rom_format() != RomFormat::VersionTwo &&
+               "iNes 2.0 unsupported");
 
-        LOG(out.format());
+        LOG(out.rom_format());
         LOG_NUM(out.prg_size);
         LOG_NUM(out.prg_size_bytes());
         LOG_NUM(out.chr_size);
@@ -49,8 +50,9 @@ struct Header {
         LOG_HEX(out.mapper());
         LOG_NUM(out.number_of_8kB_RAM_banks());
 
-        assert(out.format() != Format::VersionTwo && "iNes 2.0 unsupported");
-        if (out.format() != Format::VersionTwo) {
+        assert(out.rom_format() != RomFormat::VersionTwo &&
+               "iNes 2.0 unsupported");
+        if (out.rom_format() != RomFormat::VersionTwo) {
             out.verify_reserved_zeros();
         }
         return out;
@@ -60,14 +62,14 @@ struct Header {
         return reinterpret_cast<const Byte*>(this)[offset];
     }
 
-    struct Format {
+    struct RomFormat {
         enum Kind {
             Archaic,
             Standard,
             VersionTwo,
         } self;
 
-        constexpr Format(Kind k) : self(k) {}
+        constexpr RomFormat(Kind k) : self(k) {}
 
         const char* repr() const {
             switch (self) {
@@ -80,30 +82,31 @@ struct Header {
             }
         }
 
-        friend std::ostream& operator<<(std::ostream& stream, const Format& a) {
+        friend std::ostream& operator<<(std::ostream& stream,
+                                        const RomFormat& a) {
             stream << a.repr();
             return stream;
         }
-        bool operator==(const Format& o) { return self == o.self; }
-        bool operator!=(const Format& o) { return self != o.self; }
+        bool operator==(const RomFormat& o) { return self == o.self; }
+        bool operator!=(const RomFormat& o) { return self != o.self; }
     };
 
-    constexpr Format format() const {
+    constexpr RomFormat rom_format() const {
         if (flag7 && byte(0x0C) == 0x08) {
-            return {Format::VersionTwo};
+            return {RomFormat::VersionTwo};
         }
 
         if (flag7 && byte(0x04) == 0x08) {
-            return {Format::Archaic};
+            return {RomFormat::Archaic};
         }
 
         if (flag7 && byte(0x04) == 0x00) {
             if (!byte(12) && !byte(13) && !byte(14) && !byte(15)) {
-                return {Format::Standard};
+                return {RomFormat::Standard};
             }
         }
 
-        return {Format::Archaic};
+        return {RomFormat::Archaic};
     }
 
     u32 prg_size_bytes() const { return this->prg_size * kiloBytes<u32>(16); }
