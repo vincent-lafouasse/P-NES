@@ -94,9 +94,9 @@ struct Header {
         return {Format::Archaic};
     }
 
-    u32 prg_size_bytes() const { return this->prg_size * kiloBytes(16); }
+    u32 prg_size_bytes() const { return this->prg_size * kiloBytes<u32>(16); }
 
-    u32 chr_size_bytes() const { return this->chr_size * kiloBytes(8); }
+    u32 chr_size_bytes() const { return this->chr_size * kiloBytes<u32>(8); }
 
     // flag 6:
 
