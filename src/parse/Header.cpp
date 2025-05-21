@@ -145,6 +145,8 @@ const char* Arrangement::repr() const {
         case Vertical:
             return "Vertical";
     }
+
+    return "Unreachable";
 }
 
 std::ostream& operator<<(std::ostream& stream, const Arrangement& a) {
@@ -159,6 +161,8 @@ const char* VideoFormat::repr() const {
         case Pal:
             return "Pal";
     }
+
+    return "Unreachable";
 }
 
 std::ostream& operator<<(std::ostream& stream, const VideoFormat& a) {
