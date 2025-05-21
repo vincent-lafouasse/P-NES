@@ -193,6 +193,9 @@ struct Game {
         }
         assert(s.good() && "Failed to read chr data");
 
+        // bruh 
+
+        /*
         if (h.is_pc10()) {
             out.pc10_inst.reserve(1 << 13);  // 8kB
             for (u32 i = 0; i < chr_size; ++i) {
@@ -201,6 +204,7 @@ struct Game {
             }
         }
         assert(s.good() && "Failed to read pc10 data");
+        */
 
         return out;
     }
