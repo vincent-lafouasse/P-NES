@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "Bus/Bus.hpp"
 #include "Cartridge/Cartridge.hpp"
 #include "Cpu/Cpu.hpp"
 
@@ -15,4 +16,7 @@ int main(int ac, char** av) {
 
     Cpu cpu{};
     (void)cpu;
+
+    Bus bus{};
+    (void)bus;
 }

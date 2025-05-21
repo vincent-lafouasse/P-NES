@@ -13,6 +13,8 @@ PRIVATE
 
 		Cpu/Cpu.hpp
 
+		Bus/Bus.hpp
+
         ./log/log.hpp
         ./types/types.hpp
 )
