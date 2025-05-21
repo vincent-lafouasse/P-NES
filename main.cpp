@@ -208,6 +208,14 @@ struct Game {
 
         return out;
     }
+
+    void dump_prg() const {
+        std::ofstream of("prg.out", std::ios::out|std::ios::binary);
+
+        for (Byte b: this->prg) {
+            of << b;
+        }
+    }
 };
 
 int main() {
@@ -215,4 +223,5 @@ int main() {
 
     Game g = Game::read(stream);
     LOG(sizeof(g));
+    g.dump_prg();
 }
