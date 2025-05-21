@@ -5,6 +5,13 @@
 #include "log.hpp"
 #include "types.hpp"
 
+namespace {
+template <typename T>
+T kiloBytes(T n) {
+    return n * (1 << 10);
+}
+}  // namespace
+
 struct Header {
     Byte id[4];
     Byte prg_size;  // in units of 16kB
@@ -87,15 +94,9 @@ struct Header {
         return {Format::Archaic};
     }
 
-    u32 prg_size_bytes() const {
-        // 16kB = 2^14 B
-        return this->prg_size * (1 << 14);
-    }
+    u32 prg_size_bytes() const { return this->prg_size * kiloBytes(16); }
 
-    u32 chr_size_bytes() const {
-        // 8kB
-        return this->chr_size * (1 << 13);
-    }
+    u32 chr_size_bytes() const { return this->chr_size * kiloBytes(8); }
 
     // flag 6:
 
