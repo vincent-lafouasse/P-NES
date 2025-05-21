@@ -24,24 +24,10 @@ struct RomFormat {
     } self;
 
     constexpr RomFormat(Kind k) : self(k) {}
-
-    const char* repr() const {
-        switch (self) {
-            case Archaic:
-                return "Archaic iNes";
-            case Standard:
-                return "iNes";
-            case VersionTwo:
-                return "iNes 2.0";
-        }
-    }
-
-    friend std::ostream& operator<<(std::ostream& stream, const RomFormat& a) {
-        stream << a.repr();
-        return stream;
-    }
-    bool operator==(const RomFormat& o) { return self == o.self; }
-    bool operator!=(const RomFormat& o) { return self != o.self; }
+    const char* repr() const;
+    friend std::ostream& operator<<(std::ostream& stream, const RomFormat& a);
+    bool operator==(const RomFormat& o);
+    bool operator!=(const RomFormat& o);
 };
 
 struct Arrangement {
@@ -52,20 +38,8 @@ struct Arrangement {
 
     constexpr Arrangement(Kind k) : self(k) {}
 
-    const char* repr() const {
-        switch (self) {
-            case Horizontal:
-                return "Horizontal";
-            case Vertical:
-                return "Vertical";
-        }
-    }
-
-    friend std::ostream& operator<<(std::ostream& stream,
-                                    const Arrangement& a) {
-        stream << a.repr();
-        return stream;
-    }
+    const char* repr() const;
+    friend std::ostream& operator<<(std::ostream& stream, const Arrangement& a);
 };
 
 struct VideoFormat {
