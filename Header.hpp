@@ -34,7 +34,6 @@ struct Header {
         LOG(out.arrangement());
         LOG(out.has_persistent_memory());
         LOG(out.has_trainer_data());
-        Byte m = out.mapper();
         LOG_HEX(out.mapper());
         LOG(out.is_pc10());
         return out;
