@@ -5,11 +5,6 @@
 #include "log.hpp"
 
 namespace {
-template <typename T>
-T kiloBytes(T n) {
-    return n * (1 << 10);
-}
-
 bool bit_is_set(Byte b, u32 i) {
     return b & (1 << i);
 }
