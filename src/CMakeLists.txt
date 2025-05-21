@@ -1,4 +1,4 @@
-set(targetName Cpu)
+set(targetName Nes)
 
 add_executable(${targetName})
 
