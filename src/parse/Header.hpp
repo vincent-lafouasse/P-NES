@@ -1,4 +1,3 @@
-// ReSharper disable CppNonExplicitConvertingConstructor
 #pragma once
 
 #include "types.hpp"
@@ -10,7 +9,7 @@ struct RomFormat {
         VersionTwo,
     } self;
 
-    constexpr RomFormat(Kind k) : self(k) {}
+    constexpr RomFormat(Kind k) : self(k) {} // NOLINT(*-explicit-constructor)
     const char* repr() const;
     friend std::ostream& operator<<(std::ostream& stream, const RomFormat& a);
     bool operator==(const RomFormat& o);
@@ -23,7 +22,7 @@ struct Arrangement {
         Vertical,
     } self;
 
-    constexpr Arrangement(Kind k) : self(k) {}
+    constexpr Arrangement(Kind k) : self(k) {} // NOLINT(*-explicit-constructor)
 
     const char* repr() const;
     friend std::ostream& operator<<(std::ostream& stream, const Arrangement& a);
@@ -35,7 +34,7 @@ struct VideoFormat {
         Pal,
     } self;
 
-    constexpr VideoFormat(Kind k) : self(k) {}
+    constexpr VideoFormat(Kind k) : self(k) {} // NOLINT(*-explicit-constructor)
 
     const char* repr() const;
     friend std::ostream& operator<<(std::ostream& stream, const VideoFormat& a);
