@@ -9,8 +9,10 @@ struct RomFormat {
         VersionTwo,
     } self;
 
-    constexpr RomFormat(Kind k) : self(k) {} // NOLINT(*-explicit-constructor)
+    constexpr RomFormat(Kind k) : self(k) {}  // NOLINT(*-explicit-constructor)
+    [[nodiscard]]
     const char* repr() const;
+
     friend std::ostream& operator<<(std::ostream& stream, const RomFormat& a);
     bool operator==(const RomFormat& o);
     bool operator!=(const RomFormat& o);
@@ -22,9 +24,12 @@ struct Arrangement {
         Vertical,
     } self;
 
-    constexpr Arrangement(Kind k) : self(k) {} // NOLINT(*-explicit-constructor)
+    constexpr Arrangement(Kind k)
+        : self(k) {}  // NOLINT(*-explicit-constructor)
 
+    [[nodiscard]]
     const char* repr() const;
+
     friend std::ostream& operator<<(std::ostream& stream, const Arrangement& a);
 };
 
@@ -34,9 +39,12 @@ struct VideoFormat {
         Pal,
     } self;
 
-    constexpr VideoFormat(Kind k) : self(k) {} // NOLINT(*-explicit-constructor)
+    constexpr VideoFormat(Kind k)
+        : self(k) {}  // NOLINT(*-explicit-constructor)
 
+    [[nodiscard]]
     const char* repr() const;
+
     friend std::ostream& operator<<(std::ostream& stream, const VideoFormat& a);
 };
 
@@ -53,16 +61,25 @@ struct Header {
 
     static Header read(ByteStream& s);
 
+    [[nodiscard]]
     RomFormat rom_format() const;
+    [[nodiscard]]
     Arrangement arrangement() const;
+    [[nodiscard]]
     bool has_persistent_memory() const;
+    [[nodiscard]]
     bool has_trainer_data() const;
+    [[nodiscard]]
     bool alternative_nametable_layout() const;
+    [[nodiscard]]
     Byte mapper() const;
+    [[nodiscard]]
     u32 number_of_8kB_RAM_banks() const;
+    [[nodiscard]]
     VideoFormat video_format() const;
 
    private:
+    [[nodiscard]]
     Byte byte(std::size_t offset) const;
 
     // flag 6:
