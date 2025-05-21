@@ -67,6 +67,6 @@ void Cartridge::dump_prg() const {
     std::ofstream of("./build/prg.out", std::ios::out | std::ios::binary);
 
     for (Byte b : prg) {
-        of << static_cast<unsigned char>(b);
+        of << b;
     }
 }
