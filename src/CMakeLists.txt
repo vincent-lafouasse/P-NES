@@ -6,10 +6,10 @@ target_sources(${targetName}
 PRIVATE
         ./main.cpp
 
-		Cartridge/Header.cpp
-		Cartridge/Header.hpp
 		Cartridge/Cartridge.cpp
 		Cartridge/Cartridge.hpp
+		Cartridge/Header.cpp
+		Cartridge/Header.hpp
 
 		Cpu/Cpu.hpp
 
