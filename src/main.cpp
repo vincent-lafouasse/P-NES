@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "NES/Cpu.hpp"
 #include "parse/GameData.hpp"
 
 int main(int ac, char** av) {
@@ -12,4 +13,7 @@ int main(int ac, char** av) {
     const char* path = av[1];
     GameData g = GameData::read(path);
     g.dump_prg();
+
+    Cpu cpu{};
+    (void)cpu;
 }

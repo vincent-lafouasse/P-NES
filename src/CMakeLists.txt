@@ -11,6 +11,8 @@ PRIVATE
         ./parse/GameData.cpp
         ./parse/GameData.hpp
 
+        ./NES/Cpu.hpp
+
         ./log/log.hpp
         ./types/types.hpp
 )
