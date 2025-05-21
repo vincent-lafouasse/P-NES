@@ -1,6 +1,6 @@
 # P-NES
 
-A NES except it's terrible and it doesn't work
+6502 pog
 
 ## references
 
