@@ -193,7 +193,7 @@ struct Game {
         }
         assert(s.good() && "Failed to read chr data");
 
-        // bruh 
+        // bruh
 
         /*
         if (h.is_pc10()) {
