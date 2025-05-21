@@ -1,3 +1,4 @@
+// ReSharper disable CppNonExplicitConvertingConstructor
 #pragma once
 
 #include "types.hpp"
