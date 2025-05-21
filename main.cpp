@@ -156,9 +156,7 @@ struct Header {
 
     constexpr Byte mapper_lower_nibble() const { return this->flag6 >> 4; }
 
-    constexpr bool is_pc10() const {
-        return flag7 | (1 << 1);
-    }
+    constexpr bool is_pc10() const { return flag7 | (1 << 1); }
 };
 
 struct Game {
@@ -166,6 +164,7 @@ struct Game {
     std::vector<Byte> trainer;
     std::vector<Byte> prg;
     std::vector<Byte> chr;
+    std::vector<Byte> pc10_inst;
 
     static Game read(ByteStream& s) {
         Header h = Header::read(s);
@@ -189,6 +188,14 @@ struct Game {
         for (u32 i = 0; i < chr_size; ++i) {
             Byte b = s.get();
             out.chr.push_back(b);
+        }
+
+        if (h.is_pc10()) {
+            out.pc10_inst.reserve(1 << 13);  // 8kB
+            for (u32 i = 0; i < chr_size; ++i) {
+                Byte b = s.get();
+                out.pc10_inst.push_back(b);
+            }
         }
 
         return out;
