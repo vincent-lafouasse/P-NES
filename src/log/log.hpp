@@ -1,9 +1,8 @@
 #pragma once
 
-#include <cstddef>
-
 #define LOGGING 1
 #if LOGGING
+#include <cstddef>
 #include <iomanip>
 #include <iostream>
 #endif
