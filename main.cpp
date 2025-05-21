@@ -6,11 +6,18 @@
 #define PATH "./dq1.nes"
 
 #define LOGGING 1
+#if LOGGING
+#include <iomanip>
+#include <iostream>
+#endif
 
 #if LOGGING
 #define LOG(expr) std::clog << #expr << ":\n\t" << expr << std::endl;
+#define LOG_HEX(expr) \
+    std::clog << #expr << ":\n\t" << std::hex << +expr << std::endl;
 #else
 #define LOG(expr) ;
+#define LOG_HEX(expr) ;
 #endif
 
 using Byte = char;
@@ -46,7 +53,8 @@ struct Header {
         LOG(out.arrangement());
         LOG(out.has_persistent_memory());
         LOG(out.has_trainer_data());
-        LOG(+out.mapper_lower_nibble());
+        Byte m = out.mapper();
+        LOG_HEX(out.mapper());
         LOG(out.is_pc10());
         return out;
     }
@@ -154,7 +162,12 @@ struct Header {
         return this->flag6 & (1 << 3);
     }
 
-    constexpr Byte mapper_lower_nibble() const { return this->flag6 >> 4; }
+    Byte mapper() const {
+        const Byte lower = this->flag6 >> 4;
+        const Byte upper = this->flag7 >> 4;
+
+        return lower | (upper << 4);
+    }
 
     constexpr bool is_pc10() const { return flag7 | (1 << 1); }
 };
