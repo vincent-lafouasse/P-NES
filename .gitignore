@@ -6,6 +6,7 @@ exe
 
 .DS_Store
 *_local
+.cache
 
 # hi nintendo don't sue me there arent any roms here
 *.nes
