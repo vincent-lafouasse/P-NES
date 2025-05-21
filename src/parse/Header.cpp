@@ -116,7 +116,7 @@ VideoFormat Header::video_format() const {
     }
 }
 
-void verify_reserved_zeros() const {
+void Header::verify_reserved_zeros() const {
     assert(!bit_is_set(byte(7), 1));
     assert(!bit_is_set(byte(7), 2));
     assert(!bit_is_set(byte(7), 3));
