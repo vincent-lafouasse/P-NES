@@ -34,15 +34,15 @@ struct Header {
         assert(std::memcmp(out.id, id, 4) == 0 && "Invalid iNes header");
 
         LOG(out.format());
-        LOG(+out.prg_size);
-        LOG(out.prg_size_bytes());
-        LOG(+out.chr_size);
-        LOG(out.chr_size_bytes());
+        LOG_NUM(out.prg_size);
+        LOG_NUM(out.prg_size_bytes());
+        LOG_NUM(out.chr_size);
+        LOG_NUM(out.chr_size_bytes());
         LOG(out.arrangement());
-        LOG(out.has_persistent_memory());
-        LOG(out.has_trainer_data());
+        LOG_BOOL(out.has_persistent_memory());
+        LOG_BOOL(out.has_trainer_data());
         LOG_HEX(out.mapper());
-        LOG(out.is_pc10());
+        LOG_BOOL(out.is_pc10());
         return out;
     }
 

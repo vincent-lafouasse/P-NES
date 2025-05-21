@@ -29,7 +29,7 @@ struct Game {
         u32 prg_size = h.prg_size_bytes();
         out.prg.reserve(prg_size);
         for (u32 i = 0; i < prg_size; ++i) {
-            Byte b = s.get();
+            Byte b = static_cast<Byte>(s.get());
             out.prg.push_back(b);
         }
         assert(s.good() && "Failed to read prg data");
@@ -37,7 +37,7 @@ struct Game {
         u32 chr_size = h.chr_size_bytes();
         out.chr.reserve(chr_size);
         for (u32 i = 0; i < chr_size; ++i) {
-            Byte b = s.get();
+            Byte b = static_cast<Byte>(s.get());
             out.chr.push_back(b);
         }
         assert(s.good() && "Failed to read chr data");
@@ -62,7 +62,7 @@ struct Game {
         std::ofstream of("prg.out", std::ios::out | std::ios::binary);
 
         for (Byte b : this->prg) {
-            of << b;
+            of << static_cast<unsigned char>(b);
         }
     }
 };
