@@ -10,6 +10,7 @@ struct RomFormat {
     } self;
 
     constexpr RomFormat(Kind k) : self(k) {}  // NOLINT(*-explicit-constructor)
+
     [[nodiscard]]
     const char* repr() const;
 
@@ -24,8 +25,8 @@ struct Arrangement {
         Vertical,
     } self;
 
-    constexpr Arrangement(Kind k)
-        : self(k) {}  // NOLINT(*-explicit-constructor)
+    constexpr Arrangement(Kind k)  // NOLINT(*-explicit-constructor)
+        : self(k) {}
 
     [[nodiscard]]
     const char* repr() const;
@@ -39,8 +40,8 @@ struct VideoFormat {
         Pal,
     } self;
 
-    constexpr VideoFormat(Kind k)
-        : self(k) {}  // NOLINT(*-explicit-constructor)
+    constexpr VideoFormat(Kind k)  // NOLINT(*-explicit-constructor)
+        : self(k) {}
 
     [[nodiscard]]
     const char* repr() const;
