@@ -6,12 +6,12 @@
 
 using Bank = std::vector<Byte>;
 
-struct GameData {
+struct Cartridge {
     Header header;
     Bank trainer;
     Bank prg;
     Bank chr;
 
-    static GameData read(const std::string& path);
+    static Cartridge read(const std::string& path);
     void dump_prg() const;
 };

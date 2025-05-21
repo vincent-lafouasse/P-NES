@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "Cartridge/Cartridge.hpp"
 #include "NES/Cpu.hpp"
-#include "parse/GameData.hpp"
 
 int main(int ac, char** av) {
     if (ac == 1) {
@@ -11,7 +11,7 @@ int main(int ac, char** av) {
     }
 
     const char* path = av[1];
-    GameData g = GameData::read(path);
+    Cartridge g = Cartridge::read(path);
     g.dump_prg();
 
     Cpu cpu{};

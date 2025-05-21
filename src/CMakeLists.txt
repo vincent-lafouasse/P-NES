@@ -6,10 +6,10 @@ target_sources(${targetName}
 PRIVATE
         ./main.cpp
 
-        ./parse/Header.cpp
-        ./parse/Header.hpp
-        ./parse/GameData.cpp
-        ./parse/GameData.hpp
+		Cartridge/Header.cpp
+		Cartridge/Header.hpp
+		Cartridge/Cartridge.cpp
+		Cartridge/Cartridge.hpp
 
         ./NES/Cpu.hpp
 

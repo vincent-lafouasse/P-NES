@@ -1,4 +1,4 @@
-#include "GameData.hpp"
+#include "Cartridge.hpp"
 
 #include <cassert>
 #include <cstdlib>
@@ -23,7 +23,7 @@ Bank read_bank(std::ifstream& s, usize sz) {
 }
 }  // namespace
 
-GameData GameData::read(const std::string& path) {
+Cartridge Cartridge::read(const std::string& path) {
     std::ifstream s(path);
     if (!s.good()) {
         std::cerr << "Failed to open file " << std::quoted(path) << '\n';
@@ -33,7 +33,7 @@ GameData GameData::read(const std::string& path) {
     Header h = Header::read(s);
     assert(s.good() && "Failed to read iNes header");
 
-    GameData out;
+    Cartridge out;
     out.header = h;
 
     if (h.has_trainer_data()) {
@@ -57,7 +57,7 @@ GameData GameData::read(const std::string& path) {
     return out;
 }
 
-void GameData::dump_prg() const {
+void Cartridge::dump_prg() const {
     std::ofstream of("./build/prg.out", std::ios::out | std::ios::binary);
 
     for (Byte b : prg) {
