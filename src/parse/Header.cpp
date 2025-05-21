@@ -35,3 +35,18 @@ std::ostream& operator<<(std::ostream& stream, const Arrangement& a) {
     stream << a.repr();
     return stream;
 }
+
+const char* VideoFormat::repr() const {
+    switch (self) {
+        case Ntsc:
+            return "NTSC";
+        case Pal:
+            return "Pal";
+    }
+}
+
+std::ostream& operator<<(std::ostream& stream,
+                         const VideoFormat& a) {
+    stream << a.repr();
+    return stream;
+}

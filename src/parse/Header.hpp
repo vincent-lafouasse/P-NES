@@ -50,20 +50,9 @@ struct VideoFormat {
 
     constexpr VideoFormat(Kind k) : self(k) {}
 
-    const char* repr() const {
-        switch (self) {
-            case Ntsc:
-                return "NTSC";
-            case Pal:
-                return "Pal";
-        }
-    }
-
+    const char* repr() const;
     friend std::ostream& operator<<(std::ostream& stream,
-                                    const VideoFormat& a) {
-        stream << a.repr();
-        return stream;
-    }
+                                    const VideoFormat& a);
 };
 
 struct Header {
