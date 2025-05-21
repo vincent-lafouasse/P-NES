@@ -156,10 +156,43 @@ struct Header {
     constexpr Byte mapper_lower_nibble() const { return this->flag6 >> 4; }
 };
 
-//
+struct Game {
+    Header header;
+    std::vector<Byte> trainer;
+    std::vector<Byte> prg;
+    std::vector<Byte> chr;
+
+    static Game read(ByteStream& s) {
+        Header h = Header::read(s);
+
+        Game out;
+        out.header = h;
+
+        if (h.has_trainer_data()) {
+            out.trainer.reserve(512);
+        }
+
+        u32 prg_size = h.prg_size_bytes();
+        out.prg.reserve(prg_size);
+        for (u32 i = 0; i < prg_size; ++i) {
+            Byte b = s.get();
+            out.prg.push_back(b);
+        }
+
+        u32 chr_size = h.chr_size_bytes();
+        out.chr.reserve(chr_size);
+        for (u32 i = 0; i < chr_size; ++i) {
+            Byte b = s.get();
+            out.chr.push_back(b);
+        }
+
+        return out;
+    }
+};
 
 int main() {
     ByteStream stream(PATH);
 
-    Header h = Header::read(stream);
+    Game g = Game::read(stream);
+    LOG(sizeof(g));
 }
