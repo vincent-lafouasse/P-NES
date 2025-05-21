@@ -13,7 +13,7 @@ bool bit_is_set(Byte b, u32 i) {
 Header Header::read(ByteStream& s) {
     Header out{};
 
-    s.read(reinterpret_cast<Byte*>(&out), 16);
+    s.read(reinterpret_cast<char*>(&out), 16);
 
     assert(s.good() && "Failed to read iNes header");
 
@@ -86,7 +86,7 @@ Byte Header::mapper() const {
     const Byte lower = this->flag6 >> 4;
     const Byte upper = this->flag7 >> 4;
 
-    return lower | (upper << 4);
+    return upper << 4 | lower;
 }
 
 u32 Header::number_of_8kB_RAM_banks() const {

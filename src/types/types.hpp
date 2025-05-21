@@ -3,6 +3,6 @@
 #include <cstdint>
 #include <fstream>
 
-using Byte = char;
+using Byte = uint8_t;
 using u32 = uint32_t;
-using ByteStream = std::basic_ifstream<Byte>;
+using ByteStream = std::ifstream;
