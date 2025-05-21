@@ -28,23 +28,21 @@ GameData GameData::read(ByteStream& s) {
     out.header = h;
 
     if (h.has_trainer_data()) {
-        std::size_t trainer_sz = 512;
-        out.trainer = read_bank(s, trainer_sz);
+        std::size_t sz = 512;
+        out.trainer = read_bank(s, sz);
         assert(s.good() && "Failed to read trainer data");
     }
 
-    std::size_t n_prg = h.prg_size;
-    for (std::size_t i = 0; i < n_prg; i++) {
-        Bank prg = read_bank(s, kiloBytes(16));
+    {
+        std::size_t sz = h.prg_size * kiloBytes(16);
+        out.prg = read_bank(s, sz);
         assert(s.good() && "Failed to read prg data");
-        out.prg.push_back(std::move(prg));
     }
 
-    std::size_t n_chr = h.chr_size;
-    for (std::size_t i = 0; i < n_chr; i++) {
-        Bank chr = read_bank(s, kiloBytes(8));
-        assert(s.good() && "Failed to read prg data");
-        out.chr.push_back(std::move(chr));
+    {
+        std::size_t sz = h.chr_size * kiloBytes(8);
+        out.chr = read_bank(s, sz);
+        assert(s.good() && "Failed to read chr data");
     }
 
     return out;
@@ -53,9 +51,7 @@ GameData GameData::read(ByteStream& s) {
 void GameData::dump_prg() const {
     std::ofstream of("./build/prg.out", std::ios::out | std::ios::binary);
 
-    for (const Bank& bank : this->prg) {
-        for (Byte b : bank) {
-            of << static_cast<unsigned char>(b);
-        }
+    for (Byte b : prg) {
+        of << static_cast<unsigned char>(b);
     }
 }
