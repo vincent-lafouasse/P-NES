@@ -15,8 +15,8 @@ struct RomFormat {
     const char* repr() const;
 
     friend std::ostream& operator<<(std::ostream& stream, const RomFormat& a);
-    bool operator==(const RomFormat& o);
-    bool operator!=(const RomFormat& o);
+    bool operator==(const RomFormat& o) const;
+    bool operator!=(const RomFormat& o) const;
 };
 
 struct Arrangement {

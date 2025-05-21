@@ -131,10 +131,10 @@ std::ostream& operator<<(std::ostream& stream, const RomFormat& a) {
     stream << a.repr();
     return stream;
 }
-bool RomFormat::operator==(const RomFormat& o) {
+bool RomFormat::operator==(const RomFormat& o) const {
     return self == o.self;
 }
-bool RomFormat::operator!=(const RomFormat& o) {
+bool RomFormat::operator!=(const RomFormat& o) const {
     return self != o.self;
 }
 
