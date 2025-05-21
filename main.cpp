@@ -47,6 +47,7 @@ struct Header {
         LOG(out.has_persistent_memory());
         LOG(out.has_trainer_data());
         LOG(+out.mapper_lower_nibble());
+        LOG(out.is_pc10());
         return out;
     }
 
@@ -154,6 +155,10 @@ struct Header {
     }
 
     constexpr Byte mapper_lower_nibble() const { return this->flag6 >> 4; }
+
+    constexpr bool is_pc10() const {
+        return flag7 | (1 << 1);
+    }
 };
 
 struct Game {
