@@ -16,19 +16,24 @@ Instruction Instruction::Clear_Decimal() {
 
 Instruction Instruction::Load_A(Mode mode) {
     using M = Mode;
+    Kind k = Kind::Load_A;
     switch (mode) {
         case M::Immediate:
-            return {Kind::Load_A, mode, 2, 2};
+            return {k, mode, 2, 2};
         case M::ZeroPage:
-            return {Kind::Load_A, mode, 2, 3};
+            return {k, mode, 2, 3};
         case M::ZeroPage_X:
-            return {Kind::Load_A, mode, 2, 4};
+            return {k, mode, 2, 4};
         case M::Absolute:
-            return {Kind::Load_A, mode, 3, 4};
+            return {k, mode, 3, 4};
         case M::Absolute_X:
-            return {Kind::Load_A, mode, 3, 4};
+            return {k, mode, 3, 4};
         case M::Absolute_Y:
-            return {Kind::Load_A, mode, 3, 4};
+            return {k, mode, 3, 4};
+        case M::X_Indirect:
+            return {k, mode, 2, 6};
+        case M::Indirect_Y:
+            return {k, mode, 2, 5};
         default:
             return Unknown();
     }
