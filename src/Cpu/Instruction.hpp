@@ -209,7 +209,7 @@ struct Instruction {
     usize size;
     usize cycles;
 
-    static Instruction Unknown() { return {}; }
+    static Instruction Unknown() { return {Kind::Unknown, Mode::Implied, 1, 1}; }
     static Instruction Set_Interrupt() {
         return {Kind::Set_Interrupt, Mode::Implied, 1, 2};
     }
