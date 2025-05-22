@@ -31,4 +31,6 @@ class Cpu final {
     auto& S() { return stack_pointer; }
     auto& PC() { return program_counter; }
     auto& P() { return status; }
+
+    static constexpr Address reset_vector = 0xFFFC;
 };
