@@ -10,7 +10,10 @@
 
 class Bus final {
    public:
-    explicit Bus(const Cartridge& cart) : cartridge(cart), RAM() {}
+    explicit Bus(const Cartridge& cart) : cartridge(cart), RAM() {
+        assert(cart.header.mapper() == 0x0 &&
+               "only supporting mapper 0 for now");
+    }
     Byte read(Address address) const { return {}; }
     void write(Address address, Byte data) const {}
 
