@@ -5,11 +5,28 @@
 #include "log.hpp"
 
 Cpu::Cpu(Bus& mem) : memory(mem) {
-    instructionSet.fill(Instruction::Unknown());
+    using M = Instruction::Mode;
+    using I = Instruction;
 
-    instructionSet[0x78] = Instruction::Set_Interrupt();
-    instructionSet[0xd8] = Instruction::Clear_Decimal();
-    instructionSet[0xa9] = Instruction::Load_A(Instruction::Mode::Immediate);
+    instructionSet.fill(I::Unknown());
+
+    instructionSet[0x78] = I::Set_Interrupt();
+    instructionSet[0xd8] = I::Clear_Decimal();
+
+    instructionSet[0xa9] = I::Load_A(M::Immediate);
+    instructionSet[0xa5] = I::Load_A(M::ZeroPage);
+    instructionSet[0xb5] = I::Load_A(M::ZeroPage_X);
+    instructionSet[0xad] = I::Load_A(M::Absolute);
+    instructionSet[0xbd] = I::Load_A(M::Absolute_X);
+    instructionSet[0xb9] = I::Load_A(M::Absolute_Y);
+    instructionSet[0xa1] = I::Load_A(M::X_Indirect);
+    instructionSet[0xb1] = I::Load_A(M::Indirect_Y);
+
+    instructionSet[0xa2] = I::Load_X(M::Immediate);
+    instructionSet[0xa6] = I::Load_X(M::ZeroPage);
+    instructionSet[0xb6] = I::Load_X(M::ZeroPage_Y);
+    instructionSet[0xae] = I::Load_X(M::Absolute);
+    instructionSet[0xbe] = I::Load_X(M::Absolute_Y);
 }
 
 void Cpu::reset() {
