@@ -6,6 +6,7 @@
 struct Instruction {
     enum class Kind {
         SEI,
+        Unknown,
     } kind;
     enum class Mode {
         Implied,
@@ -13,7 +14,17 @@ struct Instruction {
     usize size;
     usize cycles;
 
+    static Instruction decode(Byte opcode) {
+        switch (opcode) {
+            case 0x78:
+                return SEI();
+            default:
+                return Unknown();
+        }
+    }
+
     static Instruction SEI() { return {Kind::SEI, Mode::Implied, 1, 2}; }
+    static Instruction Unkown() { return {Kind::Unknown}; }
 };
 
 class Cpu final {
