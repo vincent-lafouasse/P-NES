@@ -38,7 +38,7 @@ void Cpu::start() {
             this->status.decimal_flag = false;
         }
 
-        logs << std::hex << PC() << "\t" << instruction.kind_repr()
+        logs << instruction.kind_repr()
              << std::endl;
         PC() += instruction.size;
     }

@@ -35,117 +35,117 @@ Instruction Instruction::Load_A(Mode mode) {
 const char* Instruction::kind_repr() const {
     switch (kind) {
         case Kind::Load_A:
-            return "LDA";
+            return "lda";
         case Kind::Load_X:
-            return "LDX";
+            return "ldx";
         case Kind::Load_Y:
-            return "LDY";
+            return "ldy";
         case Kind::Store_A:
-            return "STA";
+            return "sta";
         case Kind::Store_X:
-            return "STX";
+            return "stx";
         case Kind::Store_Y:
-            return "STY";
+            return "sty";
         case Kind::Transfer_A2X:
-            return "TAX";
+            return "tax";
         case Kind::Transfer_A2Y:
-            return "TAY";
+            return "tay";
         case Kind::Transfer_S2X:
-            return "TSX";
+            return "tsx";
         case Kind::Transfer_X2A:
-            return "TXA";
+            return "txa";
         case Kind::Transfer_X2S:
-            return "TXS";
+            return "txs";
         case Kind::Transfer_Y2A:
-            return "TYA";
+            return "tya";
         case Kind::Push_A:
-            return "PHA";
+            return "pha";
         case Kind::Push_P:
-            return "PHP";
+            return "php";
         case Kind::Pull_A:
-            return "PLA";
+            return "pla";
         case Kind::Pull_P:
-            return "PLP";
+            return "plp";
         case Kind::Decrement_Mem:
-            return "DEC";
+            return "dec";
         case Kind::Decrement_X:
-            return "DEX";
+            return "dex";
         case Kind::Decrement_Y:
-            return "DEY";
+            return "dey";
         case Kind::Increment_Mem:
-            return "INC";
+            return "inc";
         case Kind::Increment_X:
-            return "INX";
+            return "inx";
         case Kind::Increment_Y:
-            return "INY";
+            return "iny";
         case Kind::AddWithCarry:
-            return "ADC";
+            return "adc";
         case Kind::SubtractWithCarry:
-            return "SBC";
+            return "sbc";
         case Kind::And_A:
-            return "AND";
+            return "and";
         case Kind::Xor_A:
-            return "EOR";
+            return "eor";
         case Kind::Or_A:
-            return "ORA";
+            return "ora";
         case Kind::ArithmeticShift_Left:
-            return "ASL";
+            return "asl";
         case Kind::LogicalShift_Right:
-            return "LSR";
+            return "lsr";
         case Kind::Rotate_Left:
-            return "ROL";
+            return "rol";
         case Kind::Rotate_Right:
-            return "ROR";
+            return "ror";
         case Kind::Clear_Carry:
-            return "CLC";
+            return "clc";
         case Kind::Clear_Decimal:
-            return "CLD";
+            return "cld";
         case Kind::Clear_Interrupt:
-            return "CLI";
+            return "cli";
         case Kind::Clear_Overflow:
-            return "CLV";
+            return "clv";
         case Kind::Set_Carry:
-            return "SEC";
+            return "sec";
         case Kind::Set_Decimal:
-            return "SED";
+            return "sed";
         case Kind::Set_Interrupt:
-            return "SEI";
+            return "sei";
         case Kind::Compare_A:
-            return "CMP";
+            return "cmp";
         case Kind::Compare_X:
-            return "CPX";
+            return "cpx";
         case Kind::Compare_Y:
-            return "CPY";
+            return "cpy";
         case Kind::Branch_CarryClear:
-            return "BCC";
+            return "bcc";
         case Kind::Branch_CarrySet:
-            return "BCS";
+            return "bcs";
         case Kind::Branch_Equal:
-            return "BEQ";
+            return "beq";
         case Kind::Branch_NotEqual:
-            return "BNE";
+            return "bne";
         case Kind::Branch_Minus:
-            return "BMI";
+            return "bmi";
         case Kind::Branch_Plus:
-            return "BPL";
+            return "bpl";
         case Kind::Branch_OverflowClear:
-            return "BVC";
+            return "bvc";
         case Kind::Branch_OverflowSet:
-            return "BVS";
+            return "bvs";
         case Kind::Jump:
-            return "JMP";
+            return "jmp";
         case Kind::Jump_Subroutine:
-            return "JSR";
+            return "jsr";
         case Kind::Return_Subroutine:
-            return "RTS";
+            return "rts";
         case Kind::Return_Interrupt:
-            return "RTI";
+            return "rti";
         case Kind::Break:
-            return "BRK";
+            return "brk";
         case Kind::BitTest:
-            return "BIT";
+            return "bit";
         case Kind::NoOp:
-            return "NOP";
+            return "nop";
         case Kind::Unknown:
             return "???";
     }
