@@ -18,4 +18,5 @@ int main(int ac, char** av) {
 
     Cpu cpu(memory);
     cpu.reset();
+    cpu.start();
 }

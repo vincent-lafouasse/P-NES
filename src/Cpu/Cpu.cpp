@@ -2,6 +2,12 @@
 
 #include "log.hpp"
 
+Cpu::Cpu(Bus& mem) : memory(mem) {
+    instructionSet.fill(Instruction::Unknown());
+
+    instructionSet[0x78] = Instruction::Set_Interrupt();
+}
+
 void Cpu::reset() {
     this->A() = 0;
     this->X() = 0;
@@ -11,5 +17,10 @@ void Cpu::reset() {
 
     this->PC() = this->reset_address();
     LOG_HEX(this->PC());
-    LOG_HEX(this->memory.read(this->PC()));
+}
+
+void Cpu::start() {
+    Byte opcode = memory.read(PC());
+    Instruction instruction = instructionSet[opcode];
+    LOG(instruction.kind_repr());
 }

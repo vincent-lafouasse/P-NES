@@ -2,12 +2,14 @@
 
 #include "Bus/Bus.hpp"
 #include "Instruction.hpp"
+#include "log.hpp"
 #include "types.hpp"
 
 class Cpu final {
    public:
-    explicit Cpu(Bus& mem) : memory(mem) {}
+    explicit Cpu(Bus& mem);
     void reset();
+    void start();
 
    private:
     Byte accumulator{};
@@ -28,6 +30,7 @@ class Cpu final {
     } status{};
 
     Bus& memory;
+    std::array<Instruction, 256> instructionSet{};
 
     auto& A() { return accumulator; }
     auto& X() { return x_register; }

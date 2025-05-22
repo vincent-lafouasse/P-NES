@@ -73,8 +73,8 @@ struct Instruction {
         // Unrecognized opcode
         Unknown,
     } kind;
-    static const char* kind_repr(Kind k) {
-        switch (k) {
+    const char* kind_repr() const {
+        switch (kind) {
             case Kind::Load_A:
                 return "LDA";
             case Kind::Load_X:
@@ -210,6 +210,9 @@ struct Instruction {
     usize cycles;
 
     static Instruction Unknown() { return {}; }
+    static Instruction Set_Interrupt() {
+        return {Kind::Set_Interrupt, Mode::Implied, 1, 2};
+    }
     static Instruction Load_A(Mode mode) {
         using M = Mode;
         switch (mode) {
