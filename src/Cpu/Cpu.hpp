@@ -3,6 +3,19 @@
 #include "Bus/Bus.hpp"
 #include "types.hpp"
 
+struct Instruction {
+    enum class Kind {
+        SEI,
+    } kind;
+    enum class Mode {
+        Implied,
+    } mode;
+    usize size;
+    usize cycles;
+
+    static Instruction SEI() { return {Kind::SEI, Mode::Implied, 1, 2}; }
+};
+
 class Cpu final {
    public:
     explicit Cpu(Bus& mem) : memory(mem) {}
