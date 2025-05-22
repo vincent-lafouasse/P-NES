@@ -9,6 +9,7 @@ Cpu::Cpu(Bus& mem) : memory(mem) {
 
     instructionSet[0x78] = Instruction::Set_Interrupt();
     instructionSet[0xd8] = Instruction::Clear_Decimal();
+    instructionSet[0xa8] = Instruction::Load_A(Instruction::Mode::Immediate);
 }
 
 void Cpu::reset() {

@@ -13,6 +13,7 @@ PRIVATE
 
 		Cpu/Cpu.cpp
 		Cpu/Cpu.hpp
+		Cpu/Instruction.cpp
 		Cpu/Instruction.hpp
 
 		Bus/Bus.hpp
