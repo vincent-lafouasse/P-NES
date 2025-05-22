@@ -7,6 +7,24 @@
 
 #include "log/log.hpp"
 
+namespace {
+template <typename T>
+T kiloBytes(T n) {
+    return n * (1 << 10);
+}
+
+Bank read_bank(std::ifstream& s, usize sz) {
+    Bank bank;
+
+    bank.reserve(sz);
+    for (usize i = 0; i < sz; ++i) {
+        Byte b = static_cast<Byte>(s.get());
+        bank.push_back(b);
+    }
+    return bank;
+}
+}  // namespace
+
 Cartridge Cartridge::load(const std::string& path) {
     std::ifstream s(path);
     if (!s.good()) {
@@ -20,26 +38,22 @@ Cartridge Cartridge::load(const std::string& path) {
     Cartridge out;
     out.header = h;
 
-    out.trainer = nullptr;
     if (h.has_trainer_data()) {
-        TrainerBank bank = TrainerBank::read(s);
+        usize sz = 512;
+        out.trainer = read_bank(s, sz);
         assert(s.good() && "Failed to read trainer data");
-        std::unique_ptr<TrainerBank> trainer(new TrainerBank(bank));
-        out.trainer = std::move(trainer);
     }
 
-    for (usize _ = 0; _ < h.prg_size; _++) {
-        PrgBank bank = PrgBank::read(s);
+    {
+        usize sz = h.prg_size * kiloBytes(16);
+        out.prg = read_bank(s, sz);
         assert(s.good() && "Failed to read prg data");
-        std::unique_ptr<PrgBank> prg(new PrgBank(bank));
-        out.prg.push_back(std::move(prg));
     }
 
-    for (usize _ = 0; _ < h.chr_size; _++) {
-        ChrBank bank = ChrBank::read(s);
+    {
+        usize sz = h.chr_size * kiloBytes(8);
+        out.chr = read_bank(s, sz);
         assert(s.good() && "Failed to read chr data");
-        std::unique_ptr<ChrBank> chr(new ChrBank(bank));
-        out.chr.push_back(std::move(chr));
     }
 
 #if LOGGING
@@ -52,9 +66,7 @@ Cartridge Cartridge::load(const std::string& path) {
 void Cartridge::dump_prg() const {
     std::ofstream of("./build/prg.out", std::ios::out | std::ios::binary);
 
-    for (const auto& bank : prg) {
-        for (usize i = 0; i < bank->size; ++i) {
-            of << bank->at(i);
-        }
+    for (Byte b : prg) {
+        of << b;
     }
 }
