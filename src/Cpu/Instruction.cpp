@@ -1,7 +1,6 @@
 #include "Instruction.hpp"
 
 #include <format>
-#include <sstream>
 
 Instruction Instruction::Unknown() {
     return {Kind::Unknown, Mode::Implied, 1, 1};
@@ -59,55 +58,111 @@ Instruction Instruction::Load_X(Mode mode) {
     }
 }
 
-std::string Instruction::repr(Byte op1, Byte op2) const {
-    std::stringstream out{};
+Instruction Instruction::Store_X(Mode mode) {
+    using M = Mode;
+    Kind k = Kind::Store_X;
+    switch (mode) {
+        case M::ZeroPage:
+            return {k, mode, 2, 3};
+        case M::ZeroPage_Y:
+            return {k, mode, 2, 4};
+        case M::Absolute:
+            return {k, mode, 3, 4};
+        default:
+            return Unknown();
+    }
+}
 
-    out << this->kind_repr();
+Instruction Instruction::Store_Y(Mode mode) {
+    using M = Mode;
+    Kind k = Kind::Store_Y;
+    switch (mode) {
+        case M::ZeroPage:
+            return {k, mode, 2, 3};
+        case M::ZeroPage_X:
+            return {k, mode, 2, 4};
+        case M::Absolute:
+            return {k, mode, 3, 4};
+        default:
+            return Unknown();
+    }
+}
+
+std::string Instruction::repr(Byte op1, Byte op2) const {
+    std::string out = this->kind_repr();
 
     if (this->size == 1) {
-        return out.str();
+        return out;
     }
-
-    out << '\t';
 
     using K = Kind;
     using M = Mode;
 
-    const Address address = op1 | op2 << 8;
+    const std::string b1 = std::format("{:x}", op1);
+    const std::string b2 = std::format("{:x}", op2);
+    const std::string address = std::format("{:x}", op1 | op2 << 8);
+
+    const std::string commaX = ",X";
+    const std::string commaY = ",Y";
+
+    auto paren = [](const std::string s) { return "(" + s + ")"; };
+
+    out += '\t';
 
     if (kind == K::Load_A) {
-        if (mode == M::Immediate) {
-            out << std::format("#{:x}", op1);
-        } else if (mode == M::ZeroPage) {
-            out << std::format("{:x}", op1);
-        } else if (mode == M::ZeroPage_X) {
-            out << std::format("{:x},X", op1);
-        } else if (mode == M::Absolute) {
-            out << std::format("{:x}", address);
-        } else if (mode == M::Absolute_X) {
-            out << std::format("{:x},X", address);
-        } else if (mode == M::Absolute_Y) {
-            out << std::format("{:x},Y", address);
-        } else if (mode == M::X_Indirect) {
-            out << std::format("({:x},X)", address);
-        } else if (mode == M::Indirect_Y) {
-            out << std::format("({:x}),Y", address);
+        switch (mode) {
+            case M::Immediate:
+                return out + "#" + b1;
+            case M::ZeroPage:
+                return out + b1;
+            case M::ZeroPage_X:
+                return out + b1 + commaX;
+            case M::Absolute:
+                return out + address;
+            case M::Absolute_X:
+                return out + address + commaX;
+            case M::Absolute_Y:
+                return out + address + commaY;
+            case M::X_Indirect:
+                return out + paren(b1 + commaX);
+            case M::Indirect_Y:
+                return out + paren(b1) + commaY;
+            default:
+                return out + "???";
         }
     } else if (kind == K::Load_X) {
-        if (mode == M::Immediate) {
-            out << std::format("#{:x}", op1);
-        } else if (mode == M::ZeroPage) {
-            out << std::format("{:x}", op1);
-        } else if (mode == M::ZeroPage_Y) {
-            out << std::format("{:x},Y", op1);
-        } else if (mode == M::Absolute) {
-            out << std::format("{:x}", address);
-        } else if (mode == M::Absolute_Y) {
-            out << std::format("{:x},Y", address);
+        switch (mode) {
+            case M::Immediate:
+                return out + "#" + b1;
+            case M::ZeroPage:
+                return out + b1;
+            case M::ZeroPage_Y:
+                return out + b1 + commaY;
+            case M::Absolute:
+                return out + address;
+            case M::Absolute_Y:
+                return out + address + commaY;
+            default:
+                return out + "???";
+        }
+    } else if (kind == K::Load_Y) {
+        switch (mode) {
+            case M::Immediate:
+                return out + "#" + b1;
+            case M::ZeroPage:
+                return out + b1;
+            case M::ZeroPage_X:
+                return out + b1 + commaX;
+            case M::Absolute:
+                return out + address;
+            case M::Absolute_X:
+                return out + address + commaX;
+            default:
+                return out + "???";
         }
     }
 
-    return out.str();
+    return out;
 }
 
 const char* Instruction::kind_repr() const {
