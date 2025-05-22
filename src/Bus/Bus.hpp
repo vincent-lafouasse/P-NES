@@ -1,8 +1,10 @@
 #pragma once
 
-#include <vector>
+#include <array>
 
 #include "types.hpp"
+
+#define KILOBYTES(n) (n << 10)
 
 class Bus final {
    public:
@@ -10,5 +12,5 @@ class Bus final {
     void write(Address address, Byte data) const;
 
    private:
-    std::vector<Byte> RAM;
+    std::array<Byte, KILOBYTES(2)> RAM;
 };
