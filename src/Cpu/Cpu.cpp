@@ -27,6 +27,22 @@ Cpu::Cpu(Bus& mem) : memory(mem) {
     instructionSet[0xb6] = I::Load_X(M::ZeroPage_Y);
     instructionSet[0xae] = I::Load_X(M::Absolute);
     instructionSet[0xbe] = I::Load_X(M::Absolute_Y);
+
+    instructionSet[0x85] = I::Store_A(M::ZeroPage);
+    instructionSet[0x95] = I::Store_A(M::ZeroPage_X);
+    instructionSet[0x8d] = I::Store_A(M::Absolute);
+    instructionSet[0x9d] = I::Store_A(M::Absolute_X);
+    instructionSet[0x99] = I::Store_A(M::Absolute_Y);
+    instructionSet[0x81] = I::Store_A(M::X_Indirect);
+    instructionSet[0x91] = I::Store_A(M::Indirect_Y);
+
+    instructionSet[0x86] = I::Store_X(M::ZeroPage);
+    instructionSet[0x96] = I::Store_X(M::ZeroPage_Y);
+    instructionSet[0x8e] = I::Store_X(M::Absolute);
+
+    instructionSet[0x84] = I::Store_Y(M::ZeroPage);
+    instructionSet[0x94] = I::Store_Y(M::ZeroPage_X);
+    instructionSet[0x8c] = I::Store_Y(M::Absolute);
 }
 
 void Cpu::reset() {

@@ -104,6 +104,7 @@ struct Instruction {
     static Instruction Load_A(Mode mode);
     static Instruction Load_X(Mode mode);
 
+    static Instruction Store_A(Mode mode);
     static Instruction Store_X(Mode mode);
     static Instruction Store_Y(Mode mode);
 

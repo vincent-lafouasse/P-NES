@@ -58,6 +58,29 @@ Instruction Instruction::Load_X(Mode mode) {
     }
 }
 
+Instruction Instruction::Store_A(Mode mode) {
+    using M = Mode;
+    Kind k = Kind::Store_A;
+    switch (mode) {
+        case M::ZeroPage:
+            return {k, mode, 2, 3};
+        case M::ZeroPage_X:
+            return {k, mode, 2, 4};
+        case M::Absolute:
+            return {k, mode, 3, 4};
+        case M::Absolute_X:
+            return {k, mode, 3, 5};
+        case M::Absolute_Y:
+            return {k, mode, 3, 5};
+        case M::X_Indirect:
+            return {k, mode, 2, 6};
+        case M::Indirect_Y:
+            return {k, mode, 2, 6};
+        default:
+            return Unknown();
+    }
+}
+
 Instruction Instruction::Store_X(Mode mode) {
     using M = Mode;
     Kind k = Kind::Store_X;
