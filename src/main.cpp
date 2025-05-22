@@ -16,4 +16,5 @@ int main(int ac, char** av) {
     Bus memory{};
 
     Cpu cpu(memory);
+    cpu.reset();
 }

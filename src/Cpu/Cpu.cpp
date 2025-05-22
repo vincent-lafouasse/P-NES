@@ -10,6 +10,6 @@ void Cpu::reset() {
     this->P() = {};
 
     this->PC() = this->reset_address();
-    LOG(this->PC());
-    LOG(this->memory.read(this->PC()));
+    LOG_HEX(this->PC());
+    LOG_HEX(this->memory.read(this->PC()));
 }
