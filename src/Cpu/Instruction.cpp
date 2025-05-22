@@ -57,21 +57,21 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
 
     if (kind == K::Load_A) {
         if (mode == M::Immediate) {
-            out << "#" << std::hex << op1;
+            out << "#" << std::hex << +op1;
         } else if (mode == M::ZeroPage) {
-            out << std::hex << op1;
+            out << std::hex << +op1;
         } else if (mode == M::ZeroPage_X) {
-            out << std::hex << op1 << ",X";
+            out << std::hex << +op1 << ",X";
         } else if (mode == M::Absolute) {
-            out << std::hex << address;
+            out << std::hex << +address;
         } else if (mode == M::Absolute_X) {
-            out << std::hex << address << ",X";
+            out << std::hex << +address << ",X";
         } else if (mode == M::Absolute_Y) {
-            out << std::hex << address << ",X";
+            out << std::hex << +address << ",X";
         } else if (mode == M::X_Indirect) {
-            out << "(" << std::hex << address << ",X)";
+            out << "(" << std::hex << +address << ",X)";
         } else if (mode == M::Indirect_Y) {
-            out << "(" << std::hex << address << "),Y";
+            out << "(" << std::hex << +address << "),Y";
         }
     }
 
