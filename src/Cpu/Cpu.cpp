@@ -28,6 +28,9 @@ void Cpu::start() {
 
     for (int i = 0; i < 10; i++) {
         Byte opcode = memory.read(PC());
+        Byte op1 = memory.read(PC() + 1);
+        Byte op2 = memory.read(PC() + 2);
+
         Instruction instruction = instructionSet[opcode];
         LOG_HEX(opcode);
         LOG(instruction.kind_repr());
@@ -38,8 +41,8 @@ void Cpu::start() {
             this->status.decimal_flag = false;
         }
 
-        logs << instruction.kind_repr()
-             << std::endl;
+
+        logs << instruction.repr(op1, op2) << std::endl;
         PC() += instruction.size;
     }
 }

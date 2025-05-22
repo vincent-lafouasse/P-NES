@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "types.hpp"
 
 struct Instruction {
@@ -100,4 +102,5 @@ struct Instruction {
     static Instruction Load_A(Mode mode);
 
     const char* kind_repr() const;
+    std::string repr(Byte op1, Byte op2) const;
 };

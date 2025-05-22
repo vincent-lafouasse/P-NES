@@ -1,5 +1,7 @@
 #include "Instruction.hpp"
 
+#include <sstream>
+
 Instruction Instruction::Unknown() {
     return {Kind::Unknown, Mode::Implied, 1, 1};
 }
@@ -30,6 +32,45 @@ Instruction Instruction::Load_A(Mode mode) {
         default:
             return Unknown();
     }
+}
+
+std::string Instruction::repr(Byte op1, Byte op2) const {
+    std::stringstream out{};
+
+    out << this->kind_repr();
+
+    if (this->size == 1) {
+        return out.str();
+    }
+
+    out << '\t';
+
+    using K = Kind;
+    using M = Mode;
+
+    const Address address = op1 | op2 << 8;
+
+    if (kind == K::Load_A) {
+        if (mode == M::Immediate) {
+            out << "#" << std::hex << op1;
+        } else if (mode == M::ZeroPage) {
+            out << std::hex << op1;
+        } else if (mode == M::ZeroPage_X) {
+            out << std::hex << op1 << ",X";
+        } else if (mode == M::Absolute) {
+            out << std::hex << address;
+        } else if (mode == M::Absolute_X) {
+            out << std::hex << address << ",X";
+        } else if (mode == M::Absolute_Y) {
+            out << std::hex << address << ",X";
+        } else if (mode == M::X_Indirect) {
+            out << "("<< std::hex << address << ",X)";
+        } else if (mode == M::Indirect_Y) {
+            out << "("<< std::hex << address << "),Y";
+        }
+    }
+
+    return out.str();
 }
 
 const char* Instruction::kind_repr() const {
