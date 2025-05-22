@@ -1,11 +1,14 @@
 #include "Cpu.hpp"
 
+#include <fstream>
+
 #include "log.hpp"
 
 Cpu::Cpu(Bus& mem) : memory(mem) {
     instructionSet.fill(Instruction::Unknown());
 
     instructionSet[0x78] = Instruction::Set_Interrupt();
+    instructionSet[0xd8] = Instruction::Clear_Decimal();
 }
 
 void Cpu::reset() {
@@ -20,7 +23,22 @@ void Cpu::reset() {
 }
 
 void Cpu::start() {
-    Byte opcode = memory.read(PC());
-    Instruction instruction = instructionSet[opcode];
-    LOG(instruction.kind_repr());
+    std::ofstream logs("build/asm.s");
+
+    for (int i = 0; i < 10; i++) {
+        Byte opcode = memory.read(PC());
+        Instruction instruction = instructionSet[opcode];
+        LOG_HEX(opcode);
+        LOG(instruction.kind_repr());
+
+        if (instruction.kind == Instruction::Kind::Set_Interrupt) {
+            this->status.interrupt_flag = true;
+        } else if (instruction.kind == Instruction::Kind::Clear_Decimal) {
+            this->status.decimal_flag = false;
+        }
+
+        logs << std::hex << PC() << "\t" << instruction.kind_repr()
+             << std::endl;
+        PC() += instruction.size;
+    }
 }
