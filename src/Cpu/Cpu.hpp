@@ -50,6 +50,29 @@ struct Instruction {
         Set_Carry,
         Set_Decimal,
         Set_Interrupt,
+        // Comparison
+        Compare_A,
+        Compare_X,
+        Compare_Y,
+        // Branches
+        Branch_CarryClear,
+        Branch_CarrySet,
+        Branch_Equal,
+        Branch_NotEqual,
+        Branch_Minus,
+        Branch_Plus,
+        Branch_OverflowClear,
+        Branch_OverflowSet,
+        // Jumps/Subroutines
+        Jump,
+        Jump_Subroutine,
+        Return_Subroutine,
+        // Breaks/Interrupts
+        Break,
+        Return_Interrupt,
+        // Other
+        BitTest,
+        NoOp,
         // Unrecognized opcode
         Unknown,
     } kind;
