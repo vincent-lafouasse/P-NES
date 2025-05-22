@@ -61,8 +61,8 @@ Cartridge Cartridge::load(const std::string& path) {
 #endif
 
     assert(out.trainer.size() == h.has_trainer_data() ? 512 : 0);
-    assert(out.prg.size() == h.prg_size * kiloBytes(16));
-    assert(out.chr.size() == h.chr_size * kiloBytes(8));
+    assert(out.prg.size() == h.prg_size * kiloBytes<usize>(16));
+    assert(out.chr.size() == h.chr_size * kiloBytes<usize>(8));
     return out;
 }
 

@@ -20,7 +20,7 @@ class Bus final {
         }
         return {};
     }
-    void write(Address address, Byte data) const {}
+    void write(Address, Byte) const {}
 
    private:
     /*
@@ -53,6 +53,6 @@ class Bus final {
         assert("havent mapped this address yet" && false);
     }
 
-    std::array<Byte, KILOBYTES(2)> RAM;
     const Cartridge& cartridge;
+    std::array<Byte, KILOBYTES(2)> RAM;
 };
