@@ -39,6 +39,25 @@ Instruction Instruction::Load_A(Mode mode) {
     }
 }
 
+Instruction Instruction::Load_X(Mode mode) {
+    using M = Mode;
+    Kind k = Kind::Load_X;
+    switch (mode) {
+        case M::Immediate:
+            return {k, mode, 2, 2};
+        case M::ZeroPage:
+            return {k, mode, 2, 3};
+        case M::ZeroPage_Y:
+            return {k, mode, 2, 4};
+        case M::Absolute:
+            return {k, mode, 3, 4};
+        case M::Absolute_Y:
+            return {k, mode, 3, 4};
+        default:
+            return Unknown();
+    }
+}
+
 std::string Instruction::repr(Byte op1, Byte op2) const {
     std::stringstream out{};
 
@@ -72,6 +91,18 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
             out << "(" << std::hex << +address << ",X)";
         } else if (mode == M::Indirect_Y) {
             out << "(" << std::hex << +address << "),Y";
+        }
+    } else if (kind == K::Load_X) {
+        if (mode == M::Immediate) {
+            out << "#" << std::hex << +op1;
+        } else if (mode == M::ZeroPage) {
+            out << std::hex << +op1;
+        } else if (mode == M::ZeroPage_Y) {
+            out << std::hex << +op1 << ",Y";
+        } else if (mode == M::Absolute) {
+            out << std::hex << +address;
+        } else if (mode == M::Absolute_Y) {
+            out << std::hex << +address << ",X";
         }
     }
 

@@ -97,9 +97,12 @@ struct Instruction {
     usize cycles;
 
     static Instruction Unknown();
+
     static Instruction Set_Interrupt();
     static Instruction Clear_Decimal();
+
     static Instruction Load_A(Mode mode);
+    static Instruction Load_X(Mode mode);
 
     const char* kind_repr() const;
     std::string repr(Byte op1, Byte op2) const;
