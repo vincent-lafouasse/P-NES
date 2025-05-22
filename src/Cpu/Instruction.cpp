@@ -64,9 +64,9 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
         } else if (mode == M::Absolute_Y) {
             out << std::hex << address << ",X";
         } else if (mode == M::X_Indirect) {
-            out << "("<< std::hex << address << ",X)";
+            out << "(" << std::hex << address << ",X)";
         } else if (mode == M::Indirect_Y) {
-            out << "("<< std::hex << address << "),Y";
+            out << "(" << std::hex << address << "),Y";
         }
     }
 

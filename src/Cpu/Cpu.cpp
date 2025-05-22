@@ -41,7 +41,6 @@ void Cpu::start() {
             this->status.decimal_flag = false;
         }
 
-
         logs << instruction.repr(op1, op2) << std::endl;
         PC() += instruction.size;
     }

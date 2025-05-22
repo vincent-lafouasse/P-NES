@@ -40,8 +40,7 @@ class Cpu final {
     auto& P() { return status; }
 
     static constexpr Address reset_vector = 0xFFFC;
-    [[nodiscard]]
-    Address reset_address() const {
+    [[nodiscard]] Address reset_address() const {
         return memory.read(reset_vector) | memory.read(reset_vector + 1) << 8;
     }
 };
