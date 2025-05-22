@@ -3,12 +3,14 @@
 #include <array>
 #include <cassert>
 
+#include "Cartridge/Cartridge.hpp"
 #include "types.hpp"
 
 #define KILOBYTES(n) (n << 10)
 
 class Bus final {
    public:
+    explicit Bus(const Cartridge& cart) : cartridge(cart), RAM() {}
     Byte read(Address address) const { return {}; }
     void write(Address address, Byte data) const {}
 
@@ -44,4 +46,5 @@ class Bus final {
     }
 
     std::array<Byte, KILOBYTES(2)> RAM;
+    const Cartridge& cartridge;
 };
