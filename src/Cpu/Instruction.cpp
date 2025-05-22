@@ -162,6 +162,49 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
         }
     }
 
+    if (kind == K::Store_A) {
+        switch (mode) {
+            case M::ZeroPage:
+                return out + b1;
+            case M::ZeroPage_X:
+                return out + b1 + commaX;
+            case M::Absolute:
+                return out + address;
+            case M::Absolute_X:
+                return out + address + commaX;
+            case M::Absolute_Y:
+                return out + address + commaY;
+            case M::X_Indirect:
+                return out + paren(b1 + commaX);
+            case M::Indirect_Y:
+                return out + paren(b1) + commaY;
+            default:
+                return out + "???";
+        }
+    } else if (kind == K::Store_X) {
+        switch (mode) {
+            case M::ZeroPage:
+                return out + b1;
+            case M::ZeroPage_Y:
+                return out + b1 + commaY;
+            case M::Absolute:
+                return out + address;
+            default:
+                return out + "???";
+        }
+    } else if (kind == K::Store_Y) {
+        switch (mode) {
+            case M::ZeroPage:
+                return out + b1;
+            case M::ZeroPage_X:
+                return out + b1 + commaX;
+            case M::Absolute:
+                return out + address;
+            default:
+                return out + "???";
+        }
+    }
+
     return out;
 }
 
