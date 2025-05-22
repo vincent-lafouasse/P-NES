@@ -14,7 +14,12 @@ class Bus final {
         assert(cart.header.mapper() == 0x0 &&
                "only supporting mapper 0 for now");
     }
-    Byte read(Address address) const { return {}; }
+    Byte read(Address address) const {
+        if (address >= 0x8000) {
+            return cartridge.read(address);
+        }
+        return {};
+    }
     void write(Address address, Byte data) const {}
 
    private:
