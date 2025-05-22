@@ -11,6 +11,7 @@ PRIVATE
 		Cartridge/Header.cpp
 		Cartridge/Header.hpp
 
+		Cpu/Cpu.cpp
 		Cpu/Cpu.hpp
 
 		Bus/Bus.hpp

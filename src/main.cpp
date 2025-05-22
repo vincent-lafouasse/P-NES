@@ -13,10 +13,7 @@ int main(int ac, char** av) {
 
     const char* path = av[1];
     Cartridge cartridge = Cartridge::load(path);
+    Bus memory{};
 
-    Cpu cpu{};
-    (void)cpu;
-
-    Bus bus{};
-    (void)bus;
+    Cpu cpu(memory);
 }

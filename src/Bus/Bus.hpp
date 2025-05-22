@@ -9,8 +9,8 @@
 
 class Bus final {
    public:
-    Byte read(Address address) const;
-    void write(Address address, Byte data) const;
+    Byte read(Address address) const { return {}; }
+    void write(Address address, Byte data) const {}
 
    private:
     /*
