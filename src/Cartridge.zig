@@ -8,7 +8,9 @@ pub const Cartridge = struct {
 
     videoFormat: VideoFormat,
 
-    pub fn load(path: []const u8) !Cartridge {
+    const This = @This();
+
+    pub fn load(path: []const u8) !This {
         const rom = try std.fs.cwd().openFile(path, .{});
         const reader = rom.reader();
 
@@ -21,18 +23,18 @@ pub const Cartridge = struct {
             else => unreachable,
         };
 
-        return Cartridge{
+        return This{
             .nPrgBanks = header.nPrgBanks,
             .nChrBanks = header.nChrBanks,
             .videoFormat = videoFormat,
         };
     }
 
-    pub fn log(self: Cartridge) void {
+    pub fn log(this: This) void {
         std.log.info("Cartridge {{", .{});
-        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
-        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
-        std.log.info("\tVideo format:\t {s}", .{self.videoFormat.str()});
+        std.log.info("\tnumber of PRG banks:\t {}", .{this.nPrgBanks});
+        std.log.info("\tnumber of CHR banks:\t {}", .{this.nChrBanks});
+        std.log.info("\tVideo format:\t {s}", .{this.videoFormat.str()});
         std.log.info("}}\n", .{});
     }
 };
@@ -42,8 +44,10 @@ const RomFormat = enum {
     iNes,
     iNes2,
 
-    fn repr(self: RomFormat) [:0]const u8 {
-        switch (self) {
+    const This = @This();
+
+    fn repr(this: This) [:0]const u8 {
+        switch (this) {
             .Archaic => "Archaic iNes",
             .iNes => "Standard iNes",
             .iNes2 => "iNes 2.0",
@@ -55,12 +59,14 @@ const VideoFormat = enum {
     Ntsc,
     Pal,
 
-    const nameTable = [@typeInfo(VideoFormat).@"enum".fields.len][:0]const u8{
+    const This = @This();
+
+    const nameTable = [@typeInfo(This).@"enum".fields.len][:0]const u8{
         "NTSC", "PAL",
     };
 
-    pub fn str(self: VideoFormat) [:0]const u8 {
-        return nameTable[@intFromEnum(self)];
+    pub fn str(this: This) [:0]const u8 {
+        return nameTable[@intFromEnum(this)];
     }
 };
 
@@ -73,7 +79,9 @@ const iNesHeader = struct {
     flag9: u8,
     flag10: u8,
 
-    fn read(reader: anytype) !iNesHeader {
+    const This = @This();
+
+    fn read(reader: anytype) !This {
         var bytes: [16]u8 = undefined;
         _ = try reader.read(&bytes);
 
@@ -89,7 +97,7 @@ const iNesHeader = struct {
         const flag9 = bytes[9];
         const flag10 = bytes[10];
 
-        return iNesHeader{
+        return This{
             .nPrgBanks = nPrgBanks,
             .nChrBanks = nChrBanks,
             .flag6 = flag6,
@@ -100,16 +108,16 @@ const iNesHeader = struct {
         };
     }
 
-    fn log(self: iNesHeader) void {
+    fn log(this: This) void {
         std.log.info("Header {{", .{});
-        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
-        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
+        std.log.info("\tnumber of PRG banks:\t {}", .{this.nPrgBanks});
+        std.log.info("\tnumber of CHR banks:\t {}", .{this.nChrBanks});
         std.log.info("", .{});
-        std.log.info("\tflag 6:\t\t {b:08}", .{self.flag6});
-        std.log.info("\tflag 7:\t\t {b:08}", .{self.flag7});
-        std.log.info("\tflag 8:\t\t {b:08}", .{self.flag8});
-        std.log.info("\tflag 9:\t\t {b:08}", .{self.flag9});
-        std.log.info("\tflag 10:\t {b:08}", .{self.flag10});
+        std.log.info("\tflag 6:\t\t {b:08}", .{this.flag6});
+        std.log.info("\tflag 7:\t\t {b:08}", .{this.flag7});
+        std.log.info("\tflag 8:\t\t {b:08}", .{this.flag8});
+        std.log.info("\tflag 9:\t\t {b:08}", .{this.flag9});
+        std.log.info("\tflag 10:\t {b:08}", .{this.flag10});
         std.log.info("}}\n", .{});
     }
 };
