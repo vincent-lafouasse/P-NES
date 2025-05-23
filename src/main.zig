@@ -25,5 +25,8 @@ pub fn main() !void {
         .flag7 = header_data[7],
     };
 
-    try stdout.print("number of PRG banks:\t {}", .{header.nPrgBanks});
+    try stdout.print("number of PRG banks:\t {}\n", .{header.nPrgBanks});
+    try stdout.print("number of CHR banks:\t {}\n", .{header.nChrBanks});
+    try stdout.print("flag 6:\t {b:08}\n", .{header.flag6});
+    try stdout.print("flag 7:\t {b:08}\n", .{header.flag7});
 }
