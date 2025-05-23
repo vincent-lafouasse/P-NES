@@ -85,7 +85,7 @@ enum class InstructionMode {
     Immediate,
     Implied,
     Indirect,
-    X_Indirect,
+    Indirect_X,
     Indirect_Y,
     Relative,
     ZeroPage,

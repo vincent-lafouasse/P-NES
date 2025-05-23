@@ -30,7 +30,7 @@ Instruction Instruction::Load_A(Mode mode) {
             return {k, mode, 3, 4};
         case M::Absolute_Y:
             return {k, mode, 3, 4};
-        case M::X_Indirect:
+        case M::Indirect_X:
             return {k, mode, 2, 6};
         case M::Indirect_Y:
             return {k, mode, 2, 5};
@@ -72,7 +72,7 @@ Instruction Instruction::Store_A(Mode mode) {
             return {k, mode, 3, 5};
         case M::Absolute_Y:
             return {k, mode, 3, 5};
-        case M::X_Indirect:
+        case M::Indirect_X:
             return {k, mode, 2, 6};
         case M::Indirect_Y:
             return {k, mode, 2, 6};
@@ -146,7 +146,7 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
                 return out + address + commaX;
             case M::Absolute_Y:
                 return out + address + commaY;
-            case M::X_Indirect:
+            case M::Indirect_X:
                 return out + paren(b1 + commaX);
             case M::Indirect_Y:
                 return out + paren(b1) + commaY;
@@ -197,7 +197,7 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
                 return out + address + commaX;
             case M::Absolute_Y:
                 return out + address + commaY;
-            case M::X_Indirect:
+            case M::Indirect_X:
                 return out + paren(b1 + commaX);
             case M::Indirect_Y:
                 return out + paren(b1) + commaY;
