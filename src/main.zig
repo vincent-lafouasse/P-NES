@@ -6,6 +6,23 @@ const iNesHeader = struct {
     nChrBanks: u8,
     flag6: u8,
     flag7: u8,
+
+    fn read(reader: anytype) !iNesHeader {
+        var bytes: [16]u8 = undefined;
+        _ = try reader.read(&bytes);
+
+        const nPrgBanks = bytes[4];
+        const nChrBanks = bytes[5];
+        const flag6 = bytes[6];
+        const flag7 = bytes[7];
+
+        return iNesHeader{
+            .nPrgBanks = nPrgBanks,
+            .nChrBanks = nChrBanks,
+            .flag6 = flag6,
+            .flag7 = flag7,
+        };
+    }
 };
 
 pub fn main() !void {
@@ -14,16 +31,7 @@ pub fn main() !void {
     const rom = try std.fs.cwd().openFile("roms/s9.nes", .{});
     const reader = rom.reader();
 
-    var header_data: [16]u8 = undefined;
-
-    _ = try reader.read(&header_data);
-
-    const header = iNesHeader{
-        .nPrgBanks = header_data[4],
-        .nChrBanks = header_data[5],
-        .flag6 = header_data[6],
-        .flag7 = header_data[7],
-    };
+    const header = try iNesHeader.read(&reader);
 
     try stdout.print("number of PRG banks:\t {}\n", .{header.nPrgBanks});
     try stdout.print("number of CHR banks:\t {}\n", .{header.nChrBanks});
