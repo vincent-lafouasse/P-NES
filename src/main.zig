@@ -51,10 +51,32 @@ const iNesHeader = struct {
     }
 };
 
-pub fn main() !void {
-    const rom = try std.fs.cwd().openFile("roms/s9.nes", .{});
-    const reader = rom.reader();
+const Cartridge = struct {
+    nPrgBanks: u8,
+    nChrBanks: u8,
 
-    const header = try iNesHeader.read(&reader);
-    header.log();
+    fn load(path: []const u8) !Cartridge {
+        const rom = try std.fs.cwd().openFile(path, .{});
+        const reader = rom.reader();
+
+        const header = try iNesHeader.read(&reader);
+        header.log();
+
+        return Cartridge{
+            .nPrgBanks = header.nPrgBanks,
+            .nChrBanks = header.nChrBanks,
+        };
+    }
+
+    fn log(self: Cartridge) void {
+        std.log.info("Cartridge {{", .{});
+        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
+        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
+        std.log.info("}}\n", .{});
+    }
+};
+
+pub fn main() !void {
+    const cartridge = try Cartridge.load("roms/s9.nes");
+    cartridge.log();
 }
