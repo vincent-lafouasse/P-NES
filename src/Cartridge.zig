@@ -1,5 +1,32 @@
 const std = @import("std");
 
+pub const Cartridge = struct {
+    const prgBankSize: usize = 16 * 1024;
+    const chrBankSize: usize = 8 * 1024;
+    nPrgBanks: u8,
+    nChrBanks: u8,
+
+    pub fn load(path: []const u8) !Cartridge {
+        const rom = try std.fs.cwd().openFile(path, .{});
+        const reader = rom.reader();
+
+        const header = try iNesHeader.read(&reader);
+        header.log();
+
+        return Cartridge{
+            .nPrgBanks = header.nPrgBanks,
+            .nChrBanks = header.nChrBanks,
+        };
+    }
+
+    pub fn log(self: Cartridge) void {
+        std.log.info("Cartridge {{", .{});
+        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
+        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
+        std.log.info("}}\n", .{});
+    }
+};
+
 const iNesHeader = struct {
     nPrgBanks: u8,
     nChrBanks: u8,
@@ -46,33 +73,6 @@ const iNesHeader = struct {
         std.log.info("\tflag 8:\t\t {b:08}", .{self.flag8});
         std.log.info("\tflag 9:\t\t {b:08}", .{self.flag9});
         std.log.info("\tflag 10:\t {b:08}", .{self.flag10});
-        std.log.info("}}\n", .{});
-    }
-};
-
-pub const Cartridge = struct {
-    const prgBankSize: usize = 16 * 1024;
-    const chrBankSize: usize = 8 * 1024;
-    nPrgBanks: u8,
-    nChrBanks: u8,
-
-    pub fn load(path: []const u8) !Cartridge {
-        const rom = try std.fs.cwd().openFile(path, .{});
-        const reader = rom.reader();
-
-        const header = try iNesHeader.read(&reader);
-        header.log();
-
-        return Cartridge{
-            .nPrgBanks = header.nPrgBanks,
-            .nChrBanks = header.nChrBanks,
-        };
-    }
-
-    pub fn log(self: Cartridge) void {
-        std.log.info("Cartridge {{", .{});
-        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
-        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
         std.log.info("}}\n", .{});
     }
 };
