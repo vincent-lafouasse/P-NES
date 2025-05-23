@@ -6,6 +6,8 @@ pub const Cartridge = struct {
     nPrgBanks: u8,
     nChrBanks: u8,
 
+    videoFormat: VideoFormat,
+
     pub fn load(path: []const u8) !Cartridge {
         const rom = try std.fs.cwd().openFile(path, .{});
         const reader = rom.reader();
@@ -13,9 +15,16 @@ pub const Cartridge = struct {
         const header = try iNesHeader.read(&reader);
         header.log();
 
+        const videoFormat = switch (header.flag9 & 1) {
+            1 => VideoFormat.Pal,
+            0 => VideoFormat.Ntsc,
+            else => unreachable,
+        };
+
         return Cartridge{
             .nPrgBanks = header.nPrgBanks,
             .nChrBanks = header.nChrBanks,
+            .videoFormat = videoFormat,
         };
     }
 
@@ -23,7 +32,35 @@ pub const Cartridge = struct {
         std.log.info("Cartridge {{", .{});
         std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
         std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
+        const videoFormatRepr = self.videoFormat.repr();
+        std.log.info("\tVideo format:\t {s}", .{videoFormatRepr[0.. :0]});
         std.log.info("}}\n", .{});
+    }
+};
+
+const RomFormat = enum {
+    Archaic,
+    iNes,
+    iNes2,
+
+    fn repr(self: RomFormat) [:0]const u8 {
+        switch (self) {
+            .Archaic => "Archaic iNes",
+            .iNes => "Standard iNes",
+            .iNes2 => "iNes 2.0",
+        }
+    }
+};
+
+const VideoFormat = enum {
+    Ntsc,
+    Pal,
+
+    fn repr(self: VideoFormat) [:0]const u8 {
+        switch (self) {
+            .Ntsc => "NTSC",
+            .Pal => "PAL",
+        }
     }
 };
 
