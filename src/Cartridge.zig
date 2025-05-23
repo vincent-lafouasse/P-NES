@@ -51,6 +51,8 @@ const iNesHeader = struct {
 };
 
 pub const Cartridge = struct {
+    const prgBankSize: usize = 16 * 1024;
+    const chrBankSize: usize = 8 * 1024;
     nPrgBanks: u8,
     nChrBanks: u8,
 
