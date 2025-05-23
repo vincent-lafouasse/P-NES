@@ -114,8 +114,8 @@ const iNesHeader = struct {
         const flag11 = bytes[11];
         const flag12 = bytes[12];
         const flag13 = bytes[13];
-        const flag15 = bytes[14];
-        const flag10 = bytes[15];
+        const flag14 = bytes[14];
+        const flag15 = bytes[15];
 
         return This{
             .nPrgBanks = nPrgBanks,
