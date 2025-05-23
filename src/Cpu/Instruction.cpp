@@ -1,5 +1,6 @@
 #include "Instruction.hpp"
 
+#include <cassert>
 #include <format>
 
 Instruction Instruction::Unknown() {
@@ -348,4 +349,6 @@ const char* Instruction::opcode_repr() const {
         case Kind::Unknown:
             return "???";
     }
+
+    assert(!"Unreachable");
 }
