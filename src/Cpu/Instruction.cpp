@@ -229,7 +229,7 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
         }
     }
 
-    return out;
+    return out + "???";
 }
 
 const char* Instruction::opcode_repr() const {
