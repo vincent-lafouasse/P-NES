@@ -66,7 +66,7 @@ void Cpu::start() {
 
         Instruction instruction = instructionSet[opcode];
         LOG_HEX(opcode);
-        LOG(instruction.kind_repr());
+        LOG(instruction.opcode_repr());
 
         if (instruction.kind == Instruction::Kind::Set_Interrupt) {
             this->status.interrupt_flag = true;

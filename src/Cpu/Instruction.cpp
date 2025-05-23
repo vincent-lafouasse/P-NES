@@ -112,7 +112,7 @@ Instruction Instruction::Store_Y(Mode mode) {
 }
 
 std::string Instruction::repr(Byte op1, Byte op2) const {
-    std::string out = this->kind_repr();
+    std::string out = this->opcode_repr();
 
     if (this->size == 1) {
         return out;
@@ -231,7 +231,7 @@ std::string Instruction::repr(Byte op1, Byte op2) const {
     return out;
 }
 
-const char* Instruction::kind_repr() const {
+const char* Instruction::opcode_repr() const {
     switch (kind) {
         case Kind::Load_A:
             return "lda";

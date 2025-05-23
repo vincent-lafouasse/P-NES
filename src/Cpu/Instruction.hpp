@@ -114,6 +114,6 @@ struct Instruction {
     static Instruction Store_X(Mode mode);
     static Instruction Store_Y(Mode mode);
 
-    const char* kind_repr() const;
+    const char* opcode_repr() const;
     std::string repr(Byte op1, Byte op2) const;
 };
