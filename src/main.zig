@@ -36,18 +36,25 @@ const iNesHeader = struct {
             .flag10 = flag10,
         };
     }
+
+    fn log(self: iNesHeader) void {
+        std.log.info("Header {{", .{});
+        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
+        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
+        std.log.info("", .{});
+        std.log.info("\tflag 6:\t\t {b:08}", .{self.flag6});
+        std.log.info("\tflag 7:\t\t {b:08}", .{self.flag7});
+        std.log.info("\tflag 8:\t\t {b:08}", .{self.flag8});
+        std.log.info("\tflag 9:\t\t {b:08}", .{self.flag9});
+        std.log.info("\tflag 10:\t {b:08}", .{self.flag10});
+        std.log.info("}}\n", .{});
+    }
 };
 
 pub fn main() !void {
-    const stdout = std.io.getStdOut().writer();
-
     const rom = try std.fs.cwd().openFile("roms/s9.nes", .{});
     const reader = rom.reader();
 
     const header = try iNesHeader.read(&reader);
-
-    try stdout.print("number of PRG banks:\t {}\n", .{header.nPrgBanks});
-    try stdout.print("number of CHR banks:\t {}\n", .{header.nChrBanks});
-    try stdout.print("flag 6:\t {b:08}\n", .{header.flag6});
-    try stdout.print("flag 7:\t {b:08}\n", .{header.flag7});
+    header.log();
 }
