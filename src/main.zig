@@ -6,6 +6,9 @@ const iNesHeader = struct {
     nChrBanks: u8,
     flag6: u8,
     flag7: u8,
+    flag8: u8,
+    flag9: u8,
+    flag10: u8,
 
     fn read(reader: anytype) !iNesHeader {
         var bytes: [16]u8 = undefined;
@@ -18,12 +21,18 @@ const iNesHeader = struct {
         const nChrBanks = bytes[5];
         const flag6 = bytes[6];
         const flag7 = bytes[7];
+        const flag8 = bytes[8];
+        const flag9 = bytes[9];
+        const flag10 = bytes[10];
 
         return iNesHeader{
             .nPrgBanks = nPrgBanks,
             .nChrBanks = nChrBanks,
             .flag6 = flag6,
             .flag7 = flag7,
+            .flag8 = flag8,
+            .flag9 = flag9,
+            .flag10 = flag10,
         };
     }
 };
