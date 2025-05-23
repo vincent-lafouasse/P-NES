@@ -54,12 +54,14 @@ const RomFormat = enum {
 
     const This = @This();
 
-    fn repr(this: This) [:0]const u8 {
-        switch (this) {
-            .Archaic => "Archaic iNes",
-            .iNes => "Standard iNes",
-            .iNes2 => "iNes 2.0",
-        }
+    const nameTable = [@typeInfo(This).@"enum".fields.len][:0]const u8{
+        "Archaic iNes",
+        "Standard iNes",
+        "iNes 2.0",
+    };
+
+    pub fn str(this: This) [:0]const u8 {
+        return nameTable[@intFromEnum(this)];
     }
 };
 
