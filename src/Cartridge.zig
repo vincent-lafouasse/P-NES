@@ -88,6 +88,11 @@ const iNesHeader = struct {
     flag8: u8,
     flag9: u8,
     flag10: u8,
+    flag11: u8,
+    flag12: u8,
+    flag13: u8,
+    flag14: u8,
+    flag15: u8,
 
     const This = @This();
 
@@ -106,6 +111,11 @@ const iNesHeader = struct {
         const flag8 = bytes[8];
         const flag9 = bytes[9];
         const flag10 = bytes[10];
+        const flag11 = bytes[11];
+        const flag12 = bytes[12];
+        const flag13 = bytes[13];
+        const flag15 = bytes[14];
+        const flag10 = bytes[15];
 
         return This{
             .nPrgBanks = nPrgBanks,
@@ -115,6 +125,11 @@ const iNesHeader = struct {
             .flag8 = flag8,
             .flag9 = flag9,
             .flag10 = flag10,
+            .flag11 = flag11,
+            .flag12 = flag12,
+            .flag13 = flag13,
+            .flag14 = flag14,
+            .flag15 = flag15,
         };
     }
 
