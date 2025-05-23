@@ -102,6 +102,8 @@ struct Instruction {
     usize size;
     usize cycles;
 
+    static Instruction decode(Byte opcode);
+
     static Instruction Unknown();
 
     static Instruction Set_Interrupt();

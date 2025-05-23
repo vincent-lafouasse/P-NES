@@ -3,6 +3,51 @@
 #include <cassert>
 #include <format>
 
+using Kind = InstructionKind;
+using Mode = InstructionMode;
+
+namespace GroupOne {
+constexpr std::array<Kind, 8> ids = {
+    Kind::Or_A,    Kind::And_A,  Kind::Xor_A,     Kind::AddWithCarry,
+    Kind::Store_A, Kind::Load_A, Kind::Compare_A, Kind::SubtractWithCarry,
+};
+
+constexpr std::array<Mode, 8> modes = {
+    Mode::ZeroPage_X,
+    Mode::ZeroPage,
+    InstructionMode::Immediate,
+    InstructionMode::Absolute,
+    InstructionMode::ZeroPage_Y,
+    InstructionMode::ZeroPage_X,
+    InstructionMode::Absolute_Y,
+    InstructionMode::Absolute_X,
+};
+}  // namespace GroupOne
+
+Instruction Instruction::decode(Byte opcode) {
+    using K = Kind;
+    using M = Mode;
+    // aaabbbcc
+    u8 aaa = opcode >> 5;
+    u8 bbb = (opcode >> 2) & 0b111;
+    u8 cc = opcode & 0b11;
+
+    if (cc == 0b01) {
+        // group 1
+        Kind k = GroupOne::ids[aaa];
+        Mode m = GroupOne::modes[bbb];
+
+        switch (k) {
+            case K::Load_A:
+                return Load_A(m);
+            default:
+                return Unknown();
+        }
+    }
+
+    return Unknown();
+}
+
 Instruction Instruction::Unknown() {
     return {Kind::Unknown, Mode::Implied, 1, 1};
 }
