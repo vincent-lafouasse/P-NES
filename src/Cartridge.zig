@@ -9,9 +9,9 @@ pub const Cartridge = struct {
     videoFormat: VideoFormat,
     mapper: u8,
 
-    const This = @This();
+    const Self = @This();
 
-    pub fn load(path: []const u8) !This {
+    pub fn load(path: []const u8) !Self {
         const rom = try std.fs.cwd().openFile(path, .{});
         const reader = rom.reader();
 
@@ -29,7 +29,7 @@ pub const Cartridge = struct {
 
         const mapper: u8 = (header.flag6 >> 4) | (header.flag7 & 0b11110000);
 
-        return This{
+        return Self{
             .nPrgBanks = header.nPrgBanks,
             .nChrBanks = header.nChrBanks,
             .videoFormat = videoFormat,
@@ -37,12 +37,12 @@ pub const Cartridge = struct {
         };
     }
 
-    pub fn log(this: This) void {
+    pub fn log(self: Self) void {
         std.log.info("Cartridge {{", .{});
-        std.log.info("\tnumber of PRG banks:\t {}", .{this.nPrgBanks});
-        std.log.info("\tnumber of CHR banks:\t {}", .{this.nChrBanks});
-        std.log.info("\tVideo format:\t\t {s}", .{this.videoFormat.str()});
-        std.log.info("\tMapper ID:\t\t {}", .{this.mapper});
+        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
+        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
+        std.log.info("\tVideo format:\t\t {s}", .{self.videoFormat.str()});
+        std.log.info("\tMapper ID:\t\t {}", .{self.mapper});
         std.log.info("}}\n", .{});
     }
 };
@@ -52,16 +52,16 @@ const RomFormat = enum {
     iNes,
     iNes2,
 
-    const This = @This();
+    const Self = @This();
 
-    const nameTable = [@typeInfo(This).@"enum".fields.len][:0]const u8{
+    const nameTable = [@typeInfo(Self).@"enum".fields.len][:0]const u8{
         "Archaic iNes",
         "Standard iNes",
         "iNes 2.0",
     };
 
-    pub fn str(this: This) [:0]const u8 {
-        return nameTable[@intFromEnum(this)];
+    pub fn str(self: Self) [:0]const u8 {
+        return nameTable[@intFromEnum(self)];
     }
 };
 
@@ -69,14 +69,14 @@ const VideoFormat = enum {
     Ntsc,
     Pal,
 
-    const This = @This();
+    const Self = @This();
 
-    const nameTable = [@typeInfo(This).@"enum".fields.len][:0]const u8{
+    const nameTable = [@typeInfo(Self).@"enum".fields.len][:0]const u8{
         "NTSC", "PAL",
     };
 
-    pub fn str(this: This) [:0]const u8 {
-        return nameTable[@intFromEnum(this)];
+    pub fn str(self: Self) [:0]const u8 {
+        return nameTable[@intFromEnum(self)];
     }
 };
 
@@ -94,9 +94,9 @@ const iNesHeader = struct {
     flag14: u8,
     flag15: u8,
 
-    const This = @This();
+    const Self = @This();
 
-    fn read(reader: anytype) !This {
+    fn read(reader: anytype) !Self {
         var bytes: [16]u8 = undefined;
         _ = try reader.read(&bytes);
 
@@ -117,7 +117,7 @@ const iNesHeader = struct {
         const flag14 = bytes[14];
         const flag15 = bytes[15];
 
-        return This{
+        return Self{
             .nPrgBanks = nPrgBanks,
             .nChrBanks = nChrBanks,
             .flag6 = flag6,
@@ -133,16 +133,16 @@ const iNesHeader = struct {
         };
     }
 
-    fn log(this: This) void {
+    fn log(self: Self) void {
         std.log.info("Header {{", .{});
-        std.log.info("\tnumber of PRG banks:\t {}", .{this.nPrgBanks});
-        std.log.info("\tnumber of CHR banks:\t {}", .{this.nChrBanks});
+        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
+        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
         std.log.info("", .{});
-        std.log.info("\tflag 6:\t\t {b:08}", .{this.flag6});
-        std.log.info("\tflag 7:\t\t {b:08}", .{this.flag7});
-        std.log.info("\tflag 8:\t\t {b:08}", .{this.flag8});
-        std.log.info("\tflag 9:\t\t {b:08}", .{this.flag9});
-        std.log.info("\tflag 10:\t {b:08}", .{this.flag10});
+        std.log.info("\tflag 6:\t\t {b:08}", .{self.flag6});
+        std.log.info("\tflag 7:\t\t {b:08}", .{self.flag7});
+        std.log.info("\tflag 8:\t\t {b:08}", .{self.flag8});
+        std.log.info("\tflag 9:\t\t {b:08}", .{self.flag9});
+        std.log.info("\tflag 10:\t {b:08}", .{self.flag10});
         std.log.info("}}\n", .{});
     }
 };
