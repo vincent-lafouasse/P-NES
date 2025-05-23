@@ -7,6 +7,7 @@ pub const Cartridge = struct {
     nChrBanks: u8,
 
     videoFormat: VideoFormat,
+    mapper: u8,
 
     const This = @This();
 
@@ -23,10 +24,16 @@ pub const Cartridge = struct {
             else => unreachable,
         };
 
+        const hasTrainerData = (header.flag6 & (1 << 2)) == 1;
+        _ = hasTrainerData;
+
+        const mapper: u8 = (header.flag6 >> 4) | (header.flag7 & 0b11110000);
+
         return This{
             .nPrgBanks = header.nPrgBanks,
             .nChrBanks = header.nChrBanks,
             .videoFormat = videoFormat,
+            .mapper = mapper,
         };
     }
 
@@ -34,7 +41,8 @@ pub const Cartridge = struct {
         std.log.info("Cartridge {{", .{});
         std.log.info("\tnumber of PRG banks:\t {}", .{this.nPrgBanks});
         std.log.info("\tnumber of CHR banks:\t {}", .{this.nChrBanks});
-        std.log.info("\tVideo format:\t {s}", .{this.videoFormat.str()});
+        std.log.info("\tVideo format:\t\t {s}", .{this.videoFormat.str()});
+        std.log.info("\tMapper ID:\t\t {}", .{this.mapper});
         std.log.info("}}\n", .{});
     }
 };
