@@ -1,5 +1,4 @@
 const std = @import("std");
-const lib = @import("nes_lib");
 
 const iNesHeader = struct {
     nPrgBanks: u8,
