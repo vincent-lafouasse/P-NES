@@ -32,8 +32,7 @@ pub const Cartridge = struct {
         std.log.info("Cartridge {{", .{});
         std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
         std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
-        const videoFormatRepr = self.videoFormat.repr();
-        std.log.info("\tVideo format:\t {s}", .{videoFormatRepr[0.. :0]});
+        std.log.info("\tVideo format:\t {s}", .{self.videoFormat.str()});
         std.log.info("}}\n", .{});
     }
 };
@@ -56,11 +55,12 @@ const VideoFormat = enum {
     Ntsc,
     Pal,
 
-    fn repr(self: VideoFormat) [:0]const u8 {
-        switch (self) {
-            .Ntsc => "NTSC",
-            .Pal => "PAL",
-        }
+    const nameTable = [@typeInfo(VideoFormat).@"enum".fields.len][:0]const u8{
+        "NTSC", "PAL",
+    };
+
+    pub fn str(self: VideoFormat) [:0]const u8 {
+        return nameTable[@intFromEnum(self)];
     }
 };
 
