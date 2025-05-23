@@ -2,23 +2,28 @@ const std = @import("std");
 const lib = @import("nes_lib");
 
 const iNesHeader = struct {
-    id: [4]u8,
     nPrgBanks: u8,
     nChrBanks: u8,
     flag6: u8,
     flag7: u8,
-    flag8: u8,
-    flag9: u8,
-    flag10: u8,
-    padding: [5]u8,
 };
 
 pub fn main() !void {
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+    const stdout = std.io.getStdOut().writer();
 
-    try stdout.print("hello\n", .{});
+    const rom = try std.fs.cwd().openFile("roms/s9.nes", .{});
+    const reader = rom.reader();
 
-    try bw.flush(); // Don't forget to flush!
+    var header_data: [16]u8 = undefined;
+
+    _ = try reader.read(&header_data);
+
+    const header = iNesHeader{
+        .nPrgBanks = header_data[4],
+        .nChrBanks = header_data[5],
+        .flag6 = header_data[6],
+        .flag7 = header_data[7],
+    };
+
+    try stdout.print("number of PRG banks:\t {}", .{header.nPrgBanks});
 }
