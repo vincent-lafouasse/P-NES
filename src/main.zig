@@ -11,6 +11,9 @@ const iNesHeader = struct {
         var bytes: [16]u8 = undefined;
         _ = try reader.read(&bytes);
 
+        const expectedID = [4]u8{ 'N', 'E', 'S', 0x1a };
+        try std.testing.expect(std.mem.eql(u8, &expectedID, bytes[0..4]));
+
         const nPrgBanks = bytes[4];
         const nChrBanks = bytes[5];
         const flag6 = bytes[6];
