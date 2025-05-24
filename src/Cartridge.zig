@@ -1,13 +1,30 @@
 const std = @import("std");
 const ArrayList = std.ArrayList;
+const AnyReader = std.io.AnyReader;
+const Allocator = std.mem.Allocator;
+
+fn readBytes(reader: anytype, allocator: Allocator, size: usize) !ArrayList(u8) {
+    var bytes = try ArrayList(u8).initCapacity(allocator, size);
+
+    // yes im doing it byte by byte, sue me
+    for (0..size) |_| {
+        const byte: u8 = try reader.readByte();
+        bytes.appendAssumeCapacity(byte);
+    }
+
+    return bytes;
+}
 
 pub const Cartridge = struct {
+    const trainerSize: usize = 512;
     const prgBankSize: usize = 16 * 1024;
     const chrBankSize: usize = 8 * 1024;
     nPrgBanks: u8,
     nChrBanks: u8,
 
     trainer: ?ArrayList(u8),
+    prg: ArrayList(u8),
+    chr: ArrayList(u8),
 
     videoFormat: VideoFormat,
     mapper: u8,
@@ -23,23 +40,19 @@ pub const Cartridge = struct {
         header.log();
 
         const hasTrainerData = header.hasTrainerData();
-        const trainer: ?ArrayList(u8) = if (hasTrainerData) block: {
-            const trainerSize = 512;
-            var bytes = try ArrayList(u8).initCapacity(allocator, trainerSize);
-
-            // yes im doing it byte by byte, sue me
-            for (0..trainerSize) |_| {
-                const byte: u8 = try reader.readByte();
-                bytes.appendAssumeCapacity(byte);
-            }
-
-            break :block bytes;
-        } else null;
+        const trainer: ?ArrayList(u8) = switch (hasTrainerData) {
+            true => try readBytes(reader, allocator, Self.trainerSize),
+            false => null,
+        };
+        const prg = try readBytes(reader, allocator, header.nPrgBanks * Self.prgBankSize);
+        const chr = try readBytes(reader, allocator, header.nChrBanks * Self.chrBankSize);
 
         return Self{
             .nPrgBanks = header.nPrgBanks,
             .nChrBanks = header.nChrBanks,
             .trainer = trainer,
+            .prg = prg,
+            .chr = chr,
             .videoFormat = header.videoFormat(),
             .mapper = header.mapper(),
         };
