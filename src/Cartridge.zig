@@ -29,9 +29,9 @@ fn readBytes(reader: anytype, allocator: Allocator, size: usize) !ArrayList(u8) 
 }
 
 pub const Cartridge = struct {
-    const trainerSize: usize = 512;
-    const prgBankSize: usize = 16 * 1024;
-    const chrBankSize: usize = 8 * 1024;
+    pub const trainerSize: usize = 512;
+    pub const prgBankSize: usize = 16 * 1024;
+    pub const chrBankSize: usize = 8 * 1024;
     nPrgBanks: u8,
     nChrBanks: u8,
 
