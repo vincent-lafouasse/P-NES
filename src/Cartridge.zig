@@ -3,6 +3,19 @@ const ArrayList = std.ArrayList;
 const AnyReader = std.io.AnyReader;
 const Allocator = std.mem.Allocator;
 
+fn str_eq(a: []const u8, b: []const u8) bool {
+    return std.mem.eql(u8, a, b);
+}
+
+fn str_in(x: []const u8, haystack: []const []const u8) bool {
+    for (haystack) |s| {
+        if (str_eq(x, s)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 fn readBytes(reader: anytype, allocator: Allocator, size: usize) !ArrayList(u8) {
     var bytes = try ArrayList(u8).initCapacity(allocator, size);
 
@@ -59,9 +72,9 @@ pub const Cartridge = struct {
     }
 
     pub fn free(self: Self) void {
-        if (self.trainer) |data| data.free();
-        self.prg.free();
-        self.chr.free();
+        if (self.trainer) |data| data.deinit();
+        self.prg.deinit();
+        self.chr.deinit();
     }
 
     pub fn log(self: Self) void {
@@ -69,7 +82,13 @@ pub const Cartridge = struct {
 
         log_fn("Cartridge {{", .{});
         inline for (std.meta.fields(@TypeOf(self))) |f| {
-            log_fn("    {s:<8}\t {any}", .{ f.name, @as(f.type, @field(self, f.name)) });
+            if (str_eq(f.name, "chr")) {
+                log_fn("    {s:<8}:\t size {any}", .{ "CHR Banks", self.chr.items.len });
+            } else if (str_eq(f.name, "prg")) {
+                log_fn("    {s:<8}:\t size {any}", .{ "PRG Banks", self.chr.items.len });
+            } else {
+                log_fn("    {s:<8}:\t {any}", .{ f.name, @as(f.type, @field(self, f.name)) });
+            }
         }
         log_fn("}}\n", .{});
     }
