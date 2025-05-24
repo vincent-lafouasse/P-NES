@@ -132,3 +132,19 @@ const Opcode = enum {
     NOP,
     RTI,
 };
+
+const AddressingMode = enum {
+    Implicit,
+    Accumulator,
+    Immediate,
+    ZeroPage,
+    ZeroPageX,
+    ZeroPageY,
+    Relative,
+    Absolute,
+    AbsoluteX,
+    AbsoluteY,
+    Indirect,
+    IndexedIndirect,
+    IndirectIndexed,
+};
