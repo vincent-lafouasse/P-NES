@@ -83,9 +83,9 @@ pub const Cartridge = struct {
         log_fn("Cartridge {{", .{});
         inline for (std.meta.fields(@TypeOf(self))) |f| {
             if (str_eq(f.name, "chr")) {
-                log_fn("    {s:<8}:\t size {any}", .{ "CHR Banks", self.chr.items.len });
+                log_fn("    {s:<8}:\t size {any} aka {x}", .{ "CHR Banks", self.chr.items.len, self.chr.items.len });
             } else if (str_eq(f.name, "prg")) {
-                log_fn("    {s:<8}:\t size {any}", .{ "PRG Banks", self.prg.items.len });
+                log_fn("    {s:<8}:\t size {any} aka {x}", .{ "PRG Banks", self.prg.items.len, self.prg.items.len });
             } else {
                 log_fn("    {s:<8}:\t {any}", .{ f.name, @as(f.type, @field(self, f.name)) });
             }
