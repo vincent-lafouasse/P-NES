@@ -62,3 +62,73 @@ pub const Disassembler = struct {
         }
     }
 };
+
+const InstructionKind = enum {
+    // Load/Stores
+    LDA,
+    LDX,
+    LDY,
+    STA,
+    STX,
+    STY,
+    // Register transfers
+    TAX,
+    TAY,
+    TXA,
+    TYA,
+    // Stack operations
+    TSX,
+    TXS,
+    PHA,
+    PHP,
+    PLA,
+    PLP,
+    // Logical
+    AND,
+    EOR,
+    ORA,
+    BIT,
+    // Arithmetic
+    ADC,
+    SBC,
+    CMP,
+    CPX,
+    CPY,
+    // Increments/Decrements
+    INC,
+    INX,
+    INY,
+    DEC,
+    DEX,
+    DEY,
+    // Shifts
+    ASL,
+    LSR,
+    ROL,
+    ROR,
+    // Jumps/Calls
+    JMP,
+    JSR,
+    RTS,
+    // Branches
+    BCC,
+    BCS,
+    BEQ,
+    BNE,
+    BVC,
+    BVS,
+    BMI,
+    BPL,
+    // Status register
+    CLC,
+    CLD,
+    CLI,
+    CLV,
+    SEC,
+    SED,
+    SEI,
+    // System
+    BRK,
+    NOP,
+    RTI,
+};
