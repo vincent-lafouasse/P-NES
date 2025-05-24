@@ -1,3 +1,4 @@
+const std = @import("std");
 const Cartridge = @import("Cartridge.zig").Cartridge;
 
 const DisassemblyError = error{
@@ -8,6 +9,7 @@ const DisassemblyError = error{
 pub const Disassembler = struct {
     lowBank: []const u8,
     highBank: []const u8,
+    head: u16,
 
     const Self = @This();
 
@@ -27,9 +29,36 @@ pub const Disassembler = struct {
             else => cart.prg.items[bankSize .. 2 * bankSize],
         };
 
+        const out = Self{
+            .lowBank = lowBank,
+            .highBank = highBank,
+            .head = undefined,
+        };
+
+        const lowByte: u16 = out.at(0xFFFC);
+        const highByte: u16 = out.at(0xFFFD);
+        const head: u16 = lowByte | highByte << 8;
+
+        std.log.info("Disassembler head: {x}", .{head});
+
         return Self{
             .lowBank = lowBank,
             .highBank = highBank,
+            .head = head,
         };
+    }
+
+    fn map(address: u16) u16 {
+        return (address - 0x8000);
+    }
+
+    fn at(self: Self, address: u16) u8 {
+        if (address < 0x8000) {
+            unreachable;
+        } else if (address < 0xC000) {
+            return self.lowBank[address - 0x8000];
+        } else {
+            return self.highBank[address - 0xC000];
+        }
     }
 };
