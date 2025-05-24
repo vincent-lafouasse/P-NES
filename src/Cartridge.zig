@@ -38,12 +38,13 @@ pub const Cartridge = struct {
     }
 
     pub fn log(self: Self) void {
-        std.log.info("Cartridge {{", .{});
-        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
-        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
-        std.log.info("\tVideo format:\t\t {s}", .{self.videoFormat.str()});
-        std.log.info("\tMapper ID:\t\t {}", .{self.mapper});
-        std.log.info("}}\n", .{});
+        const log_fn = std.log.info;
+
+        log_fn("Cartridge {{", .{});
+        inline for (std.meta.fields(@TypeOf(self))) |f| {
+            log_fn("    {s:<8}\t {any}", .{ f.name, @as(f.type, @field(self, f.name)) });
+        }
+        log_fn("}}\n", .{});
     }
 };
 
