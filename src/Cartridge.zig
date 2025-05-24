@@ -145,15 +145,16 @@ const iNesHeader = struct {
     }
 
     fn log(self: Self) void {
-        std.log.info("Header {{", .{});
-        std.log.info("\tnumber of PRG banks:\t {}", .{self.nPrgBanks});
-        std.log.info("\tnumber of CHR banks:\t {}", .{self.nChrBanks});
-        std.log.info("", .{});
-        std.log.info("\tflag 6:\t\t {b:08}", .{self.flag6});
-        std.log.info("\tflag 7:\t\t {b:08}", .{self.flag7});
-        std.log.info("\tflag 8:\t\t {b:08}", .{self.flag8});
-        std.log.info("\tflag 9:\t\t {b:08}", .{self.flag9});
-        std.log.info("\tflag 10:\t {b:08}", .{self.flag10});
-        std.log.info("}}\n", .{});
+        const log_fn = std.log.info;
+        log_fn("Header {{", .{});
+        log_fn("    number of PRG banks:\t {}", .{self.nPrgBanks});
+        log_fn("    number of CHR banks:\t {}", .{self.nChrBanks});
+        log_fn("", .{});
+        log_fn("    flag 6:\t {b:08}", .{self.flag6});
+        log_fn("    flag 7:\t {b:08}", .{self.flag7});
+        log_fn("    flag 8:\t {b:08}", .{self.flag8});
+        log_fn("    flag 9:\t {b:08}", .{self.flag9});
+        log_fn("    flag 10:\t {b:08}", .{self.flag10});
+        log_fn("}}\n", .{});
     }
 };
