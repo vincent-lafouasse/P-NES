@@ -22,10 +22,7 @@ pub const Cartridge = struct {
         const header = try iNesHeader.read(&reader);
         header.log();
 
-        const videoFormat = header.videoFormat();
-
         const hasTrainerData = header.hasTrainerData();
-
         const trainer: ?ArrayList(u8) = if (hasTrainerData) block: {
             const trainerSize = 512;
             var bytes = try ArrayList(u8).initCapacity(allocator, trainerSize);
@@ -39,14 +36,12 @@ pub const Cartridge = struct {
             break :block bytes;
         } else null;
 
-        const mapper: u8 = (header.flag6 >> 4) | (header.flag7 & 0b11110000);
-
         return Self{
             .nPrgBanks = header.nPrgBanks,
             .nChrBanks = header.nChrBanks,
-            .videoFormat = videoFormat,
-            .mapper = mapper,
             .trainer = trainer,
+            .videoFormat = header.videoFormat(),
+            .mapper = header.mapper(),
         };
     }
 
@@ -163,6 +158,10 @@ const iNesHeader = struct {
         } else {
             return VideoFormat.Pal;
         }
+    }
+
+    fn mapper(self: Self) u8 {
+        return (self.flag6 >> 4) | (self.flag7 & 0xf0);
     }
 
     fn log(self: Self) void {
