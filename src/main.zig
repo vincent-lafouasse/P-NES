@@ -8,4 +8,5 @@ pub fn main() !void {
     defer cartridge.free();
 
     cartridge.log();
+    try cartridge.dump_prg("data.prg");
 }

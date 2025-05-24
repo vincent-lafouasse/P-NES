@@ -92,6 +92,16 @@ pub const Cartridge = struct {
         }
         log_fn("}}\n", .{});
     }
+
+    pub fn dump_prg(self: Self, path: []const u8) !void {
+        const outfile = try std.fs.cwd().createFile(path, .{});
+        defer outfile.close();
+        const writer = outfile.writer();
+
+        for (self.prg.items) |byte| {
+            try writer.writeByte(byte);
+        }
+    }
 };
 
 const RomFormat = enum {
