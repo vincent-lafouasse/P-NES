@@ -13,6 +13,7 @@ pub const Cartridge = struct {
 
     pub fn load(path: []const u8) !Self {
         const rom = try std.fs.cwd().openFile(path, .{});
+        defer rom.close();
         const reader = rom.reader();
 
         const header = try iNesHeader.read(&reader);
