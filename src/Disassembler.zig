@@ -63,6 +63,62 @@ pub const Disassembler = struct {
     }
 };
 
+const Instruction = struct {
+    opcode: Opcode,
+    mode: AddressingMode,
+
+    const Self = @This();
+
+    fn decode(byte: u8) Self {
+        const aaa: u3 = byte >> 5;
+        const bbb: u3 = (byte >> 2) & 0b111;
+        const cc: u2 = byte & 0b11;
+
+        switch (cc) {
+            0b00 => unreachable, //todo group 3
+            0b01 => Instruction.decode_group1(aaa, bbb),
+            0b10 => unreachable, //todo group 2
+            0b11 => Instruction.unknown(), // no instructions
+        }
+    }
+
+    fn decode_group1(aaa: u3, bbb: u3) Instruction {
+        const O = Opcode;
+        const M = AddressingMode;
+
+        const opcode = switch (aaa) {
+            0b000 => O.ORA,
+            0b001 => O.AND,
+            0b010 => O.EOR,
+            0b011 => O.ADC,
+            0b100 => O.STA,
+            0b101 => O.LDA,
+            0b110 => O.CMP,
+            0b111 => O.SBC,
+        };
+
+        const mode = switch (bbb) {
+            0b000 => M.Absolute,
+            0b001 => M.Absolute,
+            0b010 => M.Absolute,
+            0b011 => M.Absolute,
+            0b100 => M.Absolute,
+            0b101 => M.Absolute,
+            0b110 => M.Absolute,
+            0b111 => M.Absolute,
+        };
+
+        _ = opcode;
+        _ = mode;
+
+        unreachable;
+    }
+
+    fn unknown() Instruction {
+        return .{ .opcode = Opcode.XXX };
+    }
+};
+
 const Opcode = enum {
     // Load/Stores
     LDA,
@@ -131,6 +187,8 @@ const Opcode = enum {
     BRK,
     NOP,
     RTI,
+    // garbage
+    XXX,
 };
 
 const AddressingMode = enum {
@@ -144,7 +202,9 @@ const AddressingMode = enum {
     Absolute,
     AbsoluteX,
     AbsoluteY,
-    Indirect,
-    IndexedIndirect,
-    IndirectIndexed,
+    Indirect, // (b1 b2)
+    IndexedIndirectX, // (op,X)
+    IndirectIndexedX, // (op),X
+    IndexedIndirectY, // (op,X)
+    IndirectIndexedY, // (op),Y
 };
