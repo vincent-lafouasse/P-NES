@@ -11,7 +11,8 @@ pub const Cartridge = struct {
 
     const Self = @This();
 
-    pub fn load(path: []const u8) !Self {
+    pub fn load(path: []const u8, allocator: std.mem.Allocator) !Self {
+        _ = allocator;
         const rom = try std.fs.cwd().openFile(path, .{});
         defer rom.close();
         const reader = rom.reader();
@@ -32,6 +33,10 @@ pub const Cartridge = struct {
             .videoFormat = videoFormat,
             .mapper = mapper,
         };
+    }
+
+    pub fn free(self: Self) void {
+        _ = self;
     }
 
     pub fn log(self: Self) void {
