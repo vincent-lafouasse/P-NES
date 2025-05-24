@@ -63,7 +63,7 @@ pub const Disassembler = struct {
     }
 };
 
-const InstructionKind = enum {
+const Opcode = enum {
     // Load/Stores
     LDA,
     LDX,
