@@ -59,7 +59,9 @@ pub const Cartridge = struct {
     }
 
     pub fn free(self: Self) void {
-        _ = self;
+        if (self.trainer) |data| data.free();
+        self.prg.free();
+        self.chr.free();
     }
 
     pub fn log(self: Self) void {
