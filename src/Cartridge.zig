@@ -18,13 +18,9 @@ pub const Cartridge = struct {
         const header = try iNesHeader.read(&reader);
         header.log();
 
-        const videoFormat = switch (header.flag9 & 1) {
-            1 => VideoFormat.Pal,
-            0 => VideoFormat.Ntsc,
-            else => unreachable,
-        };
+        const videoFormat = header.videoFormat();
 
-        const hasTrainerData = (header.flag6 & (1 << 2)) == 1;
+        const hasTrainerData = header.hasTrainerData();
         _ = hasTrainerData;
 
         const mapper: u8 = (header.flag6 >> 4) | (header.flag7 & 0b11110000);
@@ -132,6 +128,20 @@ const iNesHeader = struct {
             .flag14 = flag14,
             .flag15 = flag15,
         };
+    }
+
+    fn hasTrainerData(self: Self) bool {
+        return (self.flag6 & (1 << 2)) == 1;
+    }
+
+    fn videoFormat(self: Self) VideoFormat {
+        const isNtsc = (self.flag9 & 1) == 0;
+
+        if (isNtsc) {
+            return VideoFormat.Ntsc;
+        } else {
+            return VideoFormat.Pal;
+        }
     }
 
     fn log(self: Self) void {
