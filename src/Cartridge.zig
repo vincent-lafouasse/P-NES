@@ -1,4 +1,5 @@
 const std = @import("std");
+const ArrayList = std.ArrayList;
 
 pub const Cartridge = struct {
     const prgBankSize: usize = 16 * 1024;
@@ -6,13 +7,14 @@ pub const Cartridge = struct {
     nPrgBanks: u8,
     nChrBanks: u8,
 
+    trainer: ?ArrayList(u8),
+
     videoFormat: VideoFormat,
     mapper: u8,
 
     const Self = @This();
 
     pub fn load(path: []const u8, allocator: std.mem.Allocator) !Self {
-        _ = allocator;
         const rom = try std.fs.cwd().openFile(path, .{});
         defer rom.close();
         const reader = rom.reader();
@@ -23,7 +25,19 @@ pub const Cartridge = struct {
         const videoFormat = header.videoFormat();
 
         const hasTrainerData = header.hasTrainerData();
-        _ = hasTrainerData;
+
+        const trainer: ?ArrayList(u8) = if (hasTrainerData) block: {
+            const trainerSize = 512;
+            var bytes = try ArrayList(u8).initCapacity(allocator, trainerSize);
+
+            // yes im doing it byte by byte, sue me
+            for (0..trainerSize) |_| {
+                const byte: u8 = try reader.readByte();
+                bytes.appendAssumeCapacity(byte);
+            }
+
+            break :block bytes;
+        } else null;
 
         const mapper: u8 = (header.flag6 >> 4) | (header.flag7 & 0b11110000);
 
@@ -32,6 +46,7 @@ pub const Cartridge = struct {
             .nChrBanks = header.nChrBanks,
             .videoFormat = videoFormat,
             .mapper = mapper,
+            .trainer = trainer,
         };
     }
 
