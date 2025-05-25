@@ -1191,6 +1191,110 @@ test "LDA Indirect Y Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "ORA Immediate" {
+    const opcode: u8 = 0x09;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ORA Zero Page" {
+    const opcode: u8 = 0x05;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ORA Zero Page X Indexed" {
+    const opcode: u8 = 0x15;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ORA Absolute" {
+    const opcode: u8 = 0x0D;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ORA Absolute X Indexed" {
+    const opcode: u8 = 0x1D;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ORA Absolute Y Indexed" {
+    const opcode: u8 = 0x19;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.Absolute_YIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ORA X Indexed Indirect" {
+    const opcode: u8 = 0x01;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.XIndexed_Indirect,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ORA Indirect Y Indexed" {
+    const opcode: u8 = 0x11;
+    const expected = Instruction{
+        .opcode = Opcode.ORA,
+        .mode = AddressingMode.Indirect_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.pageAware(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
