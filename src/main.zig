@@ -14,7 +14,7 @@ pub fn main() !void {
     try cartridge.dump_prg("data.prg");
 
     var disassembler = try Disassembler.init(cartridge);
-    disassembler.disassemble();
+    try disassembler.disassemble();
 
     // const args = try std.process.ArgIterator.initWithAllocator(allocator);
     // defer args.deinit();

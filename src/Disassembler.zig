@@ -49,9 +49,25 @@ pub const Disassembler = struct {
         };
     }
 
-    pub fn disassemble(self: *Self) void {
+    pub fn disassemble(self: *Self) !void {
+        const stdout = std.io.getStdOut().writer();
+
         const instruction = Instruction.decode(self.at(self.head));
-        std.log.info("{any}", .{instruction});
+        const sz = instruction.size;
+
+        const op1: ?u8 = if (sz >= 2) self.at(self.head + 1) else null;
+        const op2: ?u8 = if (sz == 3) self.at(self.head + 1) else null;
+
+        try stdout.print("{x:4} ", .{self.head});
+        try stdout.print("{x:2} ", .{self.at(self.head)});
+        switch (sz) {
+            1 => try stdout.print("      ", .{}),
+            2 => try stdout.print("{x:2}    ", .{op1.?}),
+            3 => try stdout.print("{x:2} {x:2} ", .{ op1.?, op2.? }),
+            else => unreachable,
+        }
+        try instruction.write(stdout, op1, op2);
+        try stdout.print("\n", .{});
     }
 
     fn map(address: u16) u16 {
@@ -300,6 +316,14 @@ const Instruction = struct {
 
     fn unknown() Instruction {
         return .{ .opcode = Opcode.XXX, .mode = AddressingMode.Implicit, .size = 1, .duration = Duration.exactly(1) };
+    }
+
+    fn write(self: Self, writer: anytype, op1: ?u8, op2: ?u8) !void {
+        const name = @tagName(self.opcode);
+
+        try writer.print("{s} ", .{name});
+        _ = op1;
+        _ = op2;
     }
 };
 
