@@ -52,8 +52,7 @@ pub const Disassembler = struct {
     pub fn disassemble(self: *Self) !void {
         const stdout = std.io.getStdOut().writer();
 
-        const n = 9;
-        for (0..n) |_| {
+        while (true) {
             const instruction = Instruction.decode(self.at(self.head));
             const sz = instruction.size;
 
@@ -73,6 +72,10 @@ pub const Disassembler = struct {
             try stdout.print("\n", .{});
 
             self.head += instruction.size;
+
+            if (instruction.opcode == Opcode.BRK) {
+                break;
+            }
         }
     }
 
