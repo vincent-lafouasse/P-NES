@@ -2630,6 +2630,19 @@ test "JMP Indirect" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "NOP" {
+    const opcode: u8 = 0xea;
+    const expected = Instruction{
+        .opcode = Opcode.NOP,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
