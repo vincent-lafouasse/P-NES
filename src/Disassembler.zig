@@ -120,7 +120,7 @@ const Instruction = struct {
     }
 
     fn unknown() Instruction {
-        return .{ .opcode = Opcode.XXX, .size = 1, .duration = .{ .cycles = 1, .penalty = Instruction.Duration.Penalty.None } };
+        return .{ .opcode = Opcode.XXX, .size = 1, .duration = Duration.exactly(1) };
     }
 };
 
@@ -220,6 +220,18 @@ const InstructionDuration = struct {
         OnPageCrossing,
         OnBranch,
     };
+
+    fn exactly(cycles: u8) InstructionDuration {
+        return InstructionDuration{ .cycles = cycles, .Penalty = Penalty.None };
+    }
+
+    fn pageAware(cycles: u8) InstructionDuration {
+        return InstructionDuration{ .cycles = cycles, .Penalty = Penalty.OnPageCrossing };
+    }
+
+    fn branchAware(cycles: u8) InstructionDuration {
+        return InstructionDuration{ .cycles = cycles, .Penalty = Penalty.OnBranch };
+    }
 
     cycles: u8,
     penalty: Penalty,
