@@ -2166,3 +2166,108 @@ test "BRK" {
 
     try expectInstructionEqual(expected, actual);
 }
+
+test "0x02" {
+    const opcode: u8 = 0x02;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x12" {
+    const opcode: u8 = 0x12;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x22" {
+    const opcode: u8 = 0x22;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x32" {
+    const opcode: u8 = 0x32;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x42" {
+    const opcode: u8 = 0x42;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x52" {
+    const opcode: u8 = 0x52;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x62" {
+    const opcode: u8 = 0x62;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x72" {
+    const opcode: u8 = 0x72;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x82" {
+    const opcode: u8 = 0x82;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0x92" {
+    const opcode: u8 = 0x92;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0xb2" {
+    const opcode: u8 = 0xb2;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0xc2" {
+    const opcode: u8 = 0xc2;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0xd2" {
+    const opcode: u8 = 0xd2;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0xe2" {
+    const opcode: u8 = 0xe2;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
+
+test "0xf2" {
+    const opcode: u8 = 0xf2;
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(Instruction.unknown(), actual);
+}
