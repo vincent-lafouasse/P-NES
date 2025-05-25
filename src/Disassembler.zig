@@ -775,6 +775,110 @@ test "ADC Indirect Y Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "AND Immediate" {
+    const opcode: u8 = 0x29;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "AND Zero Page" {
+    const opcode: u8 = 0x25;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "AND Zero Page X Indexed" {
+    const opcode: u8 = 0x35;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "AND Absolute" {
+    const opcode: u8 = 0x2D;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "AND Absolute X Indexed" {
+    const opcode: u8 = 0x3D;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "AND Absolute Y Indexed" {
+    const opcode: u8 = 0x39;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.Absolute_YIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "AND X Indexed Indirect" {
+    const opcode: u8 = 0x21;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.XIndexed_Indirect,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "AND Indirect Y Indexed" {
+    const opcode: u8 = 0x31;
+    const expected = Instruction{
+        .opcode = Opcode.AND,
+        .mode = AddressingMode.Indirect_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.pageAware(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
