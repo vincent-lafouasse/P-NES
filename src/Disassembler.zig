@@ -49,6 +49,11 @@ pub const Disassembler = struct {
         };
     }
 
+    pub fn disassemble(self: *Self) void {
+        const instruction = Instruction.decode(self.at(self.head));
+        std.log.info("{any}", .{instruction});
+    }
+
     fn map(address: u16) u16 {
         return (address - 0x8000);
     }
@@ -79,16 +84,18 @@ const Instruction = struct {
             return instruction;
         }
 
-        const aaa: u3 = byte >> 5;
-        const bbb: u3 = (byte >> 2) & 0b111;
-        const cc: u2 = byte & 0b11;
+        const aaa: u3 = @intCast(byte >> 5);
+        const bbb: u3 = @intCast((byte >> 2) & 0b111);
+        const cc: u2 = @intCast(byte & 0b11);
 
-        switch (cc) {
+        _ = switch (cc) {
             0b00 => unreachable, //todo group 3
             0b01 => Instruction.decode_group1(aaa, bbb),
             0b10 => unreachable, //todo group 2
             0b11 => Instruction.unknown(), // no instructions
-        }
+        };
+
+        unreachable;
     }
 
     fn decode_group1(aaa: u3, bbb: u3) Instruction {
@@ -117,7 +124,7 @@ const Instruction = struct {
             0b111 => M.Absolute_XIndexed,
         };
 
-        switch (opcode) {
+        _ = switch (opcode) {
             O.ORA => {
                 switch (mode) {
                     M.Immediate => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
@@ -138,7 +145,8 @@ const Instruction = struct {
             O.LDA => {},
             O.CMP => {},
             O.SBC => {},
-        }
+            else => unreachable,
+        };
 
         unreachable;
     }
@@ -291,7 +299,7 @@ const Instruction = struct {
     }
 
     fn unknown() Instruction {
-        return .{ .opcode = Opcode.XXX, .size = 1, .duration = Duration.exactly(1) };
+        return .{ .opcode = Opcode.XXX, .mode = AddressingMode.Implicit, .size = 1, .duration = Duration.exactly(1) };
     }
 };
 
@@ -394,15 +402,15 @@ const InstructionDuration = struct {
     };
 
     fn exactly(cycles: u8) InstructionDuration {
-        return InstructionDuration{ .cycles = cycles, .Penalty = Penalty.None };
+        return InstructionDuration{ .cycles = cycles, .penalty = Penalty.None };
     }
 
     fn pageAware(cycles: u8) InstructionDuration {
-        return InstructionDuration{ .cycles = cycles, .Penalty = Penalty.OnPageCrossing };
+        return InstructionDuration{ .cycles = cycles, .penalty = Penalty.OnPageCrossing };
     }
 
     fn branchAware(cycles: u8) InstructionDuration {
-        return InstructionDuration{ .cycles = cycles, .Penalty = Penalty.OnBranch };
+        return InstructionDuration{ .cycles = cycles, .penalty = Penalty.OnBranch };
     }
 
     cycles: u8,

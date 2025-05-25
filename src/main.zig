@@ -13,8 +13,8 @@ pub fn main() !void {
     cartridge.log();
     try cartridge.dump_prg("data.prg");
 
-    const disassembler = try Disassembler.init(cartridge);
-    _ = disassembler;
+    var disassembler = try Disassembler.init(cartridge);
+    disassembler.disassemble();
 
     // const args = try std.process.ArgIterator.initWithAllocator(allocator);
     // defer args.deinit();
