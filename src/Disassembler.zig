@@ -1704,6 +1704,151 @@ test "CPX Absolute" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "CPY Immediate" {
+    const opcode: u8 = 0xc0;
+    const expected = Instruction{
+        .opcode = Opcode.CPY,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "CPY Zero Page" {
+    const opcode: u8 = 0xc4;
+    const expected = Instruction{
+        .opcode = Opcode.CPY,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "CPY Absolute" {
+    const opcode: u8 = 0xcc;
+    const expected = Instruction{
+        .opcode = Opcode.CPY,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+// ---------- Branches
+
+test "BCC" {
+    const opcode: u8 = 0x90;
+    const expected = Instruction{
+        .opcode = Opcode.BCC,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BCS" {
+    const opcode: u8 = 0xb0;
+    const expected = Instruction{
+        .opcode = Opcode.BCS,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BEQ" {
+    const opcode: u8 = 0xf0;
+    const expected = Instruction{
+        .opcode = Opcode.BEQ,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BMI" {
+    const opcode: u8 = 0x30;
+    const expected = Instruction{
+        .opcode = Opcode.BMI,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BNE" {
+    const opcode: u8 = 0xd0;
+    const expected = Instruction{
+        .opcode = Opcode.BNE,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BPL" {
+    const opcode: u8 = 0x10;
+    const expected = Instruction{
+        .opcode = Opcode.BPL,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BVC" {
+    const opcode: u8 = 0x50;
+    const expected = Instruction{
+        .opcode = Opcode.BVC,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BVS" {
+    const opcode: u8 = 0x70;
+    const expected = Instruction{
+        .opcode = Opcode.BVS,
+        .mode = AddressingMode.Relative,
+        .size = 2,
+        .duration = Instruction.Duration.branchAware(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
