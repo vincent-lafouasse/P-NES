@@ -6,6 +6,7 @@ const DisassemblyError = error{
     NoPrgDataSomehow,
 };
 
+// should keep track of jumps and branches
 pub const Disassembler = struct {
     lowBank: []const u8,
     highBank: []const u8,
