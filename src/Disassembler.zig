@@ -576,3 +576,26 @@ const InstructionDuration = struct {
     cycles: u8,
     penalty: Penalty,
 };
+
+const expect = std.testing.expect;
+const expectEqual = std.testing.expectEqual;
+
+fn expectInstructionEqual(expected: Instruction, actual: Instruction) !void {
+    try expectEqual(expected.opcode, actual.opcode);
+    try expectEqual(expected.mode, actual.mode);
+    try expectEqual(expected.size, actual.size);
+    try expectEqual(expected.duration, actual.duration);
+}
+
+test "BRK" {
+    const opcode: u8 = 0x00;
+    const brk = Instruction.decode(opcode);
+    const expected = Instruction{
+        .opcode = Opcode.BRK,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(7),
+    };
+
+    try expectInstructionEqual(expected, brk);
+}
