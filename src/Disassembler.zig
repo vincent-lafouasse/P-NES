@@ -124,6 +124,7 @@ const Instruction = struct {
                     M.Absolute_YIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.pageAware(4) },
                     M.XIndexed_Indirect => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
                     M.Indirect_YIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.pageAware(5) },
+                    else => unreachable,
                 }
             },
             O.AND => {},
@@ -135,6 +136,103 @@ const Instruction = struct {
             O.SBC => {},
         }
 
+        unreachable;
+    }
+
+    fn decode_group3(aaa: u3, bbb: u3) Instruction {
+        const O = Opcode;
+        const M = AddressingMode;
+
+        const opcode = switch (aaa) {
+            0b000 => return Instruction.unknown(),
+            0b001 => O.BIT,
+            0b010 => O.JMP,
+            0b011 => O.JMP_Indirect,
+            0b100 => O.STY,
+            0b101 => O.LDY,
+            0b110 => O.CPY,
+            0b111 => O.CPX,
+        };
+
+        const mode = switch (bbb) {
+            0b000 => M.Immediate,
+            0b001 => M.ZeroPage,
+            0b010 => return Instruction.unknown(),
+            0b011 => M.Absolute,
+            0b100 => return Instruction.unknown(),
+            0b101 => M.ZeroPage_XIndexed,
+            0b110 => return Instruction.unknown(),
+            0b111 => M.Absolute_XIndexed,
+        };
+
+        switch (opcode) {
+            O.LDY => {
+                switch (mode) {
+                    M.Immediate => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(4) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.pageAware(4) },
+                    else => unreachable,
+                }
+            },
+            O.STY => {
+                switch (mode) {
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(4) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+
+                    M.Immediate, M.Absolute_XIndexed => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.CPY => {
+                switch (mode) {
+                    M.Immediate => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+
+                    M.ZeroPage_XIndexed, M.Absolute_XIndexed => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.CPX => {
+                switch (mode) {
+                    M.Immediate => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+
+                    M.ZeroPage_XIndexed, M.Absolute_XIndexed => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.BIT => {
+                switch (mode) {
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+
+                    M.Immediate, M.ZeroPage_XIndexed, M.Absolute_XIndexed => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.JMP => {
+                switch (mode) {
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(3) },
+
+                    M.Immediate, M.ZeroPage, M.ZeroPage_XIndexed, M.Absolute_XIndexed => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.JMP_Indirect => {
+                switch (mode) {
+                    M.Absolute => return .{ .opcode = opcode, .mode = M.Indirect, .size = 3, .duration = Duration.exactly(5) },
+
+                    M.Immediate, M.ZeroPage, M.ZeroPage_XIndexed, M.Absolute_XIndexed => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            else => unreachable,
+        }
         unreachable;
     }
 
@@ -188,6 +286,7 @@ const Opcode = enum {
     ROR,
     // Jumps/Calls
     JMP,
+    JMP_Indirect, // here for parsing purposes
     JSR,
     RTS,
     // Branches
