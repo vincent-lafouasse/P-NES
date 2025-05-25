@@ -52,7 +52,7 @@ pub const Disassembler = struct {
     pub fn disassemble(self: *Self) !void {
         const stdout = std.io.getStdOut().writer();
 
-        const n = 3;
+        const n = 8;
         for (0..n) |_| {
             const instruction = Instruction.decode(self.at(self.head));
             const sz = instruction.size;
