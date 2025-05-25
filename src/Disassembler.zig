@@ -52,22 +52,27 @@ pub const Disassembler = struct {
     pub fn disassemble(self: *Self) !void {
         const stdout = std.io.getStdOut().writer();
 
-        const instruction = Instruction.decode(self.at(self.head));
-        const sz = instruction.size;
+        const n = 3;
+        for (0..n) |_| {
+            const instruction = Instruction.decode(self.at(self.head));
+            const sz = instruction.size;
 
-        const op1: ?u8 = if (sz >= 2) self.at(self.head + 1) else null;
-        const op2: ?u8 = if (sz == 3) self.at(self.head + 1) else null;
+            const op1: ?u8 = if (sz >= 2) self.at(self.head + 1) else null;
+            const op2: ?u8 = if (sz == 3) self.at(self.head + 1) else null;
 
-        try stdout.print("{x:4} ", .{self.head});
-        try stdout.print("{x:2} ", .{self.at(self.head)});
-        switch (sz) {
-            1 => try stdout.print("      ", .{}),
-            2 => try stdout.print("{x:2}    ", .{op1.?}),
-            3 => try stdout.print("{x:2} {x:2} ", .{ op1.?, op2.? }),
-            else => unreachable,
+            try stdout.print("{x:4} ", .{self.head});
+            try stdout.print("{x:2} ", .{self.at(self.head)});
+            switch (sz) {
+                1 => try stdout.print("      ", .{}),
+                2 => try stdout.print("{x:2}    ", .{op1.?}),
+                3 => try stdout.print("{x:2} {x:2} ", .{ op1.?, op2.? }),
+                else => unreachable,
+            }
+            try instruction.write(stdout, op1, op2);
+            try stdout.print("\n", .{});
+
+            self.head += instruction.size;
         }
-        try instruction.write(stdout, op1, op2);
-        try stdout.print("\n", .{});
     }
 
     fn map(address: u16) u16 {
@@ -104,14 +109,12 @@ const Instruction = struct {
         const bbb: u3 = @intCast((byte >> 2) & 0b111);
         const cc: u2 = @intCast(byte & 0b11);
 
-        _ = switch (cc) {
+        return switch (cc) {
             0b00 => unreachable, //todo group 3
             0b01 => Instruction.decode_group1(aaa, bbb),
-            0b10 => unreachable, //todo group 2
+            0b10 => Instruction.decode_group2(aaa, bbb),
             0b11 => Instruction.unknown(), // no instructions
         };
-
-        unreachable;
     }
 
     fn decode_group1(aaa: u3, bbb: u3) Instruction {
@@ -164,6 +167,123 @@ const Instruction = struct {
             else => unreachable,
         };
 
+        unreachable;
+    }
+
+    fn decode_group2(aaa: u3, bbb: u3) Instruction {
+        const O = Opcode;
+        const M = AddressingMode;
+
+        const opcode = switch (aaa) {
+            0b000 => O.ASL,
+            0b001 => O.ROL,
+            0b010 => O.LSR,
+            0b011 => O.ROR,
+            0b100 => O.STX,
+            0b101 => O.LDX,
+            0b110 => O.DEC,
+            0b111 => O.INC,
+        };
+
+        const mode = switch (bbb) {
+            0b000 => M.Immediate,
+            0b001 => M.ZeroPage,
+            0b010 => M.Accumulator,
+            0b011 => M.Absolute,
+            0b100 => return Instruction.unknown(),
+            0b101 => M.ZeroPage_XIndexed,
+            0b110 => return Instruction.unknown(),
+            0b111 => M.Absolute_XIndexed,
+        };
+
+        switch (opcode) {
+            O.ASL => {
+                switch (mode) {
+                    M.Accumulator => return .{ .opcode = opcode, .mode = mode, .size = 1, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(5) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(6) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(7) },
+                    M.Immediate => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.ROL => {
+                switch (mode) {
+                    M.Accumulator => return .{ .opcode = opcode, .mode = mode, .size = 1, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(5) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(6) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(7) },
+                    M.Immediate => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.LSR => {
+                switch (mode) {
+                    M.Accumulator => return .{ .opcode = opcode, .mode = mode, .size = 1, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(5) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(6) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(7) },
+                    M.Immediate => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.ROR => {
+                switch (mode) {
+                    M.Accumulator => return .{ .opcode = opcode, .mode = mode, .size = 1, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(5) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(6) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(7) },
+                    M.Immediate => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.LDX => {
+                switch (mode) {
+                    M.Immediate => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = M.ZeroPage_YIndexed, .size = 2, .duration = Duration.exactly(4) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = M.Absolute_YIndexed, .size = 3, .duration = Duration.pageAware(4) },
+                    M.Accumulator => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.STX => {
+                switch (mode) {
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = M.ZeroPage_YIndexed, .size = 2, .duration = Duration.exactly(4) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+
+                    M.Immediate, M.Absolute_XIndexed, M.Accumulator => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.DEC => {
+                switch (mode) {
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(5) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(6) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(7) },
+                    M.Immediate, M.Accumulator => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            O.INC => {
+                switch (mode) {
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(5) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(6) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(7) },
+                    M.Immediate, M.Accumulator => return Instruction.unknown(),
+                    else => unreachable,
+                }
+            },
+            else => unreachable,
+        }
         unreachable;
     }
 
