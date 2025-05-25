@@ -587,6 +587,19 @@ fn expectInstructionEqual(expected: Instruction, actual: Instruction) !void {
     try expectEqual(expected.duration, actual.duration);
 }
 
+test "ADC Immediate" {
+    const opcode: u8 = 0x69;
+    const adc_immediate = Instruction.decode(opcode);
+    const expected = Instruction{
+        .opcode = Opcode.ADC,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+
+    try expectInstructionEqual(expected, adc_immediate);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const brk = Instruction.decode(opcode);
