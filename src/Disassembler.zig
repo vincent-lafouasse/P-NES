@@ -1942,6 +1942,218 @@ test "SEI" {
     try expectInstructionEqual(expected, actual);
 }
 
+// ---------- LDX-like instructions
+
+test "LDX Immediate" {
+    const opcode: u8 = 0xa2;
+    const expected = Instruction{
+        .opcode = Opcode.LDX,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDX Zero Page" {
+    const opcode: u8 = 0xa6;
+    const expected = Instruction{
+        .opcode = Opcode.LDX,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDX Zero Page Y Indexed" {
+    const opcode: u8 = 0xb6;
+    const expected = Instruction{
+        .opcode = Opcode.LDX,
+        .mode = AddressingMode.ZeroPage_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDX Absolute" {
+    const opcode: u8 = 0xae;
+    const expected = Instruction{
+        .opcode = Opcode.LDX,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDX Absolute Y Indexed" {
+    const opcode: u8 = 0xbe;
+    const expected = Instruction{
+        .opcode = Opcode.LDX,
+        .mode = AddressingMode.Absolute_YIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDY Immediate" {
+    const opcode: u8 = 0xa0;
+    const expected = Instruction{
+        .opcode = Opcode.LDY,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDY Zero Page" {
+    const opcode: u8 = 0xa4;
+    const expected = Instruction{
+        .opcode = Opcode.LDY,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDY Zero Page X Indexed" {
+    const opcode: u8 = 0xb4;
+    const expected = Instruction{
+        .opcode = Opcode.LDY,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDY Absolute" {
+    const opcode: u8 = 0xac;
+    const expected = Instruction{
+        .opcode = Opcode.LDY,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDY Absolute X Indexed" {
+    const opcode: u8 = 0xbc;
+    const expected = Instruction{
+        .opcode = Opcode.LDY,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+// ---------- STX/STY
+
+test "STX Zero Page" {
+    const opcode: u8 = 0x86;
+    const expected = Instruction{
+        .opcode = Opcode.STX,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STX Zero Page Y Indexed" {
+    const opcode: u8 = 0x96;
+    const expected = Instruction{
+        .opcode = Opcode.STX,
+        .mode = AddressingMode.ZeroPage_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STX Absolute" {
+    const opcode: u8 = 0x8e;
+    const expected = Instruction{
+        .opcode = Opcode.STX,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STY Zero Page" {
+    const opcode: u8 = 0x84;
+    const expected = Instruction{
+        .opcode = Opcode.STY,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STY Zero Page X Indexed" {
+    const opcode: u8 = 0x94;
+    const expected = Instruction{
+        .opcode = Opcode.STY,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STY Absolute" {
+    const opcode: u8 = 0x8c;
+    const expected = Instruction{
+        .opcode = Opcode.STY,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
