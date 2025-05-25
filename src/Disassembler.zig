@@ -1468,6 +1468,71 @@ test "ASL Absolute X Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "LSR Accumulator" {
+    const opcode: u8 = 0x4a;
+    const expected = Instruction{
+        .opcode = Opcode.LSR,
+        .mode = AddressingMode.Accumulator,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LSR Zero Page" {
+    const opcode: u8 = 0x46;
+    const expected = Instruction{
+        .opcode = Opcode.LSR,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LSR Zero Page X Indexed" {
+    const opcode: u8 = 0x56;
+    const expected = Instruction{
+        .opcode = Opcode.LSR,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LSR Absolute" {
+    const opcode: u8 = 0x4e;
+    const expected = Instruction{
+        .opcode = Opcode.LSR,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LSR Absolute X Indexed" {
+    const opcode: u8 = 0x5e;
+    const expected = Instruction{
+        .opcode = Opcode.LSR,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(7),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
