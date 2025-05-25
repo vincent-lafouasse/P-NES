@@ -458,7 +458,7 @@ const Instruction = struct {
             },
             O.JMP_Indirect => {
                 switch (mode) {
-                    M.Absolute => return .{ .opcode = opcode, .mode = M.Indirect, .size = 3, .duration = Duration.exactly(5) },
+                    M.Absolute => return .{ .opcode = O.JMP, .mode = M.Indirect, .size = 3, .duration = Duration.exactly(5) },
 
                     M.Immediate, M.ZeroPage, M.ZeroPage_XIndexed, M.Absolute_XIndexed => return Instruction.unknown(),
                     else => unreachable,
@@ -2074,7 +2074,7 @@ test "LDY Absolute X Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
-// ---------- STX/STY
+// ---------- STX/STY/STA
 
 test "STX Zero Page" {
     const opcode: u8 = 0x86;
@@ -2148,6 +2148,97 @@ test "STY Absolute" {
         .mode = AddressingMode.Absolute,
         .size = 3,
         .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STA ZeroPage" {
+    const opcode: u8 = 0x85;
+    const expected = Instruction{
+        .opcode = Opcode.STA,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STA ZeroPage_XIndexed" {
+    const opcode: u8 = 0x95;
+    const expected = Instruction{
+        .opcode = Opcode.STA,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STA Absolute" {
+    const opcode: u8 = 0x8d;
+    const expected = Instruction{
+        .opcode = Opcode.STA,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STA Absolute_XIndexed" {
+    const opcode: u8 = 0x9d;
+    const expected = Instruction{
+        .opcode = Opcode.STA,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STA Absolute_YIndexed" {
+    const opcode: u8 = 0x99;
+    const expected = Instruction{
+        .opcode = Opcode.STA,
+        .mode = AddressingMode.Absolute_YIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STA X_Indexed Indirect" {
+    const opcode: u8 = 0x81;
+    const expected = Instruction{
+        .opcode = Opcode.STA,
+        .mode = AddressingMode.XIndexed_Indirect,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "STA Indirect Y Indexed" {
+    const opcode: u8 = 0x91;
+    const expected = Instruction{
+        .opcode = Opcode.STA,
+        .mode = AddressingMode.Indirect_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
     };
     const actual = Instruction.decode(opcode);
 
@@ -2429,6 +2520,32 @@ test "RTS" {
         .mode = AddressingMode.Implicit,
         .size = 1,
         .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "JMP Absolute" {
+    const opcode: u8 = 0x4c;
+    const expected = Instruction{
+        .opcode = Opcode.JMP,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "JMP Indirect" {
+    const opcode: u8 = 0x6c;
+    const expected = Instruction{
+        .opcode = Opcode.JMP,
+        .mode = AddressingMode.Indirect,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(5),
     };
     const actual = Instruction.decode(opcode);
 
