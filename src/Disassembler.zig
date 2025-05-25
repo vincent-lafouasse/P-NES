@@ -671,6 +671,8 @@ fn expectInstructionEqual(expected: Instruction, actual: Instruction) !void {
     try expectEqual(expected.duration, actual.duration);
 }
 
+// ---------- ADC-like instructions
+
 test "ADC Immediate" {
     const opcode: u8 = 0x69;
     const expected = Instruction{
@@ -1393,6 +1395,73 @@ test "SBC Indirect Y Indexed" {
         .mode = AddressingMode.Indirect_YIndexed,
         .size = 2,
         .duration = Instruction.Duration.pageAware(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+// ---------- ASL-like instructions
+
+test "ASL Accumulator" {
+    const opcode: u8 = 0x0a;
+    const expected = Instruction{
+        .opcode = Opcode.ASL,
+        .mode = AddressingMode.Accumulator,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ASL Zero Page" {
+    const opcode: u8 = 0x06;
+    const expected = Instruction{
+        .opcode = Opcode.ASL,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ASL Zero Page X Indexed" {
+    const opcode: u8 = 0x16;
+    const expected = Instruction{
+        .opcode = Opcode.ASL,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ASL Absolute" {
+    const opcode: u8 = 0x0e;
+    const expected = Instruction{
+        .opcode = Opcode.ASL,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ASL Absolute X Indexed" {
+    const opcode: u8 = 0x1e;
+    const expected = Instruction{
+        .opcode = Opcode.ASL,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(7),
     };
     const actual = Instruction.decode(opcode);
 
