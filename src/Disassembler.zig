@@ -209,3 +209,14 @@ const AddressingMode = enum {
     IndexedIndirectY, // (op,X)
     IndirectIndexedY, // (op),Y
 };
+
+const InstructionDuration = struct {
+    const Penalty = enum {
+        None,
+        OnPageCrossing,
+        OnBranch,
+    };
+
+    cycles: u8,
+    penalty: Penalty,
+};
