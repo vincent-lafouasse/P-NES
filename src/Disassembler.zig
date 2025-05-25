@@ -2409,6 +2409,32 @@ test "BIT Absolute" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "RTI" {
+    const opcode: u8 = 0x40;
+    const expected = Instruction{
+        .opcode = Opcode.RTI,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "RTS" {
+    const opcode: u8 = 0x60;
+    const expected = Instruction{
+        .opcode = Opcode.RTS,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
