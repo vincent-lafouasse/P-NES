@@ -3,7 +3,9 @@ const Cartridge = @import("Cartridge.zig").Cartridge;
 const Disassembler = @import("Disassembler.zig").Disassembler;
 
 pub fn main() !void {
-    const allocator = std.heap.page_allocator; // should be fine
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
 
     const cartridge = try Cartridge.load("roms/s9.nes", allocator);
     defer cartridge.free();
