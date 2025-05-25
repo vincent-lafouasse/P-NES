@@ -52,7 +52,7 @@ pub const Disassembler = struct {
     pub fn disassemble(self: *Self) !void {
         const stdout = std.io.getStdOut().writer();
 
-        const n = 8;
+        const n = 9;
         for (0..n) |_| {
             const instruction = Instruction.decode(self.at(self.head));
             const sz = instruction.size;
@@ -441,10 +441,25 @@ const Instruction = struct {
 
     fn write(self: Self, writer: anytype, op1: ?u8, op2: ?u8) !void {
         const name = @tagName(self.opcode);
+        const M = AddressingMode;
 
         try writer.print("{s} ", .{name});
-        _ = op1;
-        _ = op2;
+
+        switch (self.mode) {
+            M.Accumulator, M.Implicit => {},
+            M.Absolute => try writer.print("${x:02}{x:02}", .{ op2.?, op1.? }),
+            M.Absolute_XIndexed => try writer.print("${x:02}{x:02},X", .{ op2.?, op1.? }),
+            M.Absolute_YIndexed => try writer.print("${x:02}{x:02},Y", .{ op2.?, op1.? }),
+            M.Immediate => try writer.print("#${x:02}", .{op1.?}),
+            M.Indirect => try writer.print("(${x:02}{x:02})", .{ op2.?, op1.? }),
+            M.XIndexed_Indirect => try writer.print("(${x:02},X)", .{op1.?}),
+            M.YIndexed_Indirect => try writer.print("(${x:02},Y)", .{op1.?}),
+            M.Indirect_XIndexed => try writer.print("(${x:02}),X", .{op1.?}),
+            M.Indirect_YIndexed => try writer.print("(${x:02}),Y", .{op1.?}),
+            M.Relative, M.ZeroPage => try writer.print("${x:02}", .{op1.?}),
+            M.ZeroPage_XIndexed => try writer.print("${x:02},X", .{op1.?}),
+            M.ZeroPage_YIndexed => try writer.print("${x:02},Y", .{op1.?}),
+        }
     }
 };
 
