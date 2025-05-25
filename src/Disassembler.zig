@@ -60,7 +60,7 @@ pub const Disassembler = struct {
             const op1: ?u8 = if (sz >= 2) self.at(self.head + 1) else null;
             const op2: ?u8 = if (sz == 3) self.at(self.head + 1) else null;
 
-            try stdout.print("{x:04} ", .{self.head});
+            try stdout.print("{x:04}\t", .{self.head});
             try stdout.print("{x:02} ", .{self.at(self.head)});
             switch (sz) {
                 1 => try stdout.print("      ", .{}),
@@ -68,6 +68,7 @@ pub const Disassembler = struct {
                 3 => try stdout.print("{x:02} {x:02} ", .{ op1.?, op2.? }),
                 else => unreachable,
             }
+            try stdout.print("\t", .{});
             try instruction.write(stdout, op1, op2);
             try stdout.print("\n", .{});
 
