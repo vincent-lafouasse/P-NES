@@ -16,7 +16,7 @@ pub fn main() !void {
     const disassembler = try Disassembler.init(cartridge);
     _ = disassembler;
 
-    const args = try std.process.ArgIterator.initWithAllocator(allocator);
-    defer args.deinit();
-    std.log.info("{any}", .{args});
+    // const args = try std.process.ArgIterator.initWithAllocator(allocator);
+    // defer args.deinit();
+    // std.log.info("{any}", .{args});
 }
