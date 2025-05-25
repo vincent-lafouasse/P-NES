@@ -1295,6 +1295,110 @@ test "ORA Indirect Y Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "SBC Immediate" {
+    const opcode: u8 = 0xe9;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SBC Zero Page" {
+    const opcode: u8 = 0xe5;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SBC Zero Page X Indexed" {
+    const opcode: u8 = 0xf5;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SBC Absolute" {
+    const opcode: u8 = 0xeD;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SBC Absolute X Indexed" {
+    const opcode: u8 = 0xfD;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SBC Absolute Y Indexed" {
+    const opcode: u8 = 0xf9;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.Absolute_YIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SBC X Indexed Indirect" {
+    const opcode: u8 = 0xe1;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.XIndexed_Indirect,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SBC Indirect Y Indexed" {
+    const opcode: u8 = 0xf1;
+    const expected = Instruction{
+        .opcode = Opcode.SBC,
+        .mode = AddressingMode.Indirect_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.pageAware(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
