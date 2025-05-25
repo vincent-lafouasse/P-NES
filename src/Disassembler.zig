@@ -2154,6 +2154,220 @@ test "STY Absolute" {
     try expectInstructionEqual(expected, actual);
 }
 
+// ---------- INC/DEC
+
+test "DEC Zero Page" {
+    const opcode: u8 = 0xc6;
+    const expected = Instruction{
+        .opcode = Opcode.DEC,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "INC Zero Page" {
+    const opcode: u8 = 0xe6;
+    const expected = Instruction{
+        .opcode = Opcode.INC,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "DEX" {
+    const opcode: u8 = 0xca;
+    const expected = Instruction{
+        .opcode = Opcode.DEX,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "DEY" {
+    const opcode: u8 = 0x88;
+    const expected = Instruction{
+        .opcode = Opcode.DEY,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "INX" {
+    const opcode: u8 = 0xe8;
+    const expected = Instruction{
+        .opcode = Opcode.INX,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "INY" {
+    const opcode: u8 = 0xc8;
+    const expected = Instruction{
+        .opcode = Opcode.INY,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+// ---------- Stack instructions
+
+test "PHA" {
+    const opcode: u8 = 0x48;
+    const expected = Instruction{
+        .opcode = Opcode.PHA,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "PHP" {
+    const opcode: u8 = 0x08;
+    const expected = Instruction{
+        .opcode = Opcode.PHP,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "PLA" {
+    const opcode: u8 = 0x68;
+    const expected = Instruction{
+        .opcode = Opcode.PLA,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "PLP" {
+    const opcode: u8 = 0x28;
+    const expected = Instruction{
+        .opcode = Opcode.PLP,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+// ---------- Register transfers
+
+test "TAX" {
+    const opcode: u8 = 0xaa;
+    const expected = Instruction{
+        .opcode = Opcode.TAX,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "TAY" {
+    const opcode: u8 = 0xa8;
+    const expected = Instruction{
+        .opcode = Opcode.TAY,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "TSX" {
+    const opcode: u8 = 0xba;
+    const expected = Instruction{
+        .opcode = Opcode.TSX,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "TXA" {
+    const opcode: u8 = 0x8a;
+    const expected = Instruction{
+        .opcode = Opcode.TXA,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "TXS" {
+    const opcode: u8 = 0x9a;
+    const expected = Instruction{
+        .opcode = Opcode.TXS,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "TYA" {
+    const opcode: u8 = 0x98;
+    const expected = Instruction{
+        .opcode = Opcode.TYA,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
