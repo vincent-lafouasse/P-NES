@@ -65,8 +65,12 @@ pub const Disassembler = struct {
 };
 
 const Instruction = struct {
+    const Duration = InstructionDuration;
+
     opcode: Opcode,
     mode: AddressingMode,
+    size: u8,
+    duration: Duration,
 
     const Self = @This();
 
@@ -197,17 +201,17 @@ const AddressingMode = enum {
     Accumulator,
     Immediate,
     ZeroPage,
-    ZeroPageX,
-    ZeroPageY,
+    ZeroPage_XIndexed,
+    ZeroPage_YIndexed,
     Relative,
     Absolute,
-    AbsoluteX,
-    AbsoluteY,
+    Absolute_XIndexed,
+    Absolute_YIndexed,
     Indirect, // (b1 b2)
-    IndexedIndirectX, // (op,X)
-    IndirectIndexedX, // (op),X
-    IndexedIndirectY, // (op,X)
-    IndirectIndexedY, // (op),Y
+    XIndexed_Indirect, // (op,X)
+    Indirect_XIndexed, // (op),X
+    YIndexed_Indirect, // (op,X)
+    Indirect_YIndexed, // (op),X
 };
 
 const InstructionDuration = struct {
