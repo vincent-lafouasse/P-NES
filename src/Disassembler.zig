@@ -2368,6 +2368,47 @@ test "TYA" {
     try expectInstructionEqual(expected, actual);
 }
 
+// stuff
+
+test "JSR" {
+    const opcode: u8 = 0x20;
+    const expected = Instruction{
+        .opcode = Opcode.JSR,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BIT ZeroPage" {
+    const opcode: u8 = 0x24;
+    const expected = Instruction{
+        .opcode = Opcode.BIT,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "BIT Absolute" {
+    const opcode: u8 = 0x2c;
+    const expected = Instruction{
+        .opcode = Opcode.BIT,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
