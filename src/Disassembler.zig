@@ -1087,6 +1087,110 @@ test "EOR Indirect Y Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "LDA Immediate" {
+    const opcode: u8 = 0xa9;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDA Zero Page" {
+    const opcode: u8 = 0xa5;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDA Zero Page X Indexed" {
+    const opcode: u8 = 0xb5;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDA Absolute" {
+    const opcode: u8 = 0xaD;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDA Absolute X Indexed" {
+    const opcode: u8 = 0xbD;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDA Absolute Y Indexed" {
+    const opcode: u8 = 0xb9;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.Absolute_YIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDA X Indexed Indirect" {
+    const opcode: u8 = 0xa1;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.XIndexed_Indirect,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "LDA Indirect Y Indexed" {
+    const opcode: u8 = 0xb1;
+    const expected = Instruction{
+        .opcode = Opcode.LDA,
+        .mode = AddressingMode.Indirect_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.pageAware(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
