@@ -763,7 +763,7 @@ test "ADC X Indexed Indirect" {
 }
 
 test "ADC Indirect Y Indexed" {
-    const opcode: u8 = 0x61;
+    const opcode: u8 = 0x71;
     const expected = Instruction{
         .opcode = Opcode.ADC,
         .mode = AddressingMode.Indirect_YIndexed,
