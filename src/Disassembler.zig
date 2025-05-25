@@ -1849,6 +1849,99 @@ test "BVS" {
     try expectInstructionEqual(expected, actual);
 }
 
+// ---------- Status flag operations
+
+test "CLC" {
+    const opcode: u8 = 0x18;
+    const expected = Instruction{
+        .opcode = Opcode.CLC,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "CLD" {
+    const opcode: u8 = 0xd8;
+    const expected = Instruction{
+        .opcode = Opcode.CLD,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "CLI" {
+    const opcode: u8 = 0x58;
+    const expected = Instruction{
+        .opcode = Opcode.CLI,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "CLV" {
+    const opcode: u8 = 0xb8;
+    const expected = Instruction{
+        .opcode = Opcode.CLV,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SEC" {
+    const opcode: u8 = 0x38;
+    const expected = Instruction{
+        .opcode = Opcode.SEC,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SED" {
+    const opcode: u8 = 0xf8;
+    const expected = Instruction{
+        .opcode = Opcode.SED,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "SEI" {
+    const opcode: u8 = 0x78;
+    const expected = Instruction{
+        .opcode = Opcode.SEI,
+        .mode = AddressingMode.Implicit,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
