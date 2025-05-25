@@ -2260,6 +2260,45 @@ test "DEC Zero Page" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "DEC Zero Page X Indexed" {
+    const opcode: u8 = 0xd6;
+    const expected = Instruction{
+        .opcode = Opcode.DEC,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "DEC Absolute" {
+    const opcode: u8 = 0xce;
+    const expected = Instruction{
+        .opcode = Opcode.DEC,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "DEC Absolute X Indexed" {
+    const opcode: u8 = 0xde;
+    const expected = Instruction{
+        .opcode = Opcode.DEC,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(7),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "INC Zero Page" {
     const opcode: u8 = 0xe6;
     const expected = Instruction{
@@ -2267,6 +2306,45 @@ test "INC Zero Page" {
         .mode = AddressingMode.ZeroPage,
         .size = 2,
         .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "INC Zero Page X Indexed" {
+    const opcode: u8 = 0xf6;
+    const expected = Instruction{
+        .opcode = Opcode.INC,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "INC Absolute" {
+    const opcode: u8 = 0xee;
+    const expected = Instruction{
+        .opcode = Opcode.INC,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "INC Absolute X Indexed" {
+    const opcode: u8 = 0xfe;
+    const expected = Instruction{
+        .opcode = Opcode.INC,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(7),
     };
     const actual = Instruction.decode(opcode);
 
