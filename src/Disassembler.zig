@@ -75,6 +75,10 @@ const Instruction = struct {
     const Self = @This();
 
     fn decode(byte: u8) Self {
+        if (Instruction.decode_special_cases(byte)) |instruction| {
+            return instruction;
+        }
+
         const aaa: u3 = byte >> 5;
         const bbb: u3 = (byte >> 2) & 0b111;
         const cc: u2 = byte & 0b11;
@@ -234,6 +238,56 @@ const Instruction = struct {
             else => unreachable,
         }
         unreachable;
+    }
+
+    fn decode_special_cases(opcode: u8) ?Instruction {
+        const O = Opcode;
+        const M = AddressingMode;
+
+        switch (opcode) {
+            0x10 => return .{ .opcode = O.BPL, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+            0x30 => return .{ .opcode = O.BMI, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+            0x50 => return .{ .opcode = O.BVC, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+            0x70 => return .{ .opcode = O.BVS, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+            0x90 => return .{ .opcode = O.BCC, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+            0xB0 => return .{ .opcode = O.BCS, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+            0xD0 => return .{ .opcode = O.BNE, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+            0xF0 => return .{ .opcode = O.BEQ, .mode = M.Relative, .size = 2, .duration = Duration.branchAware(2) },
+
+            0x00 => return .{ .opcode = O.BRK, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(7) },
+            0x20 => return .{ .opcode = O.JSR, .mode = M.Absolute, .size = 3, .duration = Duration.exactly(6) },
+            0x40 => return .{ .opcode = O.RTI, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(6) },
+            0x60 => return .{ .opcode = O.RTS, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(6) },
+
+            0x48 => return .{ .opcode = O.PHA, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(3) },
+            0x08 => return .{ .opcode = O.PHP, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(3) },
+            0x68 => return .{ .opcode = O.PLA, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(4) },
+            0x28 => return .{ .opcode = O.PLP, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(4) },
+
+            0xCA => return .{ .opcode = O.DEX, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0x88 => return .{ .opcode = O.DEY, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0xE8 => return .{ .opcode = O.INX, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0xC8 => return .{ .opcode = O.INY, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+
+            0xAA => return .{ .opcode = O.TAX, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0xA8 => return .{ .opcode = O.TAY, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0xBA => return .{ .opcode = O.TSX, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0x8A => return .{ .opcode = O.TXA, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0x9A => return .{ .opcode = O.TXS, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0x98 => return .{ .opcode = O.TYA, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+
+            0x18 => return .{ .opcode = O.CLC, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0xD8 => return .{ .opcode = O.CLD, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0x58 => return .{ .opcode = O.CLI, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0xB8 => return .{ .opcode = O.CLV, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0x38 => return .{ .opcode = O.SEC, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0xF8 => return .{ .opcode = O.SED, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+            0x78 => return .{ .opcode = O.SEI, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+
+            0xEA => return .{ .opcode = O.NOP, .mode = M.Implicit, .size = 1, .duration = Duration.exactly(2) },
+
+            else => return null,
+        }
     }
 
     fn unknown() Instruction {
