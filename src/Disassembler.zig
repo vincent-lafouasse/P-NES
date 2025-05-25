@@ -120,7 +120,7 @@ const Instruction = struct {
     }
 
     fn unknown() Instruction {
-        return .{ .opcode = Opcode.XXX };
+        return .{ .opcode = Opcode.XXX, .size = 1, .duration = .{ .cycles = 1, .penalty = Instruction.Duration.Penalty.None } };
     }
 };
 
