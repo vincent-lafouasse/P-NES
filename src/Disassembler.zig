@@ -117,7 +117,13 @@ const Instruction = struct {
             O.ORA => {
                 switch (mode) {
                     M.Immediate => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
-                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(3) },
+                    M.ZeroPage_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(4) },
+                    M.Absolute => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.exactly(4) },
+                    M.Absolute_XIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.pageAware(4) },
+                    M.Absolute_YIndexed => return .{ .opcode = opcode, .mode = mode, .size = 3, .duration = Duration.pageAware(4) },
+                    M.XIndexed_Indirect => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(6) },
+                    M.Indirect_YIndexed => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.pageAware(5) },
                 }
             },
             O.AND => {},
