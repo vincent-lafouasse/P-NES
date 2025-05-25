@@ -103,14 +103,14 @@ const Instruction = struct {
         };
 
         const mode = switch (bbb) {
-            0b000 => M.Absolute,
-            0b001 => M.Absolute,
-            0b010 => M.Absolute,
+            0b000 => M.XIndexed_Indirect,
+            0b001 => M.ZeroPage,
+            0b010 => M.Immediate,
             0b011 => M.Absolute,
-            0b100 => M.Absolute,
-            0b101 => M.Absolute,
-            0b110 => M.Absolute,
-            0b111 => M.Absolute,
+            0b100 => M.Indirect_YIndexed,
+            0b101 => M.ZeroPage_XIndexed,
+            0b110 => M.Absolute_YIndexed,
+            0b111 => M.Absolute_XIndexed,
         };
 
         _ = opcode;
