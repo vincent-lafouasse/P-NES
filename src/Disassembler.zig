@@ -1663,6 +1663,47 @@ test "ROR Absolute X Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+// ---------- CPX-like instructions
+
+test "CPX Immediate" {
+    const opcode: u8 = 0xe0;
+    const expected = Instruction{
+        .opcode = Opcode.CPX,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "CPX Zero Page" {
+    const opcode: u8 = 0xe4;
+    const expected = Instruction{
+        .opcode = Opcode.CPX,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "CPX Absolute" {
+    const opcode: u8 = 0xec;
+    const expected = Instruction{
+        .opcode = Opcode.CPX,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
