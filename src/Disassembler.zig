@@ -111,7 +111,7 @@ const Instruction = struct {
         const cc: u2 = @intCast(byte & 0b11);
 
         return switch (cc) {
-            0b00 => unreachable, //todo group 3
+            0b00 => Instruction.decode_group3(aaa, bbb),
             0b01 => Instruction.decode_group1(aaa, bbb),
             0b10 => Instruction.decode_group2(aaa, bbb),
             0b11 => Instruction.unknown(), // no instructions
