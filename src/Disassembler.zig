@@ -113,8 +113,21 @@ const Instruction = struct {
             0b111 => M.Absolute_XIndexed,
         };
 
-        _ = opcode;
-        _ = mode;
+        switch (opcode) {
+            O.ORA => {
+                switch (mode) {
+                    M.Immediate => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
+                    M.ZeroPage => return .{ .opcode = opcode, .mode = mode, .size = 2, .duration = Duration.exactly(2) },
+                }
+            },
+            O.AND => {},
+            O.EOR => {},
+            O.ADC => {},
+            O.STA => {},
+            O.LDA => {},
+            O.CMP => {},
+            O.SBC => {},
+        }
 
         unreachable;
     }
