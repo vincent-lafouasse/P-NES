@@ -1533,6 +1533,136 @@ test "LSR Absolute X Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "ROL Accumulator" {
+    const opcode: u8 = 0x2a;
+    const expected = Instruction{
+        .opcode = Opcode.ROL,
+        .mode = AddressingMode.Accumulator,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROL Zero Page" {
+    const opcode: u8 = 0x26;
+    const expected = Instruction{
+        .opcode = Opcode.ROL,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROL Zero Page X Indexed" {
+    const opcode: u8 = 0x36;
+    const expected = Instruction{
+        .opcode = Opcode.ROL,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROL Absolute" {
+    const opcode: u8 = 0x2e;
+    const expected = Instruction{
+        .opcode = Opcode.ROL,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROL Absolute X Indexed" {
+    const opcode: u8 = 0x3e;
+    const expected = Instruction{
+        .opcode = Opcode.ROL,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(7),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROR Accumulator" {
+    const opcode: u8 = 0x6a;
+    const expected = Instruction{
+        .opcode = Opcode.ROR,
+        .mode = AddressingMode.Accumulator,
+        .size = 1,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROR Zero Page" {
+    const opcode: u8 = 0x66;
+    const expected = Instruction{
+        .opcode = Opcode.ROR,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROR Zero Page X Indexed" {
+    const opcode: u8 = 0x76;
+    const expected = Instruction{
+        .opcode = Opcode.ROR,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROR Absolute" {
+    const opcode: u8 = 0x6e;
+    const expected = Instruction{
+        .opcode = Opcode.ROR,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "ROR Absolute X Indexed" {
+    const opcode: u8 = 0x7e;
+    const expected = Instruction{
+        .opcode = Opcode.ROR,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(7),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
