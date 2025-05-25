@@ -983,6 +983,110 @@ test "CMP Indirect Y Indexed" {
     try expectInstructionEqual(expected, actual);
 }
 
+test "EOR Immediate" {
+    const opcode: u8 = 0x49;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.Immediate,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(2),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "EOR Zero Page" {
+    const opcode: u8 = 0x45;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.ZeroPage,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(3),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "EOR Zero Page X Indexed" {
+    const opcode: u8 = 0x55;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.ZeroPage_XIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "EOR Absolute" {
+    const opcode: u8 = 0x4D;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.Absolute,
+        .size = 3,
+        .duration = Instruction.Duration.exactly(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "EOR Absolute X Indexed" {
+    const opcode: u8 = 0x5D;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.Absolute_XIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "EOR Absolute Y Indexed" {
+    const opcode: u8 = 0x59;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.Absolute_YIndexed,
+        .size = 3,
+        .duration = Instruction.Duration.pageAware(4),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "EOR X Indexed Indirect" {
+    const opcode: u8 = 0x41;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.XIndexed_Indirect,
+        .size = 2,
+        .duration = Instruction.Duration.exactly(6),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
+test "EOR Indirect Y Indexed" {
+    const opcode: u8 = 0x51;
+    const expected = Instruction{
+        .opcode = Opcode.EOR,
+        .mode = AddressingMode.Indirect_YIndexed,
+        .size = 2,
+        .duration = Instruction.Duration.pageAware(5),
+    };
+    const actual = Instruction.decode(opcode);
+
+    try expectInstructionEqual(expected, actual);
+}
+
 test "BRK" {
     const opcode: u8 = 0x00;
     const expected = Instruction{
