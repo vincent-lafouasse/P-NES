@@ -1,6 +1,7 @@
 const std = @import("std");
 const ByteList = std.ArrayList(u8);
 const Allocator = std.mem.Allocator;
+const log = std.log.debug;
 
 const Cartridge = @import("Cartridge.zig").Cartridge;
 
@@ -77,37 +78,61 @@ pub const Bus = struct {
         switch (address) {
             0x0000...0x1fff => {
                 const effectiveAddress = address % 0x800;
-                return self.cpuRam[effectiveAddress];
+                const value: u8 = self.cpuRam[effectiveAddress];
+                log("reading {x:2} from CPU RAM at address {x:4}", .{ value, address });
+                return value;
             },
             0x2000...0x3fff => {
                 const effectiveAddress = (address - 0x2000) % 8;
-                return self.ppuRegisters[effectiveAddress];
+                const value: u8 = self.ppuRegisters[effectiveAddress];
+                log("reading {x:2} from PPU registers at address {x:4}", .{ value, address });
+                return value;
             },
             0x4000...0x4015 => {
                 const effectiveAddress = address - 0x4000;
-                return self.apuRegisters[effectiveAddress];
+                const value: u8 = self.apuRegisters[effectiveAddress];
+                log("reading {x:2} from APU registers at address {x:4}", .{ value, address });
+                return value;
             },
-            0x4016 => return self.joystick1,
-            0x4017 => return self.joystick1,
+            0x4016 => {
+                const value: u8 = self.joystick1;
+                log("reading {x:2} from Joystick 1 at address {x:4}", .{ value, address });
+                return value;
+            },
+            0x4017 => {
+                const value: u8 = self.joystick2;
+                log("reading {x:2} from Joystick 2 at address {x:4}", .{ value, address });
+                return value;
+            },
             0x4018...0x401f => {
                 const effectiveAddress = address - 0x4018;
-                return self.apuExtension[effectiveAddress];
+                const value: u8 = self.apuExtension[effectiveAddress];
+                log("reading {x:2} from APU extension at address {x:4}", .{ value, address });
+                return value;
             },
             0x4020...0x5fff => {
                 const effectiveAddress = address - 0x4020;
-                return self.unmapped[effectiveAddress];
+                const value: u8 = self.unmapped[effectiveAddress];
+                log("reading {x:2} from unmapped memory at address {x:4}", .{ value, address });
+                return value;
             },
             0x6000...0x7fff => {
                 const effectiveAddress = address - 0x6000;
-                return self.cartridgeRam[effectiveAddress];
+                const value: u8 = self.cartridgeRam[effectiveAddress];
+                log("reading {x:2} from cartridge RAM at address {x:4}", .{ value, address });
+                return value;
             },
             0x8000...0xbfff => {
                 const effectiveAddress = address - 0x8000;
-                return self.lowBank[effectiveAddress];
+                const value: u8 = self.lowBank[effectiveAddress];
+                log("reading {x:2} from cartridge ROM at address {x:4}", .{ value, address });
+                return value;
             },
             0xc000...0xffff => {
                 const effectiveAddress = address - 0xc000;
-                return self.highBank[effectiveAddress];
+                const value: u8 = self.highBank[effectiveAddress];
+                log("reading {x:2} from cartridge ROM at address {x:4}", .{ value, address });
+                return value;
             },
         }
     }
@@ -117,32 +142,40 @@ pub const Bus = struct {
             0x0000...0x1fff => {
                 const effectiveAddress = address % 0x800;
                 self.cpuRam[effectiveAddress] = value;
+                log("writing {x:2} in CPU RAM at address {x:4}", .{ value, address });
             },
             0x2000...0x3fff => {
                 const effectiveAddress = (address - 0x2000) % 8;
                 self.ppuRegisters[effectiveAddress] = value;
+                log("writing {x:2} in PPU registers at address {x:4}", .{ value, address });
             },
             0x4000...0x4015 => {
                 const effectiveAddress = address - 0x4000;
                 self.apuRegisters[effectiveAddress] = value;
+                log("writing {x:2} in APU registers at address {x:4}", .{ value, address });
             },
             0x4016 => {
                 self.joystick1 = value;
+                log("writing {x:2} in Joystick 1 at address {x:4}", .{ value, address });
             },
             0x4017 => {
                 self.joystick1 = value;
+                log("writing {x:2} in Joystick 2 at address {x:4}", .{ value, address });
             },
             0x4018...0x401f => {
                 const effectiveAddress = address - 0x4018;
                 self.apuExtension[effectiveAddress] = value;
+                log("writing {x:2} in APU extension at address {x:4}", .{ value, address });
             },
             0x4020...0x5fff => {
                 const effectiveAddress = address - 0x4020;
                 self.unmapped[effectiveAddress] = value;
+                log("writing {x:2} in unmapped memory at address {x:4}", .{ value, address });
             },
             0x6000...0x7fff => {
                 const effectiveAddress = address - 0x6000;
                 self.cartridgeRam[effectiveAddress] = value;
+                log("writing {x:2} in cartridge RAM at address {x:4}", .{ value, address });
             },
             0x8000...0xffff => {
                 std.log.warn("Attempting to write in cartridge ROM at address {}", .{address});
