@@ -4,6 +4,17 @@ const Allocator = std.mem.Allocator;
 
 const Cartridge = @import("Cartridge.zig").Cartridge;
 
+const PpuRegisters = struct {
+    ctrl: u8,
+    mask: u8,
+    status: u8,
+    oamAddress: u8,
+    oamData: u8,
+    scroll: u8,
+    address: u8,
+    data: u8,
+};
+
 const BusInitError = error{
     AllocationFailure,
     UnsupportedMapper,
@@ -14,6 +25,8 @@ pub const Bus = struct {
     const cpuRamSize = 0x800; // 2kB
     cpuRam: [Bus.cpuRamSize]u8,
 
+    ppuRegisters: PpuRegisters,
+
     lowBank: []const u8,
     highBank: []const u8,
 
@@ -23,6 +36,7 @@ pub const Bus = struct {
 
     pub fn init(cartridge: *const Cartridge) BusInitError!Self {
         const cpuRam = std.mem.zeroes([Bus.cpuRamSize]u8);
+        const ppuRegisters = std.mem.zeroes(PpuRegisters);
 
         var lowBank: []const u8 = undefined;
         var highBank: []const u8 = undefined;
@@ -31,6 +45,7 @@ pub const Bus = struct {
         return Self{
             .cartridge = cartridge,
             .cpuRam = cpuRam,
+            .ppuRegisters = ppuRegisters,
             .lowBank = lowBank,
             .highBank = highBank,
         };
