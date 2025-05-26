@@ -1,5 +1,5 @@
 const std = @import("std");
-const ArrayList = std.ArrayList;
+const ByteList = std.ArrayList(u8);
 const AnyReader = std.io.AnyReader;
 const Allocator = std.mem.Allocator;
 
@@ -16,8 +16,8 @@ fn str_in(x: []const u8, haystack: []const []const u8) bool {
     return false;
 }
 
-fn readBytes(reader: anytype, allocator: Allocator, size: usize) !ArrayList(u8) {
-    var bytes = try ArrayList(u8).initCapacity(allocator, size);
+fn readBytes(reader: anytype, allocator: Allocator, size: usize) !ByteList {
+    var bytes = try ByteList.initCapacity(allocator, size);
 
     // yes im doing it byte by byte, sue me
     for (0..size) |_| {
@@ -35,9 +35,9 @@ pub const Cartridge = struct {
     nPrgBanks: u8,
     nChrBanks: u8,
 
-    trainer: ?ArrayList(u8),
-    prg: ArrayList(u8),
-    chr: ArrayList(u8),
+    trainer: ?ByteList,
+    prg: ByteList,
+    chr: ByteList,
 
     videoFormat: VideoFormat,
     mapper: u8,
@@ -53,7 +53,7 @@ pub const Cartridge = struct {
         header.log();
 
         const hasTrainerData = header.hasTrainerData();
-        const trainer: ?ArrayList(u8) = switch (hasTrainerData) {
+        const trainer: ?ByteList = switch (hasTrainerData) {
             true => try readBytes(reader, allocator, Self.trainerSize),
             false => null,
         };
