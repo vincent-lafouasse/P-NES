@@ -66,10 +66,10 @@ pub const Bus = struct {
             return BusInitError.NoPrgDataSomehow;
         }
 
-        lowBank.* = cartridge.prg.items[0..0x2000];
+        lowBank.* = cartridge.prg.items[0..Cartridge.prgBankSize];
         highBank.* = switch (cartridge.nPrgBanks) {
             1 => lowBank.*,
-            else => cartridge.prg.items[0x2000..0x4000],
+            else => cartridge.prg.items[Cartridge.prgBankSize..(2 * Cartridge.prgBankSize)],
         };
     }
 
