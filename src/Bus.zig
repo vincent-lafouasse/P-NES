@@ -74,9 +74,42 @@ pub const Bus = struct {
     }
 
     pub fn read(self: *const Self, address: u16) u8 {
-        _ = self;
-        _ = address;
-        return 0x00;
+        switch (address) {
+            0x0000...0x1fff => {
+                const effectiveAddress = address % 0x800;
+                return self.cpuRam[effectiveAddress];
+            },
+            0x2000...0x3fff => {
+                const effectiveAddress = (address - 0x2000) % 8;
+                return self.ppuRegisters[effectiveAddress];
+            },
+            0x4000...0x4015 => {
+                const effectiveAddress = address - 0x4000;
+                return self.apuRegisters[effectiveAddress];
+            },
+            0x4016 => return self.joystick1,
+            0x4017 => return self.joystick1,
+            0x4018...0x401f => {
+                const effectiveAddress = address - 0x4018;
+                return self.apuExtension[effectiveAddress];
+            },
+            0x4020...0x5fff => {
+                const effectiveAddress = address - 0x4020;
+                return self.unmapped[effectiveAddress];
+            },
+            0x6000...0x7fff => {
+                const effectiveAddress = address - 0x6000;
+                return self.cartridgeRam[effectiveAddress];
+            },
+            0x8000...0xbfff => {
+                const effectiveAddress = address - 0x8000;
+                return self.lowBank[effectiveAddress];
+            },
+            0xc000...0xffff => {
+                const effectiveAddress = address - 0xc000;
+                return self.highBank[effectiveAddress];
+            },
+        }
     }
 
     pub fn write(self: *const Self, address: u16, value: u8) void {
