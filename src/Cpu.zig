@@ -43,6 +43,7 @@ pub const Cpu = struct {
     }
 
     pub fn start(self: *Self) void {
+        @breakpoint();
         while (true) {
             self.pc += self.execute();
         }

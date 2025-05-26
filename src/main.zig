@@ -9,6 +9,8 @@ pub fn main() !void {
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
 
+    @breakpoint();
+
     const cartridge = try Cartridge.load("roms/s9.nes", allocator);
     defer cartridge.free();
 
