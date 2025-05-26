@@ -20,8 +20,8 @@ pub fn main() !void {
 
     var bus = try Bus.init(&cartridge);
 
-    const cpu = Cpu.init(&bus);
-    _ = cpu;
+    var cpu = Cpu.init(&bus);
+    cpu.start();
 
     // const args = try std.process.ArgIterator.initWithAllocator(allocator);
     // defer args.deinit();

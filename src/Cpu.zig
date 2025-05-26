@@ -9,7 +9,7 @@ const CpuStatus = packed struct(u8) {
     d: bool,
     b: bool,
     unused: bool,
-    o: bool,
+    v: bool,
     n: bool,
 };
 
@@ -24,20 +24,71 @@ pub const Cpu = struct {
     p: CpuStatus,
 
     const Self = @This();
+    const resetAddress: u16 = 0xfffc;
 
     pub fn init(bus: *Bus) Self {
-        const resetAddress = 0xfffc;
-        const pc: u16 = readAddress(bus, resetAddress);
-
         return Self{
             .bus = bus,
-            .pc = pc,
+            .pc = Cpu.readAddress(bus, Cpu.resetAddress),
             .a = 0x00,
             .x = 0x00,
             .y = 0x00,
             .s = 0x00,
             .p = std.mem.zeroes(CpuStatus),
         };
+    }
+
+    pub fn reset(self: *Self) void {
+        self.pc = Cpu.readAddress(self.bus, Cpu.resetAddress);
+    }
+
+    pub fn start(self: *Self) void {
+        while (true) {
+            self.pc += self.execute();
+        }
+    }
+
+    fn execute(self: *Self) u8 {
+        const instruction = Instruction.decode(self.bus.read(self.pc));
+        const O = Instruction.Opcode;
+
+        switch (instruction.opcode) {
+            O.XXX => {
+                return instruction.duration.cycles;
+            },
+            O.CLC => {
+                self.p.c = false;
+                return instruction.duration.cycles;
+            },
+            O.CLD => {
+                self.p.d = false;
+                return instruction.duration.cycles;
+            },
+            O.CLI => {
+                self.p.i = false;
+                return instruction.duration.cycles;
+            },
+            O.CLV => {
+                self.p.v = false;
+                return instruction.duration.cycles;
+            },
+            O.SEC => {
+                self.p.c = true;
+                return instruction.duration.cycles;
+            },
+            O.SED => {
+                self.p.d = true;
+                return instruction.duration.cycles;
+            },
+            O.SEI => {
+                self.p.i = true;
+                return instruction.duration.cycles;
+            },
+            else => {
+                std.log.err("Unmapped instruction:\n{any}", .{instruction});
+                @panic("");
+            },
+        }
     }
 
     fn readAddress(bus: *const Bus, address: u16) u16 {
