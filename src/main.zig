@@ -9,7 +9,7 @@ pub fn main() !void {
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
 
-    @breakpoint();
+    //@breakpoint();
 
     const cartridge = try Cartridge.load("roms/s9.nes", allocator);
     defer cartridge.free();
@@ -17,8 +17,8 @@ pub fn main() !void {
     cartridge.log();
     try cartridge.dump_prg("data.prg");
 
-    //var disassembler = try Disassembler.init(cartridge);
-    //try disassembler.disassemble();
+    var disassembler = try Disassembler.init(cartridge);
+    try disassembler.disassemble();
 
     var bus = try Bus.init(&cartridge);
 

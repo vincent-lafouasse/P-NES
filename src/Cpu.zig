@@ -3,14 +3,22 @@ const Bus = @import("Bus.zig").Bus;
 const Instruction = @import("Instruction.zig").Instruction;
 
 const CpuStatus = packed struct(u8) {
-    c: bool,
-    z: bool,
-    i: bool,
-    d: bool,
-    b: bool,
+    carry: bool,
+    zero: bool,
+    interruptDisable: bool,
+    decimalMode: bool,
+    breakFlag: bool,
     unused: bool,
-    v: bool,
-    n: bool,
+    overflowFlag: bool,
+    negative: bool,
+
+    pub fn fromByte(byte: u8) CpuStatus {
+        return @bitCast(byte);
+    }
+
+    pub fn toByte(self: CpuStatus) u8 {
+        return @bitCast(self);
+    }
 };
 
 pub const Cpu = struct {
@@ -43,53 +51,67 @@ pub const Cpu = struct {
     }
 
     pub fn start(self: *Self) void {
-        @breakpoint();
+        //@breakpoint();
         while (true) {
-            self.pc += self.execute();
+            const cycles: u8 = self.execute();
+            _ = cycles;
         }
     }
 
     fn execute(self: *Self) u8 {
-        const instruction = Instruction.decode(self.bus.read(self.pc));
+        const data: u8 = self.bus.read(self.pc);
+        const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
+
+        var cycles: u8 = undefined;
 
         switch (instruction.opcode) {
             O.XXX => {
-                return instruction.duration.cycles;
+                std.log.debug("Ignoring opcode {x:02}", .{data});
+                cycles = instruction.duration.cycles;
             },
             O.CLC => {
-                self.p.c = false;
-                return instruction.duration.cycles;
+                self.p.carry = false;
+                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                cycles = instruction.duration.cycles;
             },
             O.CLD => {
-                self.p.d = false;
-                return instruction.duration.cycles;
+                self.p.decimalMode = false;
+                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                cycles = instruction.duration.cycles;
             },
             O.CLI => {
-                self.p.i = false;
-                return instruction.duration.cycles;
+                self.p.interruptDisable = false;
+                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                cycles = instruction.duration.cycles;
             },
             O.CLV => {
-                self.p.v = false;
-                return instruction.duration.cycles;
+                self.p.overflowFlag = false;
+                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                cycles = instruction.duration.cycles;
             },
             O.SEC => {
-                self.p.c = true;
-                return instruction.duration.cycles;
+                self.p.carry = true;
+                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                cycles = instruction.duration.cycles;
             },
             O.SED => {
-                self.p.d = true;
-                return instruction.duration.cycles;
+                self.p.decimalMode = true;
+                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                cycles = instruction.duration.cycles;
             },
             O.SEI => {
-                self.p.i = true;
-                return instruction.duration.cycles;
+                self.p.interruptDisable = true;
+                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                cycles = instruction.duration.cycles;
             },
             else => {
                 std.log.err("Unmapped instruction:\n{any}", .{instruction});
                 @panic("");
             },
         }
+        self.pc += instruction.size;
+        return cycles;
     }
 
     fn readAddress(bus: *const Bus, address: u16) u16 {
