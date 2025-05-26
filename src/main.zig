@@ -1,6 +1,7 @@
 const std = @import("std");
 const Cartridge = @import("Cartridge.zig").Cartridge;
 const Disassembler = @import("Disassembler.zig").Disassembler;
+const Bus = @import("Bus.zig").Bus;
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -15,6 +16,9 @@ pub fn main() !void {
 
     var disassembler = try Disassembler.init(cartridge);
     try disassembler.disassemble();
+
+    var bus = try Bus.init(allocator, &cartridge);
+    defer bus.free();
 
     // const args = try std.process.ArgIterator.initWithAllocator(allocator);
     // defer args.deinit();
