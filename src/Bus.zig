@@ -7,25 +7,48 @@ const Cartridge = @import("Cartridge.zig").Cartridge;
 const BusInitError = error{
     AllocationFailure,
     UnsupportedMapper,
+    NoPrgDataSomehow,
 };
 
 pub const Bus = struct {
     const cpuRamSize = 0x800; // 2kB
     cpuRam: [Bus.cpuRamSize]u8,
 
-    // lowBank: []const u8,
-    // highBank: []const u8,
+    lowBank: []const u8,
+    highBank: []const u8,
 
     cartridge: *const Cartridge,
 
     const Self = @This();
 
-    pub fn init(cartridge: *const Cartridge) Self {
+    pub fn init(cartridge: *const Cartridge) BusInitError!Self {
         const cpuRam = std.mem.zeroes([Bus.cpuRamSize]u8);
+
+        var lowBank: []const u8 = undefined;
+        var highBank: []const u8 = undefined;
+        try Bus.initPrgRom(cartridge, &lowBank, &highBank);
 
         return Self{
             .cartridge = cartridge,
             .cpuRam = cpuRam,
+            .lowBank = lowBank,
+            .highBank = highBank,
+        };
+    }
+
+    fn initPrgRom(cartridge: *const Cartridge, lowBank: *[]const u8, highBank: *[]const u8) BusInitError!void {
+        if (cartridge.mapper != 0) {
+            return BusInitError.UnsupportedMapper;
+        }
+
+        if (cartridge.nPrgBanks == 0) {
+            return BusInitError.NoPrgDataSomehow;
+        }
+
+        lowBank.* = cartridge.prg.items[0..0x2000];
+        highBank.* = switch (cartridge.nPrgBanks) {
+            1 => lowBank.*,
+            else => cartridge.prg.items[0x2000..0x4000],
         };
     }
 

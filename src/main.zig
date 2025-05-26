@@ -17,7 +17,7 @@ pub fn main() !void {
     var disassembler = try Disassembler.init(cartridge);
     try disassembler.disassemble();
 
-    var bus = Bus.init(&cartridge);
+    var bus = try Bus.init(&cartridge);
     bus.write(0x420, 0x69);
 
     // const args = try std.process.ArgIterator.initWithAllocator(allocator);
