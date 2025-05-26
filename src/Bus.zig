@@ -112,9 +112,41 @@ pub const Bus = struct {
         }
     }
 
-    pub fn write(self: *const Self, address: u16, value: u8) void {
-        _ = self;
-        _ = address;
-        _ = value;
+    pub fn write(self: *Self, address: u16, value: u8) void {
+        switch (address) {
+            0x0000...0x1fff => {
+                const effectiveAddress = address % 0x800;
+                self.cpuRam[effectiveAddress] = value;
+            },
+            0x2000...0x3fff => {
+                const effectiveAddress = (address - 0x2000) % 8;
+                self.ppuRegisters[effectiveAddress] = value;
+            },
+            0x4000...0x4015 => {
+                const effectiveAddress = address - 0x4000;
+                self.apuRegisters[effectiveAddress] = value;
+            },
+            0x4016 => {
+                self.joystick1 = value;
+            },
+            0x4017 => {
+                self.joystick1 = value;
+            },
+            0x4018...0x401f => {
+                const effectiveAddress = address - 0x4018;
+                self.apuExtension[effectiveAddress] = value;
+            },
+            0x4020...0x5fff => {
+                const effectiveAddress = address - 0x4020;
+                self.unmapped[effectiveAddress] = value;
+            },
+            0x6000...0x7fff => {
+                const effectiveAddress = address - 0x6000;
+                self.cartridgeRam[effectiveAddress] = value;
+            },
+            0x8000...0xffff => {
+                std.log.warn("Attempting to write in cartridge ROM at address {}", .{address});
+            },
+        }
     }
 };
