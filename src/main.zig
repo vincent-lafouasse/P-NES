@@ -11,7 +11,7 @@ pub fn main() !void {
 
     //@breakpoint();
 
-    const cartridge = try Cartridge.load("roms/s9.nes", allocator);
+    const cartridge = try Cartridge.load("roms/tutor.nes", allocator);
     defer cartridge.free();
 
     cartridge.log();

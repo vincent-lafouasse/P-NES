@@ -79,6 +79,22 @@ pub const Cpu = struct {
         std.log.debug("\x1b[31m ------ Executing instruction {s} in {s} mode \x1b[0m", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
 
         switch (instruction.opcode) {
+            O.JSR => {
+                // where to go
+                const adl: u16 = self.bus.read(self.pc + 1);
+                const adh: u16 = self.bus.read(self.pc + 2);
+                const jumpTo: u16 = adl + 256 * adh;
+                self.pc += 2;
+                // where to come back to
+                const pcl: u8 = self.bus.read(self.pc);
+                const pch: u8 = self.bus.read(self.pc + 1);
+                const comeBackTo: u16 = @as(u16, pcl) + 256 * @as(u16, pcl);
+                self.pushOntoStack(pch);
+                self.pushOntoStack(pcl);
+                std.log.debug("Caching address {x:04} on the stack", .{comeBackTo});
+                std.log.debug("Jumping to {x:04}", .{jumpTo});
+                self.pc = jumpTo;
+            },
             O.CLC => {
                 self.p.carry = false;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
