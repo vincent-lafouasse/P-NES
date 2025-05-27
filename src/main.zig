@@ -14,12 +14,19 @@ pub fn main() !void {
     const allocator = gpa.allocator();
     _ = allocator;
 
-    const maybe_display: ?*c.Display = c.XOpenDisplay(@as(?*u8, null));
-    _ = maybe_display;
+    const display: *c.Display = c.XOpenDisplay(@as(?*u8, null)) orelse {
+        std.log.err("Failed to create a connection to an X display", .{});
+        std.process.exit(1);
+    };
+    defer _ = c.XCloseDisplay(display);
 
-    const millis = 3000;
-    const nanos = millis * 1000 * 1000;
-    std.Thread.sleep(nanos);
+    const root_window: c.Window = c.XDefaultRootWindow(display);
+    const window: c.Window = c.XCreateSimpleWindow(display, root_window, 0, 0, 1600, 800, 0, 0, 0x202040);
+
+    _ = c.XMapWindow(display, window);
+    _ = c.XSync(display, 0);
+
+    while (true) {}
 
     ////@breakpoint();
 
