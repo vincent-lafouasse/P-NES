@@ -5,12 +5,14 @@ exe
 zig-out/
 .zig-cache/
 
-*.out
+*.o
+*.a
 
 .DS_Store
 *_local
 .cache
 
+*.out
 *.prg
 *.chr
 *.asm
