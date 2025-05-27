@@ -18,6 +18,12 @@ pub fn build(b: *std.Build) void {
 
     b.installArtifact(exe);
 
+    const raylib_dep = b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    exe.linkLibrary(raylib_dep.artifact("raylib"));
+
     // create internal run step that depend on exe install
     const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());

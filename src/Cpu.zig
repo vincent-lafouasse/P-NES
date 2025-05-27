@@ -76,7 +76,7 @@ pub const Cpu = struct {
         const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
 
-        std.log.debug("\x1b[31m ------ {x:04} Executing instruction {s} in {s} mode \x1b[0m", .{self.pc, @tagName(instruction.opcode), @tagName(instruction.mode) });
+        std.log.debug("\x1b[31m ------ {x:04} Executing instruction {s} in {s} mode \x1b[0m", .{ self.pc, @tagName(instruction.opcode), @tagName(instruction.mode) });
 
         switch (instruction.opcode) {
             O.JSR => {

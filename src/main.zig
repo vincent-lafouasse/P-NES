@@ -4,28 +4,38 @@ const Disassembler = @import("Disassembler.zig").Disassembler;
 const Bus = @import("Bus.zig").Bus;
 const Cpu = @import("Cpu.zig").Cpu;
 
+const raylib = @cImport({
+    @cInclude("raylib.h");
+});
+
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
+    _ = allocator;
 
-    const cartridge = try Cartridge.load("roms/s9/s9.nes", allocator);
-    defer cartridge.free();
+    const window = raylib.InitWindow(1600, 900, "P-NES");
+    defer window.CloseWindow();
 
-    cartridge.log();
-    try cartridge.dump_prg();
-    try cartridge.dump_chr();
+    while (true) {}
 
-    var disassembler = try Disassembler.init(cartridge, allocator);
-    defer disassembler.deinit();
-    try disassembler.disassemble();
+    //const cartridge = try Cartridge.load("roms/tutor.nes", allocator);
+    //defer cartridge.free();
 
-    var bus = try Bus.init(&cartridge);
+    //cartridge.log();
+    //try cartridge.dump_prg();
+    //try cartridge.dump_chr();
 
-    var cpu = Cpu.init(&bus);
-    cpu.start();
+    //var disassembler = try Disassembler.init(cartridge, allocator);
+    //defer disassembler.deinit();
+    //try disassembler.disassemble();
 
-    // const args = try std.process.ArgIterator.initWithAllocator(allocator);
-    // defer args.deinit();
-    // std.log.info("{any}", .{args});
+    //var bus = try Bus.init(&cartridge);
+
+    //var cpu = Cpu.init(&bus);
+    //cpu.start();
+
+    //// const args = try std.process.ArgIterator.initWithAllocator(allocator);
+    //// defer args.deinit();
+    //// std.log.info("{any}", .{args});
 }
