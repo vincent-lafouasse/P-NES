@@ -32,6 +32,7 @@ pub const Cartridge = struct {
     pub const trainerSize: usize = 512;
     pub const prgBankSize: usize = 16 * 1024;
     pub const chrBankSize: usize = 8 * 1024;
+    name: []const u8,
     nPrgBanks: u8,
     nChrBanks: u8,
 
@@ -45,6 +46,13 @@ pub const Cartridge = struct {
     const Self = @This();
 
     pub fn load(path: []const u8, allocator: std.mem.Allocator) !Self {
+        var start: usize = 0;
+        while (std.ascii.indexOfIgnoreCase(path[start..], "/")) |index| {
+            start = index + 1;
+        }
+        const name: []const u8 = if (std.ascii.indexOfIgnoreCase(path[start..], ".nes")) |index| name: {
+            break :name path[start .. start + index];
+        } else path;
         const rom = try std.fs.cwd().openFile(path, .{});
         defer rom.close();
         const reader = rom.reader();
@@ -61,6 +69,7 @@ pub const Cartridge = struct {
         const chr = try readBytes(reader, allocator, header.nChrBanks * Self.chrBankSize);
 
         return Self{
+            .name = name,
             .nPrgBanks = header.nPrgBanks,
             .nChrBanks = header.nChrBanks,
             .trainer = trainer,
@@ -86,6 +95,8 @@ pub const Cartridge = struct {
                 log_fn("    {s:<8}:\t size {any} aka {x}", .{ "CHR Banks", self.chr.items.len, self.chr.items.len });
             } else if (str_eq(f.name, "prg")) {
                 log_fn("    {s:<8}:\t size {any} aka {x}", .{ "PRG Banks", self.prg.items.len, self.prg.items.len });
+            } else if (str_eq(f.name, "name")) {
+                log_fn("    {s:<8}:\t {s}", .{ "name", self.name });
             } else {
                 log_fn("    {s:<8}:\t {any}", .{ f.name, @as(f.type, @field(self, f.name)) });
             }
