@@ -111,6 +111,30 @@ pub const Cpu = struct {
             O.STX => {
                 self.stx(instruction.mode);
             },
+            O.TAX => {
+                std.log.debug("Writing {x:02} from A to X", .{self.a});
+                self.x = self.a;
+            },
+            O.TAY => {
+                std.log.debug("Writing {x:02} from A to Y", .{self.a});
+                self.y = self.a;
+            },
+            O.TSX => {
+                std.log.debug("Writing {x:02} from S to X", .{self.s});
+                self.x = self.s;
+            },
+            O.TXA => {
+                std.log.debug("Writing {x:02} from X to A", .{self.x});
+                self.a = self.x;
+            },
+            O.TXS => {
+                std.log.debug("Writing {x:02} from X to S", .{self.x});
+                self.s = self.x;
+            },
+            O.TYA => {
+                std.log.debug("Writing {x:02} from Y to A", .{self.y});
+                self.a = self.y;
+            },
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
             },
