@@ -1,6 +1,7 @@
 const std = @import("std");
 const Cartridge = @import("Cartridge.zig").Cartridge;
 const Instruction = @import("Instruction.zig").Instruction;
+const Allocator = std.mem.Allocator;
 
 const DisassemblyError = error{
     UnsupportedMapper,
@@ -13,10 +14,12 @@ pub const Disassembler = struct {
     highBank: []const u8,
     head: u16,
     cartridge: Cartridge,
+    linesEncountered: std.AutoHashMap(u16, void),
+    jumpEncountered: std.AutoHashMap(u16, void),
 
     const Self = @This();
 
-    pub fn init(cart: Cartridge) DisassemblyError!Self {
+    pub fn init(cart: Cartridge, allocator: Allocator) DisassemblyError!Self {
         if (cart.mapper != 0) {
             return DisassemblyError.UnsupportedMapper;
         }
@@ -24,6 +27,9 @@ pub const Disassembler = struct {
         if (cart.nPrgBanks == 0) {
             return DisassemblyError.NoPrgDataSomehow;
         }
+
+        const linesEncountered = std.AutoHashMap(u16, void).init(allocator);
+        const jumpEncountered = std.AutoHashMap(u16, void).init(allocator);
 
         const bankSize = Cartridge.prgBankSize;
         const lowBank = cart.prg.items[0..bankSize];
@@ -37,6 +43,8 @@ pub const Disassembler = struct {
             .highBank = highBank,
             .cartridge = undefined,
             .head = undefined,
+            .linesEncountered = undefined,
+            .jumpEncountered = undefined,
         };
 
         const lowByte: u16 = out.at(0xFFFC);
@@ -50,7 +58,14 @@ pub const Disassembler = struct {
             .highBank = highBank,
             .head = head,
             .cartridge = cart,
+            .linesEncountered = linesEncountered,
+            .jumpEncountered = jumpEncountered,
         };
+    }
+
+    pub fn deinit(self: *Self) void {
+        self.linesEncountered.deinit();
+        self.jumpEncountered.deinit();
     }
 
     pub fn disassemble(self: *Self) !void {
@@ -68,6 +83,7 @@ pub const Disassembler = struct {
         while (true) {
             const instruction = Instruction.decode(self.at(self.head));
             const sz = instruction.size;
+            try self.linesEncountered.put(self.head, {});
 
             const op1: ?u8 = if (sz >= 2) self.at(self.head + 1) else null;
             const op2: ?u8 = if (sz == 3) self.at(self.head + 1) else null;
@@ -84,10 +100,33 @@ pub const Disassembler = struct {
             try instruction.write(writer, op1, op2);
             try writer.print("\n", .{});
 
+            try self.maybeLogJump(instruction, op1, op2);
+
             self.head += instruction.size;
 
             if (instruction.opcode == Instruction.Opcode.BRK) {
                 break;
+            }
+        }
+    }
+
+    fn maybeLogJump(self: *Self, instruction: Instruction, op1: ?u8, op2: ?u8) !void {
+        //const M = Instruction.Mode;
+        const O = Instruction.Opcode;
+
+        //const mode = instruction.mode;
+        const opcode = instruction.opcode;
+
+        _ = op2;
+
+        if (opcode == O.BCC or opcode == O.BCS) {
+            const signed_offset: i8 = @bitCast(op1.?);
+            if (signed_offset >= 0) {
+                const offset: u16 = @intCast(signed_offset);
+                try self.jumpEncountered.put(self.head + offset, {});
+            } else {
+                const offset: u16 = @intCast(-signed_offset);
+                try self.jumpEncountered.put(self.head - offset, {});
             }
         }
     }

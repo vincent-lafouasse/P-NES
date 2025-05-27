@@ -18,7 +18,8 @@ pub fn main() !void {
     try cartridge.dump_prg();
     try cartridge.dump_chr();
 
-    var disassembler = try Disassembler.init(cartridge);
+    var disassembler = try Disassembler.init(cartridge, allocator);
+    defer disassembler.deinit();
     try disassembler.disassemble();
 
     var bus = try Bus.init(&cartridge);
