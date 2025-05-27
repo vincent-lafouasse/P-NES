@@ -41,9 +41,22 @@ pub const Cpu = struct {
             .a = 0x00,
             .x = 0x00,
             .y = 0x00,
-            .s = 0x00,
+            .s = 0xff,
             .p = std.mem.zeroes(CpuStatus),
         };
+    }
+
+    fn pushOntoStack(self: *Self, value: u8) void {
+        const actualAddress: u16 = 0x0100 + @as(u16, self.s);
+        self.bus.write(actualAddress, value);
+        self.s -= 1;
+    }
+
+    fn popFromStack(self: *Self) u8 {
+        const actualAddress: u16 = 0x0100 + @as(u16, self.s);
+        const value = self.bus.read(actualAddress + 1);
+        self.s += 1;
+        return value;
     }
 
     pub fn reset(self: *Self) void {
