@@ -114,18 +114,22 @@ pub const Cpu = struct {
             O.TAX => {
                 std.log.debug("Writing {x:02} from A to X", .{self.a});
                 self.x = self.a;
+                self.updateStatusOnArithmetic(self.x);
             },
             O.TAY => {
                 std.log.debug("Writing {x:02} from A to Y", .{self.a});
                 self.y = self.a;
+                self.updateStatusOnArithmetic(self.y);
             },
             O.TSX => {
                 std.log.debug("Writing {x:02} from S to X", .{self.s});
                 self.x = self.s;
+                self.updateStatusOnArithmetic(self.x);
             },
             O.TXA => {
                 std.log.debug("Writing {x:02} from X to A", .{self.x});
                 self.a = self.x;
+                self.updateStatusOnArithmetic(self.a);
             },
             O.TXS => {
                 std.log.debug("Writing {x:02} from X to S", .{self.x});
@@ -134,6 +138,27 @@ pub const Cpu = struct {
             O.TYA => {
                 std.log.debug("Writing {x:02} from Y to A", .{self.y});
                 self.a = self.y;
+                self.updateStatusOnArithmetic(self.a);
+            },
+            O.INX => {
+                self.x +%= 1;
+                std.log.debug("Writing {x:02} in X", .{self.x});
+                self.updateStatusOnArithmetic(self.x);
+            },
+            O.INY => {
+                self.y +%= 1;
+                std.log.debug("Writing {x:02} in Y", .{self.y});
+                self.updateStatusOnArithmetic(self.y);
+            },
+            O.DEX => {
+                self.x -%= 1;
+                std.log.debug("Writing {x:02} in X", .{self.x});
+                self.updateStatusOnArithmetic(self.x);
+            },
+            O.DEY => {
+                self.y -%= 1;
+                std.log.debug("Writing {x:02} in Y", .{self.y});
+                self.updateStatusOnArithmetic(self.y);
             },
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
@@ -148,6 +173,8 @@ pub const Cpu = struct {
 
     fn lda(self: *Self, addressingMode: Instruction.AddressingMode) void {
         const M = Instruction.AddressingMode;
+
+        defer self.updateStatusOnArithmetic(self.a);
 
         if (addressingMode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
@@ -165,6 +192,8 @@ pub const Cpu = struct {
     fn ldx(self: *Self, addressingMode: Instruction.AddressingMode) void {
         const M = Instruction.AddressingMode;
 
+        defer self.updateStatusOnArithmetic(self.x);
+
         if (addressingMode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
             std.log.debug("Writing {x:02} in register X", .{value});
@@ -180,6 +209,8 @@ pub const Cpu = struct {
 
     fn ldy(self: *Self, addressingMode: Instruction.AddressingMode) void {
         const M = Instruction.AddressingMode;
+
+        defer self.updateStatusOnArithmetic(self.y);
 
         if (addressingMode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
@@ -254,6 +285,17 @@ pub const Cpu = struct {
             },
             M.Relative, M.Accumulator, M.Immediate, M.Implicit => unreachable, // non-sensical
         }
+    }
+
+    fn updateStatusOnArithmetic(self: *Self, register: u8) void {
+        defer if (register == 0) {
+            self.p.zero = true;
+            std.log.debug("Setting zero flag", .{});
+        };
+        defer if ((register >> 7) != 0) {
+            self.p.negative = true;
+            std.log.debug("Setting negative flag", .{});
+        };
     }
 
     fn readAddress(bus: *const Bus, address: u16) u16 {
