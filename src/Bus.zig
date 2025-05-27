@@ -3,6 +3,11 @@ const ByteList = std.ArrayList(u8);
 const Allocator = std.mem.Allocator;
 const log = std.log.debug;
 
+const inRed = "\x1b[31m";
+const inBlue = "\x1b[0;34m";
+const inPurple = "\x1b[0;35m";
+const resetFormatting = "\x1b[0m";
+
 const Cartridge = @import("Cartridge.zig").Cartridge;
 
 const BusInitError = error{
@@ -85,35 +90,35 @@ pub const Bus = struct {
             0x2000...0x3fff => {
                 const effectiveAddress = (address - 0x2000) % 8;
                 const value: u8 = self.ppuRegisters[effectiveAddress];
-                log("reading {x:02} from PPU registers at address {x:04}", .{ value, address });
+                log("{s}reading {x:02} from PPU registers at address {x:04}{s}", .{ inBlue, value, address, resetFormatting });
                 return value;
             },
             0x4000...0x4015 => {
                 const effectiveAddress = address - 0x4000;
                 const value: u8 = self.apuRegisters[effectiveAddress];
-                log("reading {x:02} from APU registers at address {x:04}", .{ value, address });
+                log("{s}reading {x:02} from APU registers at address {x:04}{s}", .{ inBlue, value, address, resetFormatting });
                 return value;
             },
             0x4016 => {
                 const value: u8 = self.joystick1;
-                log("reading {x:02} from Joystick 1 at address {x:04}", .{ value, address });
+                log("{s}reading {x:02} from Joystick 1 at address {x:04}{s}", .{ inBlue, value, address, resetFormatting });
                 return value;
             },
             0x4017 => {
                 const value: u8 = self.joystick2;
-                log("reading {x:02} from Joystick 2 at address {x:04}", .{ value, address });
+                log("{s}reading {x:02} from Joystick 2 at address {x:04}{s}", .{ inBlue, value, address, resetFormatting });
                 return value;
             },
             0x4018...0x401f => {
                 const effectiveAddress = address - 0x4018;
                 const value: u8 = self.apuExtension[effectiveAddress];
-                log("reading {x:02} from APU extension at address {x:04}", .{ value, address });
+                log("{s}reading {x:02} from APU extension at address {x:04}{s}", .{ inBlue, value, address, resetFormatting });
                 return value;
             },
             0x4020...0x5fff => {
                 const effectiveAddress = address - 0x4020;
                 const value: u8 = self.unmapped[effectiveAddress];
-                log("reading {x:02} from unmapped memory at address {x:04}", .{ value, address });
+                log("{s}reading {x:02} from unmapped memory at address {x:04}{s}", .{ inBlue, value, address, resetFormatting });
                 return value;
             },
             0x6000...0x7fff => {
@@ -147,30 +152,30 @@ pub const Bus = struct {
             0x2000...0x3fff => {
                 const effectiveAddress = (address - 0x2000) % 8;
                 self.ppuRegisters[effectiveAddress] = value;
-                log("writing {x:02} in PPU registers at address {x:04}", .{ value, address });
+                log("{s}writing {x:02} in PPU registers at address {x:04}{s}", .{ inPurple, value, address, resetFormatting });
             },
             0x4000...0x4015 => {
                 const effectiveAddress = address - 0x4000;
                 self.apuRegisters[effectiveAddress] = value;
-                log("writing {x:02} in APU registers at address {x:04}", .{ value, address });
+                log("{s}writing {x:02} in APU registers at address {x:04}{s}", .{ inPurple, value, address, resetFormatting });
             },
             0x4016 => {
                 self.joystick1 = value;
-                log("writing {x:02} in Joystick 1 at address {x:04}", .{ value, address });
+                log("{s}writing {x:02} in Joystick 1 at address {x:04}{s}", .{ inPurple, value, address, resetFormatting });
             },
             0x4017 => {
                 self.joystick1 = value;
-                log("writing {x:02} in Joystick 2 at address {x:04}", .{ value, address });
+                log("{s}writing {x:02} in Joystick 2 at address {x:04}{s}", .{ inPurple, value, address, resetFormatting });
             },
             0x4018...0x401f => {
                 const effectiveAddress = address - 0x4018;
                 self.apuExtension[effectiveAddress] = value;
-                log("writing {x:02} in APU extension at address {x:04}", .{ value, address });
+                log("{s}writing {x:02} in APU extension at address {x:04}{s}", .{ inPurple, value, address, resetFormatting });
             },
             0x4020...0x5fff => {
                 const effectiveAddress = address - 0x4020;
                 self.unmapped[effectiveAddress] = value;
-                log("writing {x:02} in unmapped memory at address {x:04}", .{ value, address });
+                log("{s}writing {x:02} in unmapped memory at address {x:04}{s}", .{ inPurple, value, address, resetFormatting });
             },
             0x6000...0x7fff => {
                 const effectiveAddress = address - 0x6000;
