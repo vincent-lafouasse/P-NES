@@ -62,7 +62,7 @@ pub const Cpu = struct {
         const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
 
-        std.log.debug("Executing instruction {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
+        std.log.debug("-- Executing instruction {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
 
         switch (instruction.opcode) {
             O.XXX => {
@@ -100,7 +100,7 @@ pub const Cpu = struct {
                 self.lda(instruction.mode);
             },
             else => {
-                std.log.err("Unmapped instruction:\n{any}", .{instruction});
+                std.log.debug("-- Unmapped instruction: {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
                 @panic("");
             },
         }
