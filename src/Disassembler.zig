@@ -12,6 +12,7 @@ pub const Disassembler = struct {
     lowBank: []const u8,
     highBank: []const u8,
     head: u16,
+    cartridge: Cartridge,
 
     const Self = @This();
 
@@ -34,6 +35,7 @@ pub const Disassembler = struct {
         const out = Self{
             .lowBank = lowBank,
             .highBank = highBank,
+            .cartridge = undefined,
             .head = undefined,
         };
 
@@ -47,11 +49,16 @@ pub const Disassembler = struct {
             .lowBank = lowBank,
             .highBank = highBank,
             .head = head,
+            .cartridge = cart,
         };
     }
 
     pub fn disassemble(self: *Self) !void {
-        const path = "data.asm";
+        const bufferSize = 100;
+        var buffer: [bufferSize]u8 = [_]u8{0} ** bufferSize;
+        const maybe_truncated_name = self.cartridge.name[0..@min(self.cartridge.name.len, bufferSize - 4)];
+        const path = std.fmt.bufPrint(&buffer, "{s}.asm", .{maybe_truncated_name}) catch unreachable;
+
         std.log.info("Writing asm to {s}", .{path});
 
         const outfile = try std.fs.cwd().createFile(path, .{});

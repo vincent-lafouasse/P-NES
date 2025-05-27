@@ -105,16 +105,11 @@ pub const Cartridge = struct {
     }
 
     pub fn dump_prg(self: Self) !void {
-        // const bufferSize = 100;
-        // var path: [bufferSize]u8 = [_]u8{0} ** bufferSize;
-        // _ = std.fmt.bufPrint(&path, "{s}.prg", .{self.name}) catch {
-        //     path[bufferSize - 4] = '.';
-        //     path[bufferSize - 3] = 'p';
-        //     path[bufferSize - 2] = 'r';
-        //     path[bufferSize - 1] = 'g';
-        // };
+        const bufferSize = 100;
+        var buffer: [bufferSize]u8 = [_]u8{0} ** bufferSize;
+        const maybe_truncated_name = self.name[0..@min(self.name.len, bufferSize - 4)];
+        const path = std.fmt.bufPrint(&buffer, "{s}.prg", .{maybe_truncated_name}) catch unreachable;
 
-        const path = "data.prg";
         std.log.info("Writing prg data to {s}", .{path});
 
         const outfile = try std.fs.cwd().createFile(path, .{});
@@ -127,16 +122,11 @@ pub const Cartridge = struct {
     }
 
     pub fn dump_chr(self: Self) !void {
-        // const bufferSize = 100;
-        // var path: [bufferSize]u8 = [_]u8{0} ** bufferSize;
-        // _ = std.fmt.bufPrint(&path, "{s}.chr", .{self.name}) catch {
-        //     path[bufferSize - 4] = '.';
-        //     path[bufferSize - 3] = 'c';
-        //     path[bufferSize - 2] = 'h';
-        //     path[bufferSize - 1] = 'r';
-        // };
+        const bufferSize = 100;
+        var buffer: [bufferSize]u8 = [_]u8{0} ** bufferSize;
+        const maybe_truncated_name = self.name[0..@min(self.name.len, bufferSize - 4)];
+        const path = std.fmt.bufPrint(&buffer, "{s}.chr", .{maybe_truncated_name}) catch unreachable;
 
-        const path = "data.chr";
         std.log.info("Writing chr data to {s}", .{path});
 
         const outfile = try std.fs.cwd().createFile(path, .{});
