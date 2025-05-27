@@ -4,29 +4,13 @@ const Disassembler = @import("Disassembler.zig").Disassembler;
 const Bus = @import("Bus.zig").Bus;
 const Cpu = @import("Cpu.zig").Cpu;
 
-const c = @cImport({
-    @cInclude("X11/Xlib.h");
-});
+const mlx = @import("mlx");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
     _ = allocator;
-
-    const display: *c.Display = c.XOpenDisplay(@as(?*u8, null)) orelse {
-        std.log.err("Failed to create a connection to an X display", .{});
-        std.process.exit(1);
-    };
-    defer _ = c.XCloseDisplay(display);
-
-    const root_window: c.Window = c.XDefaultRootWindow(display);
-    const window: c.Window = c.XCreateSimpleWindow(display, root_window, 0, 0, 1600, 800, 0, 0, 0x202040);
-
-    _ = c.XMapWindow(display, window);
-    _ = c.XSync(display, 0);
-
-    while (true) {}
 
     ////@breakpoint();
 
