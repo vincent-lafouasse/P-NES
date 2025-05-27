@@ -6,7 +6,12 @@
 
     .minimum_zig_version = "0.14.0",
 
-    .dependencies = .{},
+    .dependencies = .{
+        .raylib = .{
+            .url = "git+https://github.com/raysan5/raylib#bbeade636cd8c90e18b7e9e841c20b5f8bd15d94",
+            .hash = "raylib-5.5.0-whq8uGZGzQDi3_L7tJzgEINoZN-HwmOs0zkkc2g7ysIZ",
+        },
+    },
 
     .paths = .{
         "build.zig",

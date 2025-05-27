@@ -16,31 +16,13 @@ pub fn build(b: *std.Build) void {
         .root_module = main_mod,
     });
 
-    exe.linkSystemLibrary("X11");
-    exe.linkSystemLibrary("Xext");
-    exe.linkLibC();
-
     b.installArtifact(exe);
 
-    const raylib = b.addStaticLibrary(.{
-        .name = "raylib",
+    const raylib_dep = b.dependency("raylib", .{
         .target = target,
         .optimize = optimize,
     });
-
-    raylib.addCSourceFiles(.{ .files = &.{
-        "lib/raylib/src/rcore.c",
-        "lib/raylib/src/rshapes.c",
-        "lib/raylib/src/rtextures.c",
-        "lib/raylib/src/rtext.c",
-        "lib/raylib/src/rmodels.c",
-        "lib/raylib/src/utils.c",
-        "lib/raylib/src/raudio.c",
-    }, .flags = &.{"-fno-sanitize=undefined"} });
-
-    raylib.linkLibC();
-    raylib.addIncludePath(b.path("lib/raylib/src"));
-    raylib.addIncludePath(b.path("lib/raylib/src/external/glfw/include/"));
+    exe.linkLibrary(raylib_dep.artifact("raylib"));
 
     // create internal run step that depend on exe install
     const run_cmd = b.addRunArtifact(exe);
