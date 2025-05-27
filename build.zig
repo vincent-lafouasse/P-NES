@@ -16,6 +16,10 @@ pub fn build(b: *std.Build) void {
         .root_module = main_mod,
     });
 
+    exe.linkSystemLibrary("X11");
+    exe.linkSystemLibrary("Xext");
+    exe.linkLibC();
+
     b.installArtifact(exe);
 
     // create internal run step that depend on exe install
