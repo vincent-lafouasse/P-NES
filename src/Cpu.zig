@@ -163,6 +163,26 @@ pub const Cpu = struct {
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
             },
+            O.BNE => {
+                switch (self.p.zero) {
+                    false => {
+                        const op: u8 = self.bus.read(self.pc + 1);
+                        const offset: i8 = @bitCast(op);
+                        std.log.debug("Z is cleared, branch by {}", .{offset});
+                        if (offset >= 0) {
+                            const offset_also: u8 = @intCast(offset);
+                            self.pc += offset_also;
+                        } else {
+                            const offset_also: u8 = @intCast(-offset);
+                            self.pc -= offset_also;
+                        }
+                        std.log.debug("Branching to {x:04}", .{self.pc});
+                    },
+                    true => {
+                        std.log.debug("Z is set, no branch", .{});
+                    },
+                }
+            },
             else => {
                 std.log.debug("-- Unmapped instruction: {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
                 @panic("");
