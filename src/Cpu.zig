@@ -53,57 +53,51 @@ pub const Cpu = struct {
     pub fn start(self: *Self) void {
         //@breakpoint();
         while (true) {
-            const cycles: u8 = self.execute();
-            _ = cycles;
+            self.execute();
         }
     }
 
-    fn execute(self: *Self) u8 {
+    fn execute(self: *Self) void {
         const data: u8 = self.bus.read(self.pc);
         const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
 
-        var cycles: u8 = undefined;
+        std.log.debug("Executing instruction {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
 
         switch (instruction.opcode) {
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
-                cycles = instruction.duration.cycles;
             },
             O.CLC => {
                 self.p.carry = false;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
-                cycles = instruction.duration.cycles;
             },
             O.CLD => {
                 self.p.decimalMode = false;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
-                cycles = instruction.duration.cycles;
             },
             O.CLI => {
                 self.p.interruptDisable = false;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
-                cycles = instruction.duration.cycles;
             },
             O.CLV => {
                 self.p.overflowFlag = false;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
-                cycles = instruction.duration.cycles;
             },
             O.SEC => {
                 self.p.carry = true;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
-                cycles = instruction.duration.cycles;
             },
             O.SED => {
                 self.p.decimalMode = true;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
-                cycles = instruction.duration.cycles;
             },
             O.SEI => {
                 self.p.interruptDisable = true;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
-                cycles = instruction.duration.cycles;
+            },
+            O.LDA => {
+                self.lda(instruction.mode);
             },
             else => {
                 std.log.err("Unmapped instruction:\n{any}", .{instruction});
@@ -111,7 +105,54 @@ pub const Cpu = struct {
             },
         }
         self.pc += instruction.size;
-        return cycles;
+    }
+
+    fn lda(self: *Self, addressingMode: Instruction.AddressingMode) void {
+        const M = Instruction.AddressingMode;
+
+        const op1: u8 = self.bus.read(self.pc + 1);
+
+        if (addressingMode == M.Immediate) {
+            std.log.debug("Writing {x:02} in accumulator", .{op1});
+        }
+
+        const address: u16 = switch (addressingMode) {
+            M.ZeroPage => op1,
+            M.ZeroPage_XIndexed => op1 +% self.x,
+            M.ZeroPage_YIndexed => op1 +% self.y,
+            M.Absolute, M.Absolute_XIndexed, M.Absolute_YIndexed => out: {
+                const lowByte: u16 = op1;
+                const highByte: u16 = self.bus.read(self.pc + 2);
+                const a: u16 = lowByte + 256 * highByte;
+
+                switch (addressingMode) {
+                    M.Absolute => break :out a,
+                    M.Absolute_XIndexed => break :out a + self.y,
+                    M.Absolute_YIndexed => break :out a + self.x,
+                    else => unreachable,
+                }
+            },
+            M.XIndexed_Indirect => out: {
+                const lookupAddress: u8 = op1 +% self.x;
+
+                const lowByte: u16 = self.bus.read(lookupAddress);
+                const highByte: u16 = self.bus.read(lookupAddress + 1);
+                break :out lowByte + 256 * highByte;
+            },
+            M.Indirect_YIndexed => out: {
+                const lookupAddress: u8 = op1;
+
+                const lowByte: u16 = self.bus.read(lookupAddress);
+                const highByte: u16 = self.bus.read(lookupAddress + 1);
+                break :out lowByte + 256 * highByte + @as(u16, self.y);
+            },
+            M.Immediate => unreachable,
+            else => unreachable,
+        };
+
+        const value: u8 = self.bus.read(address);
+        std.log.debug("Writing {x:02} in accumulator from address {x:04}", .{ value, address });
+        self.a = value;
     }
 
     fn readAddress(bus: *const Bus, address: u16) u16 {
