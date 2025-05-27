@@ -61,6 +61,7 @@ pub const Cpu = struct {
 
     pub fn reset(self: *Self) void {
         self.pc = Cpu.readAddress(self.bus, Cpu.resetAddress);
+        self.s = 0xff;
     }
 
     pub fn start(self: *Self) void {
