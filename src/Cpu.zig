@@ -99,12 +99,84 @@ pub const Cpu = struct {
             O.LDA => {
                 self.lda(instruction.mode);
             },
+            O.LDY => {
+                self.ldy(instruction.mode);
+            },
+            O.LDX => {
+                self.ldx(instruction.mode);
+            },
             else => {
                 std.log.debug("-- Unmapped instruction: {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
                 @panic("");
             },
         }
         self.pc += instruction.size;
+    }
+
+    fn ldx(self: *Self, addressingMode: Instruction.AddressingMode) void {
+        const M = Instruction.AddressingMode;
+
+        const op1: u8 = self.bus.read(self.pc + 1);
+
+        if (addressingMode == M.Immediate) {
+            std.log.debug("Writing {x:02} in register X", .{op1});
+            return;
+        }
+
+        const address: u16 = switch (addressingMode) {
+            M.ZeroPage => op1,
+            M.ZeroPage_YIndexed => op1 +% self.y,
+            M.Absolute, M.Absolute_YIndexed => out: {
+                const lowByte: u16 = op1;
+                const highByte: u16 = self.bus.read(self.pc + 2);
+                const a: u16 = lowByte + 256 * highByte;
+
+                switch (addressingMode) {
+                    M.Absolute => break :out a,
+                    M.Absolute_XIndexed => break :out a + self.y,
+                    else => unreachable,
+                }
+            },
+            M.Immediate => unreachable,
+            else => unreachable,
+        };
+
+        const value: u8 = self.bus.read(address);
+        std.log.debug("Writing {x:02} in register X from address {x:04}", .{ value, address });
+        self.x = value;
+    }
+
+    fn ldy(self: *Self, addressingMode: Instruction.AddressingMode) void {
+        const M = Instruction.AddressingMode;
+
+        const op1: u8 = self.bus.read(self.pc + 1);
+
+        if (addressingMode == M.Immediate) {
+            std.log.debug("Writing {x:02} in register Y", .{op1});
+            return;
+        }
+
+        const address: u16 = switch (addressingMode) {
+            M.ZeroPage => op1,
+            M.ZeroPage_XIndexed => op1 +% self.x,
+            M.Absolute, M.Absolute_XIndexed => out: {
+                const lowByte: u16 = op1;
+                const highByte: u16 = self.bus.read(self.pc + 2);
+                const a: u16 = lowByte + 256 * highByte;
+
+                switch (addressingMode) {
+                    M.Absolute => break :out a,
+                    M.Absolute_XIndexed => break :out a + self.y,
+                    else => unreachable,
+                }
+            },
+            M.Immediate => unreachable,
+            else => unreachable,
+        };
+
+        const value: u8 = self.bus.read(address);
+        std.log.debug("Writing {x:02} in register Y from address {x:04}", .{ value, address });
+        self.y = value;
     }
 
     fn lda(self: *Self, addressingMode: Instruction.AddressingMode) void {
@@ -114,6 +186,7 @@ pub const Cpu = struct {
 
         if (addressingMode == M.Immediate) {
             std.log.debug("Writing {x:02} in accumulator", .{op1});
+            return;
         }
 
         const address: u16 = switch (addressingMode) {
