@@ -104,7 +104,19 @@ pub const Cartridge = struct {
         log_fn("}}\n", .{});
     }
 
-    pub fn dump_prg(self: Self, path: []const u8) !void {
+    pub fn dump_prg(self: Self) !void {
+        // const bufferSize = 100;
+        // var path: [bufferSize]u8 = [_]u8{0} ** bufferSize;
+        // _ = std.fmt.bufPrint(&path, "{s}.prg", .{self.name}) catch {
+        //     path[bufferSize - 4] = '.';
+        //     path[bufferSize - 3] = 'p';
+        //     path[bufferSize - 2] = 'r';
+        //     path[bufferSize - 1] = 'g';
+        // };
+
+        const path = "data.prg";
+        std.log.info("Writing prg data to {s}", .{path});
+
         const outfile = try std.fs.cwd().createFile(path, .{});
         defer outfile.close();
         const writer = outfile.writer();
@@ -114,7 +126,19 @@ pub const Cartridge = struct {
         }
     }
 
-    pub fn dump_chr(self: Self, path: []const u8) !void {
+    pub fn dump_chr(self: Self) !void {
+        // const bufferSize = 100;
+        // var path: [bufferSize]u8 = [_]u8{0} ** bufferSize;
+        // _ = std.fmt.bufPrint(&path, "{s}.chr", .{self.name}) catch {
+        //     path[bufferSize - 4] = '.';
+        //     path[bufferSize - 3] = 'c';
+        //     path[bufferSize - 2] = 'h';
+        //     path[bufferSize - 1] = 'r';
+        // };
+
+        const path = "data.chr";
+        std.log.info("Writing chr data to {s}", .{path});
+
         const outfile = try std.fs.cwd().createFile(path, .{});
         defer outfile.close();
         const writer = outfile.writer();

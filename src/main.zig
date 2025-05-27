@@ -15,8 +15,8 @@ pub fn main() !void {
     defer cartridge.free();
 
     cartridge.log();
-    try cartridge.dump_prg("data.prg");
-    try cartridge.dump_chr("data.chr");
+    try cartridge.dump_prg();
+    try cartridge.dump_chr();
 
     var disassembler = try Disassembler.init(cartridge);
     try disassembler.disassemble();
