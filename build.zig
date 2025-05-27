@@ -22,6 +22,26 @@ pub fn build(b: *std.Build) void {
 
     b.installArtifact(exe);
 
+    const raylib = b.addStaticLibrary(.{
+        .name = "raylib",
+        .target = target,
+        .optimize = optimize,
+    });
+
+    raylib.addCSourceFiles(.{ .files = &.{
+        "lib/raylib/src/rcore.c",
+        "lib/raylib/src/rshapes.c",
+        "lib/raylib/src/rtextures.c",
+        "lib/raylib/src/rtext.c",
+        "lib/raylib/src/rmodels.c",
+        "lib/raylib/src/utils.c",
+        "lib/raylib/src/raudio.c",
+    }, .flags = &.{"-fno-sanitize=undefined"} });
+
+    raylib.linkLibC();
+    raylib.addIncludePath(b.path("lib/raylib/src"));
+    raylib.addIncludePath(b.path("lib/raylib/src/external/glfw/include/"));
+
     // create internal run step that depend on exe install
     const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
