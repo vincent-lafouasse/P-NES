@@ -48,7 +48,7 @@ pub const Cartridge = struct {
     pub fn load(path: []const u8, allocator: std.mem.Allocator) !Self {
         var start: usize = 0;
         while (std.ascii.indexOfIgnoreCase(path[start..], "/")) |index| {
-            start = index + 1;
+            start += index + 1;
         }
         const name: []const u8 = if (std.ascii.indexOfIgnoreCase(path[start..], ".nes")) |index| name: {
             break :name path[start .. start + index];
