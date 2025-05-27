@@ -13,6 +13,7 @@ zig-out/
 
 *.prg
 *.chr
+*.asm
 
 # hi nintendo don't sue me there arent any roms here
 *.nes
