@@ -62,7 +62,7 @@ pub const Cpu = struct {
         const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
 
-        std.log.debug("------ Executing instruction {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
+        std.log.debug("\x1b[31m ------ Executing instruction {s} in {s} mode \x1b[0m", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
 
         switch (instruction.opcode) {
             O.CLC => {
