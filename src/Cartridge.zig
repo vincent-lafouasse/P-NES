@@ -102,6 +102,16 @@ pub const Cartridge = struct {
             try writer.writeByte(byte);
         }
     }
+
+    pub fn dump_chr(self: Self, path: []const u8) !void {
+        const outfile = try std.fs.cwd().createFile(path, .{});
+        defer outfile.close();
+        const writer = outfile.writer();
+
+        for (self.chr.items) |byte| {
+            try writer.writeByte(byte);
+        }
+    }
 };
 
 const RomFormat = enum {
