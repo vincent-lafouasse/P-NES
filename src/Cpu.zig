@@ -62,12 +62,9 @@ pub const Cpu = struct {
         const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
 
-        std.log.debug("-- Executing instruction {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
+        std.log.debug("------ Executing instruction {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
 
         switch (instruction.opcode) {
-            O.XXX => {
-                std.log.debug("Ignoring opcode {x:02}", .{data});
-            },
             O.CLC => {
                 self.p.carry = false;
                 std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
@@ -104,6 +101,18 @@ pub const Cpu = struct {
             },
             O.LDX => {
                 self.ldx(instruction.mode);
+            },
+            O.STA => {
+                self.sta(instruction.mode);
+            },
+            O.STY => {
+                self.sty(instruction.mode);
+            },
+            O.STX => {
+                self.stx(instruction.mode);
+            },
+            O.XXX => {
+                std.log.debug("Ignoring opcode {x:02}", .{data});
             },
             else => {
                 std.log.debug("-- Unmapped instruction: {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
@@ -159,6 +168,21 @@ pub const Cpu = struct {
         const value: u8 = self.bus.read(address);
         std.log.debug("Writing {x:02} in register Y from address {x:04}", .{ value, address });
         self.y = value;
+    }
+
+    fn sta(self: *Self, addressingMode: Instruction.AddressingMode) void {
+        const address: u16 = self.effectiveAddress(addressingMode);
+        self.bus.write(address, self.a);
+    }
+
+    fn stx(self: *Self, addressingMode: Instruction.AddressingMode) void {
+        const address: u16 = self.effectiveAddress(addressingMode);
+        self.bus.write(address, self.x);
+    }
+
+    fn sty(self: *Self, addressingMode: Instruction.AddressingMode) void {
+        const address: u16 = self.effectiveAddress(addressingMode);
+        self.bus.write(address, self.y);
     }
 
     fn effectiveAddress(self: *Self, mode: Instruction.AddressingMode) u16 {
