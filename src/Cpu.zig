@@ -113,34 +113,33 @@ pub const Cpu = struct {
         self.pc += instruction.size;
     }
 
-    fn ldx(self: *Self, addressingMode: Instruction.AddressingMode) void {
+    fn lda(self: *Self, addressingMode: Instruction.AddressingMode) void {
         const M = Instruction.AddressingMode;
 
-        const op1: u8 = self.bus.read(self.pc + 1);
-
         if (addressingMode == M.Immediate) {
-            std.log.debug("Writing {x:02} in register X", .{op1});
+            const value: u8 = self.bus.read(self.pc + 1);
+            std.log.debug("Writing {x:02} in register A", .{value});
+            self.a = value;
             return;
         }
 
-        const address: u16 = switch (addressingMode) {
-            M.ZeroPage => op1,
-            M.ZeroPage_YIndexed => op1 +% self.y,
-            M.Absolute, M.Absolute_YIndexed => out: {
-                const lowByte: u16 = op1;
-                const highByte: u16 = self.bus.read(self.pc + 2);
-                const a: u16 = lowByte + 256 * highByte;
+        const address: u16 = self.effectiveAddress(addressingMode);
+        const value: u8 = self.bus.read(address);
+        std.log.debug("Writing {x:02} in register A from address {x:04}", .{ value, address });
+        self.a = value;
+    }
 
-                switch (addressingMode) {
-                    M.Absolute => break :out a,
-                    M.Absolute_XIndexed => break :out a + self.y,
-                    else => unreachable,
-                }
-            },
-            M.Immediate => unreachable,
-            else => unreachable,
-        };
+    fn ldx(self: *Self, addressingMode: Instruction.AddressingMode) void {
+        const M = Instruction.AddressingMode;
 
+        if (addressingMode == M.Immediate) {
+            const value: u8 = self.bus.read(self.pc + 1);
+            std.log.debug("Writing {x:02} in register X", .{value});
+            self.x = value;
+            return;
+        }
+
+        const address: u16 = self.effectiveAddress(addressingMode);
         const value: u8 = self.bus.read(address);
         std.log.debug("Writing {x:02} in register X from address {x:04}", .{ value, address });
         self.x = value;
@@ -149,83 +148,64 @@ pub const Cpu = struct {
     fn ldy(self: *Self, addressingMode: Instruction.AddressingMode) void {
         const M = Instruction.AddressingMode;
 
-        const op1: u8 = self.bus.read(self.pc + 1);
-
         if (addressingMode == M.Immediate) {
-            std.log.debug("Writing {x:02} in register Y", .{op1});
+            const value: u8 = self.bus.read(self.pc + 1);
+            std.log.debug("Writing {x:02} in register Y", .{value});
+            self.y = value;
             return;
         }
 
-        const address: u16 = switch (addressingMode) {
-            M.ZeroPage => op1,
-            M.ZeroPage_XIndexed => op1 +% self.x,
-            M.Absolute, M.Absolute_XIndexed => out: {
-                const lowByte: u16 = op1;
-                const highByte: u16 = self.bus.read(self.pc + 2);
-                const a: u16 = lowByte + 256 * highByte;
-
-                switch (addressingMode) {
-                    M.Absolute => break :out a,
-                    M.Absolute_XIndexed => break :out a + self.y,
-                    else => unreachable,
-                }
-            },
-            M.Immediate => unreachable,
-            else => unreachable,
-        };
-
+        const address: u16 = self.effectiveAddress(addressingMode);
         const value: u8 = self.bus.read(address);
         std.log.debug("Writing {x:02} in register Y from address {x:04}", .{ value, address });
         self.y = value;
     }
 
-    fn lda(self: *Self, addressingMode: Instruction.AddressingMode) void {
+    fn effectiveAddress(self: *Self, mode: Instruction.AddressingMode) u16 {
         const M = Instruction.AddressingMode;
 
-        const op1: u8 = self.bus.read(self.pc + 1);
-
-        if (addressingMode == M.Immediate) {
-            std.log.debug("Writing {x:02} in accumulator", .{op1});
-            return;
-        }
-
-        const address: u16 = switch (addressingMode) {
-            M.ZeroPage => op1,
-            M.ZeroPage_XIndexed => op1 +% self.x,
-            M.ZeroPage_YIndexed => op1 +% self.y,
-            M.Absolute, M.Absolute_XIndexed, M.Absolute_YIndexed => out: {
-                const lowByte: u16 = op1;
-                const highByte: u16 = self.bus.read(self.pc + 2);
-                const a: u16 = lowByte + 256 * highByte;
-
-                switch (addressingMode) {
-                    M.Absolute => break :out a,
-                    M.Absolute_XIndexed => break :out a + self.y,
-                    M.Absolute_YIndexed => break :out a + self.x,
+        switch (mode) {
+            M.Absolute, M.Absolute_XIndexed, M.Absolute_YIndexed => {
+                const address = Cpu.readAddress(self.bus, self.pc + 1);
+                switch (mode) {
+                    M.Absolute => return address,
+                    M.Absolute_XIndexed => return address + @as(u16, self.x),
+                    M.Absolute_YIndexed => return address + @as(u16, self.y),
                     else => unreachable,
                 }
             },
-            M.XIndexed_Indirect => out: {
-                const lookupAddress: u8 = op1 +% self.x;
-
-                const lowByte: u16 = self.bus.read(lookupAddress);
-                const highByte: u16 = self.bus.read(lookupAddress + 1);
-                break :out lowByte + 256 * highByte;
+            M.ZeroPage, M.ZeroPage_XIndexed, M.ZeroPage_YIndexed => {
+                const address: u8 = self.bus.read(self.pc + 1);
+                switch (mode) {
+                    M.ZeroPage => return address,
+                    M.ZeroPage_XIndexed => return address +% self.x,
+                    M.ZeroPage_YIndexed => return address +% self.y,
+                    else => unreachable,
+                }
             },
-            M.Indirect_YIndexed => out: {
-                const lookupAddress: u8 = op1;
-
-                const lowByte: u16 = self.bus.read(lookupAddress);
-                const highByte: u16 = self.bus.read(lookupAddress + 1);
-                break :out lowByte + 256 * highByte + @as(u16, self.y);
+            M.Indirect => {
+                const address = Cpu.readAddress(self.bus, self.pc + 1);
+                return Cpu.readAddress(self.bus, address);
             },
-            M.Immediate => unreachable,
-            else => unreachable,
-        };
+            M.XIndexed_Indirect, M.Indirect_XIndexed, M.YIndexed_Indirect, M.Indirect_YIndexed => {
+                const operand: u8 = self.bus.read(self.pc + 1);
+                const address: u8 = switch (mode) {
+                    M.XIndexed_Indirect => operand +% self.x,
+                    M.YIndexed_Indirect => operand +% self.x,
+                    M.Indirect_XIndexed, M.Indirect_YIndexed => operand,
+                    else => unreachable,
+                };
 
-        const value: u8 = self.bus.read(address);
-        std.log.debug("Writing {x:02} in accumulator from address {x:04}", .{ value, address });
-        self.a = value;
+                const actualAddress = Cpu.readAddress(self.bus, address);
+                switch (mode) {
+                    M.XIndexed_Indirect, M.YIndexed_Indirect => return actualAddress,
+                    M.Indirect_XIndexed => return actualAddress + self.x,
+                    M.Indirect_YIndexed => return actualAddress + self.y,
+                    else => unreachable,
+                }
+            },
+            M.Relative, M.Accumulator, M.Immediate, M.Implicit => unreachable, // non-sensical
+        }
     }
 
     fn readAddress(bus: *const Bus, address: u16) u16 {
