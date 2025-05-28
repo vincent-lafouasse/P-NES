@@ -171,24 +171,12 @@ pub const Cpu = struct {
                 self.p.interruptDisable = true;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
             },
-            O.LDA => {
-                self.lda(instruction.mode);
-            },
-            O.LDY => {
-                self.ldy(instruction.mode);
-            },
-            O.LDX => {
-                self.ldx(instruction.mode);
-            },
-            O.STA => {
-                self.sta(instruction.mode);
-            },
-            O.STY => {
-                self.sty(instruction.mode);
-            },
-            O.STX => {
-                self.stx(instruction.mode);
-            },
+            O.LDA => self.lda(instruction),
+            O.LDY => self.ldy(instruction),
+            O.LDX => self.ldx(instruction),
+            O.STA => self.sta(instruction),
+            O.STY => self.sty(instruction),
+            O.STX => self.stx(instruction),
             O.TAX => {
                 std.log.debug("Writing {x:02} from A to X", .{self.a});
                 self.x = self.a;
@@ -269,72 +257,72 @@ pub const Cpu = struct {
         self.pc += instruction.size;
     }
 
-    fn lda(self: *Self, addressingMode: Instruction.AddressingMode) void {
+    fn lda(self: *Self, i: Instruction) void {
         const M = Instruction.AddressingMode;
 
         defer self.updateStatusOnArithmetic(self.a);
 
-        if (addressingMode == M.Immediate) {
+        if (i.mode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
             self.a = value;
-            self.log("{s} #${X:02}{s:24}", .{ "LDA", value, "" });
+            self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
             return;
         }
 
-        const address: u16 = self.effectiveAddress(addressingMode);
+        const address: u16 = self.effectiveAddress(i.mode);
         const value: u8 = self.bus.read(address);
         std.log.debug("Writing {x:02} in register A from address {x:04}", .{ value, address });
         self.a = value;
     }
 
-    fn ldx(self: *Self, addressingMode: Instruction.AddressingMode) void {
+    fn ldx(self: *Self, i: Instruction) void {
         const M = Instruction.AddressingMode;
 
         defer self.updateStatusOnArithmetic(self.x);
 
-        if (addressingMode == M.Immediate) {
+        if (i.mode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
             self.x = value;
-            self.log("{s} #${X:02}{s:24}", .{ "LDX", value, "" });
+            self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
             return;
         }
 
-        const address: u16 = self.effectiveAddress(addressingMode);
+        const address: u16 = self.effectiveAddress(i.mode);
         const value: u8 = self.bus.read(address);
         std.log.debug("Writing {x:02} in register X from address {x:04}", .{ value, address });
         self.x = value;
     }
 
-    fn ldy(self: *Self, addressingMode: Instruction.AddressingMode) void {
+    fn ldy(self: *Self, i: Instruction) void {
         const M = Instruction.AddressingMode;
 
         defer self.updateStatusOnArithmetic(self.y);
 
-        if (addressingMode == M.Immediate) {
+        if (i.mode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
             self.y = value;
-            self.log("{s} #${X:02}{s:24}", .{ "LDY", value, "" });
+            self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
             return;
         }
 
-        const address: u16 = self.effectiveAddress(addressingMode);
+        const address: u16 = self.effectiveAddress(i.mode);
         const value: u8 = self.bus.read(address);
         std.log.debug("Writing {x:02} in register Y from address {x:04}", .{ value, address });
         self.y = value;
     }
 
-    fn sta(self: *Self, addressingMode: Instruction.AddressingMode) void {
-        const address: u16 = self.effectiveAddress(addressingMode);
+    fn sta(self: *Self, i: Instruction) void {
+        const address: u16 = self.effectiveAddress(i.mode);
         self.bus.write(address, self.a);
     }
 
-    fn stx(self: *Self, addressingMode: Instruction.AddressingMode) void {
-        const address: u16 = self.effectiveAddress(addressingMode);
+    fn stx(self: *Self, i: Instruction) void {
+        const address: u16 = self.effectiveAddress(i.mode);
         self.bus.write(address, self.x);
     }
 
-    fn sty(self: *Self, addressingMode: Instruction.AddressingMode) void {
-        const address: u16 = self.effectiveAddress(addressingMode);
+    fn sty(self: *Self, i: Instruction) void {
+        const address: u16 = self.effectiveAddress(i.mode);
         self.bus.write(address, self.y);
     }
 
