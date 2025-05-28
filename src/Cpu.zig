@@ -569,14 +569,16 @@ pub const Cpu = struct {
     }
 
     fn updateStatusOnArithmetic(self: *Self, register: u8) void {
-        defer if (register == 0) {
+        if (register == 0) {
             self.p.zero = true;
-            std.log.debug("Setting zero flag", .{});
-        };
-        defer if ((register >> 7) != 0) {
+        } else {
+            self.p.zero = false;
+        }
+        if ((register >> 7) != 0) {
             self.p.negative = true;
-            std.log.debug("Setting negative flag", .{});
-        };
+        } else {
+            self.p.negative = false;
+        }
     }
 
     fn readAddress(bus: *const Bus, address: u16) u16 {
