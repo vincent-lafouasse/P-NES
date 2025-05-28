@@ -270,12 +270,13 @@ pub const Cpu = struct {
 
     fn bcs(self: *Self, i: Instruction) void {
         const op: u8 = self.bus.read(self.pc + 1);
+        self.pc += i.size;
+
         const offset: i8 = @bitCast(op);
         const dest: u16 = shiftU16(self.pc, offset);
 
-        switch (self.p.carry) {
-            true => self.pc = dest,
-            false => self.pc += i.size,
+        if (self.p.carry) {
+            self.pc = dest;
         }
 
         self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
