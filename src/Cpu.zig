@@ -387,12 +387,30 @@ pub const Cpu = struct {
         } else {
             self.log("{s} ${X:04} = {X:02}{s:18}", .{ @tagName(i.opcode), address, self.x, "" });
         }
+
+        if (i.mode == Instruction.AddressingMode.ZeroPage) {
+            self.cycles += 3;
+        } else {
+            self.cycles += 4;
+        }
     }
 
     fn sty(self: *Self, i: Instruction) void {
         defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
         self.bus.write(address, self.y);
+
+        if (i.size == 2) {
+            self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, self.x, "" });
+        } else {
+            self.log("{s} ${X:04} = {X:02}{s:18}", .{ @tagName(i.opcode), address, self.x, "" });
+        }
+
+        if (i.mode == Instruction.AddressingMode.ZeroPage) {
+            self.cycles += 3;
+        } else {
+            self.cycles += 4;
+        }
     }
 
     fn effectiveAddress(self: *Self, mode: Instruction.AddressingMode) u16 {
