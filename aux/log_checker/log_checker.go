@@ -49,7 +49,7 @@ func main() {
 		var actual_str = actual.Text()
 
 		var l = min(len(expected_str), len(actual_str))
-		for i := 0; i < l; i++ {
+		for i := l - 1; i >= 0; i-- {
 			if expected_str[i] != actual_str[i] {
 				fmt.Println("Mismatch in line ", line)
 				fmt.Println("Expected:")
