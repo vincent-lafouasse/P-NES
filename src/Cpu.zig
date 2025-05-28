@@ -569,16 +569,8 @@ pub const Cpu = struct {
     }
 
     fn updateStatusOnArithmetic(self: *Self, register: u8) void {
-        if (register == 0) {
-            self.p.zero = true;
-        } else {
-            self.p.zero = false;
-        }
-        if ((register >> 7) != 0) {
-            self.p.negative = true;
-        } else {
-            self.p.negative = false;
-        }
+        self.p.zero = register == 0;
+        self.p.negative = (register >> 7) != 0;
     }
 
     fn readAddress(bus: *const Bus, address: u16) u16 {
