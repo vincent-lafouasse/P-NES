@@ -274,6 +274,19 @@ pub const Cpu = struct {
         }
     }
 
+    fn bne(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        switch (self.p.zero) {
+            false => self.pc = dest,
+            true => self.pc += i.size,
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
     fn lda(self: *Self, i: Instruction) void {
         const M = Instruction.AddressingMode;
 
@@ -486,7 +499,27 @@ pub const Cpu = struct {
         return lowByte + 256 * highByte;
     }
 
+    fn shiftProgramCounter(self: *Self, offset: i8) void {
+        if (offset >= 0) {
+            const offset_also: u8 = @intCast(offset);
+            self.pc += offset_also;
+        } else {
+            const offset_also: u8 = @intCast(-offset);
+            self.pc -= offset_also;
+        }
+    }
+
     pub fn log(self: Self, comptime format: []const u8, args: anytype) void {
         self.logFile.writer().print(format, args) catch {};
     }
 };
+
+fn shiftU16(pc: u16, offset: i8) u8 {
+    if (offset >= 0) {
+        const offset_also: u8 = @intCast(offset);
+        return pc + offset_also;
+    } else {
+        const offset_also: u8 = @intCast(-offset);
+        return pc - offset_also;
+    }
+}
