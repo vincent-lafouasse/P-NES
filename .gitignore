@@ -13,8 +13,8 @@ zig-out/
 .cache
 
 *.out
-*.prg
-*.chr
+
+
 *.asm
 
 # i said shhhhh
