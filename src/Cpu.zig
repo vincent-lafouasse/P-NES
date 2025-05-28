@@ -108,9 +108,9 @@ pub const Cpu = struct {
 
         self.log("{X:04}  ", .{self.pc});
         switch (instruction.size) {
-            1 => self.log("{X:02} {s:2} {s:2}   ", .{ data, "", "" }),
-            2 => self.log("{X:02} {X:02} {s:2}   ", .{ data, self.bus.read(self.pc + 1), "" }),
-            3 => self.log("{X:02} {X:02} {X:02}   ", .{ data, self.bus.read(self.pc + 1), self.bus.read(self.pc + 2) }),
+            1 => self.log("{X:02} {s:2} {s:2}  ", .{ data, "", "" }),
+            2 => self.log("{X:02} {X:02} {s:2}  ", .{ data, self.bus.read(self.pc + 1), "" }),
+            3 => self.log("{X:02} {X:02} {X:02}  ", .{ data, self.bus.read(self.pc + 1), self.bus.read(self.pc + 2) }),
             else => unreachable,
         }
 
