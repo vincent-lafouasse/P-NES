@@ -1,5 +1,5 @@
 NAME   = inkbox
-CC	   = cc65
+CC	   = ca65
 LD     = ld65
 TARGET = nes
 
