@@ -31,6 +31,8 @@ pub const Cpu = struct {
     s: u8,
     p: CpuStatus,
 
+    cycles: usize,
+
     const Self = @This();
     const resetAddress: u16 = 0xfffc;
 
@@ -43,6 +45,7 @@ pub const Cpu = struct {
             .y = 0x00,
             .s = 0xff,
             .p = std.mem.zeroes(CpuStatus),
+            .cycles = 0,
         };
     }
 
