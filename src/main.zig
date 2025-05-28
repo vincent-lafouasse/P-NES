@@ -26,7 +26,8 @@ pub fn main() !void {
 
     var bus = try Bus.init(&cartridge);
 
-    var cpu = Cpu.init(&bus);
+    var cpu = try Cpu.init(&bus, cartridge.name);
+    defer cpu.deinit();
     cpu.start();
 
     // const args = try std.process.ArgIterator.initWithAllocator(allocator);

@@ -33,10 +33,26 @@ pub const Cpu = struct {
 
     cycles: usize,
 
+    logFile: std.fs.File,
+
     const Self = @This();
     const resetAddress: u16 = 0xfffc;
 
-    pub fn init(bus: *Bus) Self {
+    pub fn init(bus: *Bus, name: []const u8) !Self {
+        const bufferSize = 100;
+        var buffer: [bufferSize]u8 = undefined;
+        const maybe_truncated_name = name[0..@min(name.len, bufferSize - 4)];
+        const path = std.fmt.bufPrint(&buffer, "{s}.log", .{maybe_truncated_name}) catch unreachable;
+
+        std.fs.cwd().makeDir("artefacts") catch |err| {
+            switch (err) {
+                std.posix.MakeDirError.PathAlreadyExists => {},
+                else => return err,
+            }
+        };
+        const outdir = try std.fs.cwd().openDir("artefacts", .{});
+        const outfile = try outdir.createFile(path, .{});
+
         return Self{
             .bus = bus,
             .pc = Cpu.readAddress(bus, Cpu.resetAddress),
@@ -46,7 +62,12 @@ pub const Cpu = struct {
             .s = 0xff,
             .p = std.mem.zeroes(CpuStatus),
             .cycles = 0,
+            .logFile = outfile,
         };
+    }
+
+    pub fn deinit(self: *Self) void {
+        self.logFile.close();
     }
 
     fn pushOntoStack(self: *Self, value: u8) void {
