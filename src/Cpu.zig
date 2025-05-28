@@ -61,7 +61,7 @@ pub const Cpu = struct {
             .y = 0x00,
             .s = 0xff,
             .p = std.mem.zeroes(CpuStatus),
-            .cycles = 0,
+            .cycles = 7,
             .logFile = outfile,
         };
     }
@@ -90,6 +90,7 @@ pub const Cpu = struct {
 
     pub fn start(self: *Self) void {
         //@breakpoint();
+        self.pc = 0xC000;
         while (true) {
             self.execute();
         }

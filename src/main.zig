@@ -13,7 +13,7 @@ pub fn main() !void {
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
 
-    const cartridge = try Cartridge.load("roms/s9/s9.nes", allocator);
+    const cartridge = try Cartridge.load("roms/nestest/nestest.nes", allocator);
     defer cartridge.free();
 
     cartridge.log();
