@@ -12,30 +12,24 @@ pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();
-    _ = allocator;
 
-    const window = raylib.InitWindow(1600, 900, "P-NES");
-    defer window.CloseWindow();
+    const cartridge = try Cartridge.load("roms/inkbox/inkbox.nes", allocator);
+    defer cartridge.free();
 
-    while (true) {}
+    cartridge.log();
+    try cartridge.dump_prg();
+    try cartridge.dump_chr();
 
-    //const cartridge = try Cartridge.load("roms/tutor.nes", allocator);
-    //defer cartridge.free();
+    var disassembler = try Disassembler.init(cartridge, allocator);
+    defer disassembler.deinit();
+    try disassembler.disassemble();
 
-    //cartridge.log();
-    //try cartridge.dump_prg();
-    //try cartridge.dump_chr();
+    var bus = try Bus.init(&cartridge);
 
-    //var disassembler = try Disassembler.init(cartridge, allocator);
-    //defer disassembler.deinit();
-    //try disassembler.disassemble();
+    var cpu = Cpu.init(&bus);
+    cpu.start();
 
-    //var bus = try Bus.init(&cartridge);
-
-    //var cpu = Cpu.init(&bus);
-    //cpu.start();
-
-    //// const args = try std.process.ArgIterator.initWithAllocator(allocator);
-    //// defer args.deinit();
-    //// std.log.info("{any}", .{args});
+    // const args = try std.process.ArgIterator.initWithAllocator(allocator);
+    // defer args.deinit();
+    // std.log.info("{any}", .{args});
 }

@@ -76,7 +76,14 @@ pub const Disassembler = struct {
 
         std.log.info("Writing asm to {s}", .{path});
 
-        const outfile = try std.fs.cwd().createFile(path, .{});
+        std.fs.cwd().makeDir("artefacts") catch |err| {
+            switch (err) {
+                std.posix.MakeDirError.PathAlreadyExists => {},
+                else => return err,
+            }
+        };
+        const outdir = try std.fs.cwd().openDir("artefacts", .{});
+        const outfile = try outdir.createFile(path, .{});
         defer outfile.close();
         const writer = outfile.writer();
 
