@@ -241,10 +241,6 @@ pub const Cpu = struct {
                 std.log.debug("Writing {x:02} in Y", .{self.y});
                 self.updateStatusOnArithmetic(self.y);
             },
-            O.XXX => {
-                std.log.debug("Ignoring opcode {x:02}", .{data});
-                self.pc += instruction.size;
-            },
             O.BNE => {
                 switch (self.p.zero) {
                     false => {
@@ -265,6 +261,11 @@ pub const Cpu = struct {
                         self.pc += instruction.size;
                     },
                 }
+            },
+            O.NOP => self.nop(instruction),
+            O.XXX => {
+                std.log.debug("Ignoring opcode {x:02}", .{data});
+                self.pc += instruction.size;
             },
             else => {
                 std.log.debug("-- Unmapped instruction: {s} in {s} mode", .{ @tagName(instruction.opcode), @tagName(instruction.mode) });
@@ -414,6 +415,11 @@ pub const Cpu = struct {
         } else {
             self.cycles += 4;
         }
+    }
+
+    fn nop(self: *Self, i: Instruction) void {
+        self.pc += 1;
+        self.log("{s:<32}", .{@tagName(i.opcode)});
     }
 
     fn effectiveAddress(self: *Self, mode: Instruction.AddressingMode) u16 {
