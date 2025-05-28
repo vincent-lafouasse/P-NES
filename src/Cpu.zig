@@ -90,7 +90,7 @@ pub const Cpu = struct {
 
     pub fn start(self: *Self) void {
         //@breakpoint();
-        //self.pc = 0xC000;
+        self.pc = 0xC000;
         while (true) {
             self.execute();
         }
@@ -127,6 +127,7 @@ pub const Cpu = struct {
         defer self.log("{s}", .{cpuState});
 
         switch (instruction.opcode) {
+            O.JMP => self.jmp(instruction),
             O.JSR => {
                 // where to go
                 const adl: u16 = self.bus.read(self.pc + 1);
@@ -311,6 +312,30 @@ pub const Cpu = struct {
         const value: u8 = self.bus.read(address);
         std.log.debug("Writing {x:02} in register X from address {x:04}", .{ value, address });
         self.x = value;
+    }
+
+    fn jmp(self: *Self, i: Instruction) void {
+        const M = Instruction.AddressingMode;
+
+        const operand = Cpu.readAddress(self.bus, self.pc + 1);
+
+        switch (i.mode) {
+            M.Absolute => self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), operand, "" }),
+            M.Indirect => self.log("{s} (${X:04}){s:21}", .{ @tagName(i.opcode), operand, "" }),
+            else => unreachable,
+        }
+
+        switch (i.mode) {
+            M.Absolute => {
+                self.pc = operand;
+                self.cycles += 3;
+            },
+            M.Indirect => {
+                self.pc = Cpu.readAddress(self.bus, operand);
+                self.cycles += 5;
+            },
+            else => unreachable,
+        }
     }
 
     fn ldy(self: *Self, i: Instruction) void {
