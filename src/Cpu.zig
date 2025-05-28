@@ -90,7 +90,7 @@ pub const Cpu = struct {
 
     pub fn start(self: *Self) void {
         //@breakpoint();
-        self.pc = 0xC000;
+        //self.pc = 0xC000;
         while (true) {
             self.execute();
         }
@@ -144,30 +144,37 @@ pub const Cpu = struct {
                 self.pc = jumpTo;
             },
             O.CLC => {
+                defer self.pc += instruction.size;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.carry = false;
             },
             O.CLD => {
+                defer self.pc += instruction.size;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.decimalMode = false;
             },
             O.CLI => {
+                defer self.pc += instruction.size;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.interruptDisable = false;
             },
             O.CLV => {
+                defer self.pc += instruction.size;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.overflowFlag = false;
             },
             O.SEC => {
+                defer self.pc += instruction.size;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.carry = true;
             },
             O.SED => {
+                defer self.pc += instruction.size;
                 self.p.decimalMode = true;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
             },
             O.SEI => {
+                defer self.pc += instruction.size;
                 self.p.interruptDisable = true;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
             },
@@ -178,56 +185,67 @@ pub const Cpu = struct {
             O.STY => self.sty(instruction),
             O.STX => self.stx(instruction),
             O.TAX => {
+                defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from A to X", .{self.a});
                 self.x = self.a;
                 self.updateStatusOnArithmetic(self.x);
             },
             O.TAY => {
+                defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from A to Y", .{self.a});
                 self.y = self.a;
                 self.updateStatusOnArithmetic(self.y);
             },
             O.TSX => {
+                defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from S to X", .{self.s});
                 self.x = self.s;
                 self.updateStatusOnArithmetic(self.x);
             },
             O.TXA => {
+                defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from X to A", .{self.x});
                 self.a = self.x;
                 self.updateStatusOnArithmetic(self.a);
             },
             O.TXS => {
+                defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from X to S", .{self.x});
                 self.s = self.x;
             },
             O.TYA => {
+                defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from Y to A", .{self.y});
                 self.a = self.y;
                 self.updateStatusOnArithmetic(self.a);
             },
             O.INX => {
+                defer self.pc += instruction.size;
                 self.x +%= 1;
                 std.log.debug("Writing {x:02} in X", .{self.x});
                 self.updateStatusOnArithmetic(self.x);
             },
             O.INY => {
+                defer self.pc += instruction.size;
                 self.y +%= 1;
                 std.log.debug("Writing {x:02} in Y", .{self.y});
                 self.updateStatusOnArithmetic(self.y);
             },
             O.DEX => {
+                defer self.pc += instruction.size;
                 self.x -%= 1;
                 std.log.debug("Writing {x:02} in X", .{self.x});
                 self.updateStatusOnArithmetic(self.x);
             },
             O.DEY => {
+                defer self.pc += instruction.size;
                 self.y -%= 1;
                 std.log.debug("Writing {x:02} in Y", .{self.y});
                 self.updateStatusOnArithmetic(self.y);
             },
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
+                self.pc += instruction.size;
             },
             O.BNE => {
                 switch (self.p.zero) {
@@ -246,6 +264,7 @@ pub const Cpu = struct {
                     },
                     true => {
                         std.log.debug("Z is set, no branch", .{});
+                        self.pc += instruction.size;
                     },
                 }
             },
@@ -254,13 +273,13 @@ pub const Cpu = struct {
                 @panic("");
             },
         }
-        self.pc += instruction.size;
     }
 
     fn lda(self: *Self, i: Instruction) void {
         const M = Instruction.AddressingMode;
 
         defer self.updateStatusOnArithmetic(self.a);
+        defer self.pc += i.size;
 
         if (i.mode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
@@ -279,6 +298,7 @@ pub const Cpu = struct {
         const M = Instruction.AddressingMode;
 
         defer self.updateStatusOnArithmetic(self.x);
+        defer self.pc += i.size;
 
         if (i.mode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
@@ -297,6 +317,7 @@ pub const Cpu = struct {
         const M = Instruction.AddressingMode;
 
         defer self.updateStatusOnArithmetic(self.y);
+        defer self.pc += i.size;
 
         if (i.mode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
@@ -312,16 +333,19 @@ pub const Cpu = struct {
     }
 
     fn sta(self: *Self, i: Instruction) void {
+        defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
         self.bus.write(address, self.a);
     }
 
     fn stx(self: *Self, i: Instruction) void {
+        defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
         self.bus.write(address, self.x);
     }
 
     fn sty(self: *Self, i: Instruction) void {
+        defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
         self.bus.write(address, self.y);
     }
