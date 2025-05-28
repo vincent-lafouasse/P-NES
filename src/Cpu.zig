@@ -241,8 +241,14 @@ pub const Cpu = struct {
                 std.log.debug("Writing {x:02} in Y", .{self.y});
                 self.updateStatusOnArithmetic(self.y);
             },
+            O.BEQ => self.beq(instruction),
             O.BNE => self.bne(instruction),
             O.BCS => self.bcs(instruction),
+            O.BCC => self.bcc(instruction),
+            O.BVS => self.bvs(instruction),
+            O.BVC => self.bvc(instruction),
+            O.BPL => self.bpl(instruction),
+            O.BMI => self.bmi(instruction),
             O.NOP => self.nop(instruction),
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
@@ -269,6 +275,48 @@ pub const Cpu = struct {
         self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
     }
 
+    fn beq(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        self.pc += i.size;
+
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        if (self.p.zero) {
+            self.pc = dest;
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
+    fn bmi(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        self.pc += i.size;
+
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        if (self.p.negative) {
+            self.pc = dest;
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
+    fn bpl(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        self.pc += i.size;
+
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        if (!self.p.negative) {
+            self.pc = dest;
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
     fn bcs(self: *Self, i: Instruction) void {
         const op: u8 = self.bus.read(self.pc + 1);
         self.pc += i.size;
@@ -277,6 +325,48 @@ pub const Cpu = struct {
         const dest: u16 = shiftU16(self.pc, offset);
 
         if (self.p.carry) {
+            self.pc = dest;
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
+    fn bcc(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        self.pc += i.size;
+
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        if (!self.p.carry) {
+            self.pc = dest;
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
+    fn bvs(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        self.pc += i.size;
+
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        if (self.p.overflowFlag) {
+            self.pc = dest;
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
+    fn bvc(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        self.pc += i.size;
+
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        if (!self.p.overflowFlag) {
             self.pc = dest;
         }
 
