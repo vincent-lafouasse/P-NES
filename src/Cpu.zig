@@ -131,14 +131,12 @@ pub const Cpu = struct {
         }
 
         var buffer: [100]u8 = undefined;
-        const cpuState = std.fmt.bufPrint(&buffer, "A:{X:02} X:{X:02} Y:{X:02} P:{X:02} SP:{X:02} PPU:{d:3},{d:3}", .{
+        const cpuState = std.fmt.bufPrint(&buffer, "A:{X:02} X:{X:02} Y:{X:02} P:{X:02} SP:{X:02} PPU:___,___", .{
             self.a,
             self.x,
             self.y,
             self.p.toByte(),
             self.s,
-            0,
-            0,
         }) catch unreachable;
         defer self.log("{s}", .{cpuState});
 
