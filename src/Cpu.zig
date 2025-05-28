@@ -107,9 +107,9 @@ pub const Cpu = struct {
 
         self.log("{X:04}  ", .{self.pc});
         switch (instruction.size) {
-            1 => self.log("{X:02} {s:2} {s:2}  ", .{ data, "", "" }),
-            2 => self.log("{X:02} {X:02} {s:2}  ", .{ data, self.bus.read(self.pc + 1), "" }),
-            3 => self.log("{X:02} {X:02} {X:02}  ", .{ data, self.bus.read(self.pc + 1), self.bus.read(self.pc + 2) }),
+            1 => self.log("{X:02} {s:2} {s:2}   ", .{ data, "", "" }),
+            2 => self.log("{X:02} {X:02} {s:2}   ", .{ data, self.bus.read(self.pc + 1), "" }),
+            3 => self.log("{X:02} {X:02} {X:02}   ", .{ data, self.bus.read(self.pc + 1), self.bus.read(self.pc + 2) }),
             else => unreachable,
         }
 
@@ -143,32 +143,32 @@ pub const Cpu = struct {
                 self.pc = jumpTo;
             },
             O.CLC => {
+                self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.carry = false;
-                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
             },
             O.CLD => {
+                self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.decimalMode = false;
-                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
             },
             O.CLI => {
+                self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.interruptDisable = false;
-                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
             },
             O.CLV => {
+                self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.overflowFlag = false;
-                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
             },
             O.SEC => {
+                self.log("{s:<32}", .{@tagName(instruction.opcode)});
                 self.p.carry = true;
-                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
             },
             O.SED => {
                 self.p.decimalMode = true;
-                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                self.log("{s:<32}", .{@tagName(instruction.opcode)});
             },
             O.SEI => {
                 self.p.interruptDisable = true;
-                std.log.debug("Status flag is now {b:08}", .{self.p.toByte()});
+                self.log("{s:<32}", .{@tagName(instruction.opcode)});
             },
             O.LDA => {
                 self.lda(instruction.mode);
