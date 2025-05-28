@@ -11,7 +11,7 @@ func print_cursor(x int) {
 	for i := 0; i < x; i++ {
 		fmt.Print(" ")
 	}
-	fmt.Print("v\n")
+	fmt.Print("Λ\n")
 }
 
 func main() {
@@ -53,11 +53,11 @@ func main() {
 			if expected_str[i] != actual_str[i] {
 				fmt.Println("Mismatch in line ", line)
 				fmt.Println("Expected:")
-				print_cursor(i)
 				fmt.Println(expected_str)
-				fmt.Println("Actual:")
 				print_cursor(i)
+				fmt.Println("Actual:")
 				fmt.Println(actual_str)
+				print_cursor(i)
 				os.Exit(1)
 			}
 		}
@@ -65,11 +65,11 @@ func main() {
 		if len(expected_str) != len(actual_str) {
 				fmt.Println("Mismatch in line ", line)
 				fmt.Println("Expected:")
-				print_cursor(l)
 				fmt.Println(expected_str)
-				fmt.Println("Actual:")
 				print_cursor(l)
+				fmt.Println("Actual:")
 				fmt.Println(actual_str)
+				print_cursor(l)
 				os.Exit(1)
 		}
 
