@@ -102,6 +102,16 @@ pub const Cpu = struct {
 
         std.log.debug("\x1b[31m ------ {x:04} Executing instruction {s} in {s} mode \x1b[0m", .{ self.pc, @tagName(instruction.opcode), @tagName(instruction.mode) });
 
+        defer self.log("\n", .{});
+
+        self.log("{X:04}  ", .{self.pc});
+        switch (instruction.size) {
+            1 => self.log("{X:02} {s:2} {s:2}  ", .{ data, "", "" }),
+            2 => self.log("{X:02} {X:02} {s:2}  ", .{ data, self.bus.read(self.pc + 1), "" }),
+            3 => self.log("{X:02} {X:02} {X:02}  ", .{ data, self.bus.read(self.pc + 1), self.bus.read(self.pc + 2) }),
+            else => unreachable,
+        }
+
         switch (instruction.opcode) {
             O.JSR => {
                 // where to go
@@ -376,5 +386,9 @@ pub const Cpu = struct {
         const lowByte: u16 = bus.read(address);
         const highByte: u16 = bus.read(address + 1);
         return lowByte + 256 * highByte;
+    }
+
+    pub fn log(self: Self, comptime format: []const u8, args: anytype) void {
+        self.logFile.writer().print(format, args) catch {};
     }
 };
