@@ -119,9 +119,7 @@ pub const Cpu = struct {
 
         std.log.debug("\x1b[31m ------ {x:04} Executing instruction {s} in {s} mode \x1b[0m", .{ self.pc, @tagName(instruction.opcode), @tagName(instruction.mode) });
 
-        const nCyclesStart = self.cycles;
-        defer self.log(" CYC:{d}\n", .{nCyclesStart});
-
+        defer self.log("\n", .{});
         self.log("{X:04}  ", .{self.pc});
         switch (instruction.size) {
             1 => self.log("{X:02} {s:2} {s:2}  ", .{ data, "", "" }),
@@ -131,7 +129,7 @@ pub const Cpu = struct {
         }
 
         var buffer: [100]u8 = undefined;
-        const cpuState = std.fmt.bufPrint(&buffer, "A:{X:02} X:{X:02} Y:{X:02} P:{X:02} SP:{X:02} PPU:___,___", .{
+        const cpuState = std.fmt.bufPrint(&buffer, "A:{X:02} X:{X:02} Y:{X:02} P:{X:02} SP:{X:02}", .{
             self.a,
             self.x,
             self.y,
