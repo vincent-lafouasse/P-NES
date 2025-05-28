@@ -6,18 +6,31 @@ const CpuStatus = packed struct(u8) {
     carry: bool,
     zero: bool,
     interruptDisable: bool,
-    decimalMode: bool,
-    breakFlag: bool,
-    unused: bool,
+    decimalMode: bool, // set
+    unused1: bool, // set
+    unused2: bool,
     overflowFlag: bool,
     negative: bool,
+
+    pub fn init() CpuStatus {
+        return CpuStatus.fromByte(0x04);
+    }
 
     pub fn fromByte(byte: u8) CpuStatus {
         return @bitCast(byte);
     }
 
     pub fn toByte(self: CpuStatus) u8 {
-        return @bitCast(self);
+        var copy = self;
+        copy.unused1 = false; // convention for unused flags
+        copy.unused2 = true;
+        return @bitCast(copy);
+    }
+
+    fn log(self: CpuStatus) void {
+        std.log.info("--- {any}", .{self});
+        std.log.info("--- {b:08}", .{self.toByte()});
+        std.log.info("--- {x:02}", .{self.toByte()});
     }
 };
 
@@ -59,8 +72,8 @@ pub const Cpu = struct {
             .a = 0x00,
             .x = 0x00,
             .y = 0x00,
-            .s = 0xff,
-            .p = std.mem.zeroes(CpuStatus),
+            .s = 0xfd,
+            .p = CpuStatus.init(),
             .cycles = 7,
             .logFile = outfile,
         };
@@ -91,12 +104,15 @@ pub const Cpu = struct {
     pub fn start(self: *Self) void {
         //@breakpoint();
         self.pc = 0xC000;
+        self.p.log();
         while (true) {
             self.execute();
         }
     }
 
     fn execute(self: *Self) void {
+        self.p.log();
+
         const data: u8 = self.bus.read(self.pc);
         const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
