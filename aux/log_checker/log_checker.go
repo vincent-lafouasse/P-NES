@@ -1,3 +1,7 @@
+// I needed a small tool so i made a small tool
+// this is terrible code but it does its job
+// stop looking at it
+
 package main
 
 import (
