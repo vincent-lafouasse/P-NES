@@ -241,27 +241,8 @@ pub const Cpu = struct {
                 std.log.debug("Writing {x:02} in Y", .{self.y});
                 self.updateStatusOnArithmetic(self.y);
             },
-            O.BNE => {
-                switch (self.p.zero) {
-                    false => {
-                        const op: u8 = self.bus.read(self.pc + 1);
-                        const offset: i8 = @bitCast(op);
-                        std.log.debug("Z is cleared, branch by {}", .{offset});
-                        if (offset >= 0) {
-                            const offset_also: u8 = @intCast(offset);
-                            self.pc += offset_also;
-                        } else {
-                            const offset_also: u8 = @intCast(-offset);
-                            self.pc -= offset_also;
-                        }
-                        std.log.debug("Branching to {x:04}", .{self.pc});
-                    },
-                    true => {
-                        std.log.debug("Z is set, no branch", .{});
-                        self.pc += instruction.size;
-                    },
-                }
-            },
+            O.BNE => self.bne(instruction),
+            O.BCS => self.bcs(instruction),
             O.NOP => self.nop(instruction),
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
@@ -282,6 +263,19 @@ pub const Cpu = struct {
         switch (self.p.zero) {
             false => self.pc = dest,
             true => self.pc += i.size,
+        }
+
+        self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
+    }
+
+    fn bcs(self: *Self, i: Instruction) void {
+        const op: u8 = self.bus.read(self.pc + 1);
+        const offset: i8 = @bitCast(op);
+        const dest: u16 = shiftU16(self.pc, offset);
+
+        switch (self.p.carry) {
+            true => self.pc = dest,
+            false => self.pc += i.size,
         }
 
         self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), dest, "" });
@@ -514,7 +508,7 @@ pub const Cpu = struct {
     }
 };
 
-fn shiftU16(pc: u16, offset: i8) u8 {
+fn shiftU16(pc: u16, offset: i8) u16 {
     if (offset >= 0) {
         const offset_also: u8 = @intCast(offset);
         return pc + offset_also;
