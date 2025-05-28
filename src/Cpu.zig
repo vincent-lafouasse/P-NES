@@ -275,8 +275,8 @@ pub const Cpu = struct {
 
         if (addressingMode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
-            std.log.debug("Writing {x:02} in register A", .{value});
             self.a = value;
+            self.log("{s} #${X:02}{s:24}", .{ "LDA", value, "" });
             return;
         }
 
@@ -293,8 +293,8 @@ pub const Cpu = struct {
 
         if (addressingMode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
-            std.log.debug("Writing {x:02} in register X", .{value});
             self.x = value;
+            self.log("{s} #${X:02}{s:24}", .{ "LDX", value, "" });
             return;
         }
 
@@ -311,8 +311,8 @@ pub const Cpu = struct {
 
         if (addressingMode == M.Immediate) {
             const value: u8 = self.bus.read(self.pc + 1);
-            std.log.debug("Writing {x:02} in register Y", .{value});
             self.y = value;
+            self.log("{s} #${X:02}{s:24}", .{ "LDY", value, "" });
             return;
         }
 
