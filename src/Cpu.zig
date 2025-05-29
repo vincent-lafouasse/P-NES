@@ -91,7 +91,7 @@ pub const Cpu = struct {
 
     fn popFromStack(self: *Self) u8 {
         const actualAddress: u16 = 0x0100 + @as(u16, self.s);
-        const value = self.bus.read(actualAddress + 1);
+        const value = self.read(actualAddress + 1);
         self.s += 1;
         return value;
     }
@@ -113,7 +113,7 @@ pub const Cpu = struct {
     fn execute(self: *Self) void {
         self.p.log();
 
-        const data: u8 = self.bus.read(self.pc);
+        const data: u8 = self.read(self.pc);
         const instruction = Instruction.decode(data);
         const O = Instruction.Opcode;
 
@@ -575,6 +575,14 @@ pub const Cpu = struct {
             },
             M.Relative, M.Accumulator, M.Immediate, M.Implicit => unreachable, // non-sensical
         }
+    }
+
+    fn read(self: *const Self, address: u16) u8 {
+        return self.bus.read(address);
+    }
+
+    fn write(self: *const Self, address: u16, value: u8) void {
+        self.bus.write(address, value);
     }
 
     fn updateStatusOnArithmetic(self: *Self, register: u8) void {
