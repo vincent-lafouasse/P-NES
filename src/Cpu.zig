@@ -85,7 +85,7 @@ pub const Cpu = struct {
 
     fn pushOntoStack(self: *Self, value: u8) void {
         const actualAddress: u16 = 0x0100 + @as(u16, self.s);
-        self.bus.write(actualAddress, value);
+        self.write(actualAddress, value);
         self.s -= 1;
     }
 
@@ -123,8 +123,8 @@ pub const Cpu = struct {
         self.log("{X:04}  ", .{self.pc});
         switch (instruction.size) {
             1 => self.log("{X:02} {s:2} {s:2}  ", .{ data, "", "" }),
-            2 => self.log("{X:02} {X:02} {s:2}  ", .{ data, self.bus.read(self.pc + 1), "" }),
-            3 => self.log("{X:02} {X:02} {X:02}  ", .{ data, self.bus.read(self.pc + 1), self.bus.read(self.pc + 2) }),
+            2 => self.log("{X:02} {X:02} {s:2}  ", .{ data, self.read(self.pc + 1), "" }),
+            3 => self.log("{X:02} {X:02} {X:02}  ", .{ data, self.read(self.pc + 1), self.read(self.pc + 2) }),
             else => unreachable,
         }
 
@@ -262,7 +262,7 @@ pub const Cpu = struct {
     }
 
     fn bne(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -276,7 +276,7 @@ pub const Cpu = struct {
     }
 
     fn beq(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -290,7 +290,7 @@ pub const Cpu = struct {
     }
 
     fn bmi(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -304,7 +304,7 @@ pub const Cpu = struct {
     }
 
     fn bpl(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -318,7 +318,7 @@ pub const Cpu = struct {
     }
 
     fn bcs(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -332,7 +332,7 @@ pub const Cpu = struct {
     }
 
     fn bcc(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -346,7 +346,7 @@ pub const Cpu = struct {
     }
 
     fn bvs(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -360,7 +360,7 @@ pub const Cpu = struct {
     }
 
     fn bvc(self: *Self, i: Instruction) void {
-        const op: u8 = self.bus.read(self.pc + 1);
+        const op: u8 = self.read(self.pc + 1);
         self.pc += i.size;
 
         const offset: i8 = @bitCast(op);
@@ -380,14 +380,14 @@ pub const Cpu = struct {
         defer self.pc += i.size;
 
         if (i.mode == M.Immediate) {
-            const value: u8 = self.bus.read(self.pc + 1);
+            const value: u8 = self.read(self.pc + 1);
             self.a = value;
             self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
             return;
         }
 
         const address: u16 = self.effectiveAddress(i.mode);
-        const value: u8 = self.bus.read(address);
+        const value: u8 = self.read(address);
         std.log.debug("Writing {x:02} in register A from address {x:04}", .{ value, address });
         self.a = value;
     }
@@ -399,14 +399,14 @@ pub const Cpu = struct {
         defer self.pc += i.size;
 
         if (i.mode == M.Immediate) {
-            const value: u8 = self.bus.read(self.pc + 1);
+            const value: u8 = self.read(self.pc + 1);
             self.x = value;
             self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
             return;
         }
 
         const address: u16 = self.effectiveAddress(i.mode);
-        const value: u8 = self.bus.read(address);
+        const value: u8 = self.read(address);
         std.log.debug("Writing {x:02} in register X from address {x:04}", .{ value, address });
         self.x = value;
     }
@@ -437,14 +437,14 @@ pub const Cpu = struct {
 
     fn jsr(self: *Self, i: Instruction) void {
         // where to go
-        const adl: u16 = self.bus.read(self.pc + 1);
-        const adh: u16 = self.bus.read(self.pc + 2);
+        const adl: u16 = self.read(self.pc + 1);
+        const adh: u16 = self.read(self.pc + 2);
         const jumpTo: u16 = adl + 256 * adh;
 
         self.pc += 2;
         // where to come back to
-        const pcl: u8 = self.bus.read(self.pc);
-        const pch: u8 = self.bus.read(self.pc + 1);
+        const pcl: u8 = self.read(self.pc);
+        const pch: u8 = self.read(self.pc + 1);
         // const comeBackTo: u16 = @as(u16, pcl) + 256 * @as(u16, pcl);
 
         self.pushOntoStack(pch);
@@ -462,14 +462,14 @@ pub const Cpu = struct {
         defer self.pc += i.size;
 
         if (i.mode == M.Immediate) {
-            const value: u8 = self.bus.read(self.pc + 1);
+            const value: u8 = self.read(self.pc + 1);
             self.y = value;
             self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
             return;
         }
 
         const address: u16 = self.effectiveAddress(i.mode);
-        const value: u8 = self.bus.read(address);
+        const value: u8 = self.read(address);
         std.log.debug("Writing {x:02} in register Y from address {x:04}", .{ value, address });
         self.y = value;
     }
@@ -477,8 +477,8 @@ pub const Cpu = struct {
     fn sta(self: *Self, i: Instruction) void {
         defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
-        const overwrittenValue: u8 = self.bus.read(address);
-        self.bus.write(address, self.a);
+        const overwrittenValue: u8 = self.read(address);
+        self.write(address, self.a);
 
         if (i.size == 2) {
             self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, overwrittenValue, "" });
@@ -490,8 +490,8 @@ pub const Cpu = struct {
     fn stx(self: *Self, i: Instruction) void {
         defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
-        const overwrittenValue: u8 = self.bus.read(address);
-        self.bus.write(address, self.x);
+        const overwrittenValue: u8 = self.read(address);
+        self.write(address, self.x);
 
         if (i.size == 2) {
             self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, overwrittenValue, "" });
@@ -509,8 +509,8 @@ pub const Cpu = struct {
     fn sty(self: *Self, i: Instruction) void {
         defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
-        const overwrittenValue: u8 = self.bus.read(address);
-        self.bus.write(address, self.y);
+        const overwrittenValue: u8 = self.read(address);
+        self.write(address, self.y);
 
         if (i.size == 2) {
             self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, overwrittenValue, "" });
@@ -544,7 +544,7 @@ pub const Cpu = struct {
                 }
             },
             M.ZeroPage, M.ZeroPage_XIndexed, M.ZeroPage_YIndexed => {
-                const address: u8 = self.bus.read(self.pc + 1);
+                const address: u8 = self.read(self.pc + 1);
                 switch (mode) {
                     M.ZeroPage => return address,
                     M.ZeroPage_XIndexed => return address +% self.x,
@@ -557,7 +557,7 @@ pub const Cpu = struct {
                 return Cpu.readAddress(self.bus, address);
             },
             M.XIndexed_Indirect, M.Indirect_XIndexed, M.YIndexed_Indirect, M.Indirect_YIndexed => {
-                const operand: u8 = self.bus.read(self.pc + 1);
+                const operand: u8 = self.read(self.pc + 1);
                 const address: u8 = switch (mode) {
                     M.XIndexed_Indirect => operand +% self.x,
                     M.YIndexed_Indirect => operand +% self.x,
@@ -578,11 +578,11 @@ pub const Cpu = struct {
     }
 
     fn read(self: *const Self, address: u16) u8 {
-        return self.bus.read(address);
+        return self.read(address);
     }
 
     fn write(self: *const Self, address: u16, value: u8) void {
-        self.bus.write(address, value);
+        self.write(address, value);
     }
 
     fn updateStatusOnArithmetic(self: *Self, register: u8) void {
