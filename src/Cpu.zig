@@ -49,7 +49,7 @@ pub const Cpu = struct {
     logFile: std.fs.File,
 
     const Self = @This();
-    const resetAddress: u16 = 0xfffc;
+    const resetVector: u16 = 0xfffc;
 
     pub fn init(bus: *Bus, name: []const u8) !Self {
         const bufferSize = 100;
@@ -66,9 +66,21 @@ pub const Cpu = struct {
         const outdir = try std.fs.cwd().openDir("artefacts", .{});
         const outfile = try outdir.createFile(path, .{});
 
+        const pc = (Self{
+            .bus = bus,
+            .pc = undefined,
+            .a = undefined,
+            .x = undefined,
+            .y = undefined,
+            .s = undefined,
+            .p = undefined,
+            .cycles = undefined,
+            .logFile = undefined,
+        }).resetAddress();
+
         return Self{
             .bus = bus,
-            .pc = Cpu.readAddress(bus, Cpu.resetAddress),
+            .pc = pc,
             .a = 0x00,
             .x = 0x00,
             .y = 0x00,
@@ -97,7 +109,7 @@ pub const Cpu = struct {
     }
 
     pub fn reset(self: *Self) void {
-        self.pc = Cpu.readAddress(self.bus, Cpu.resetAddress);
+        self.pc = self.resetAddress();
         self.s = 0xff;
     }
 
@@ -414,7 +426,7 @@ pub const Cpu = struct {
     fn jmp(self: *Self, i: Instruction) void {
         const M = Instruction.AddressingMode;
 
-        const operand = Cpu.readAddress(self.bus, self.pc + 1);
+        const operand = self.readAddress(self.pc + 1);
 
         switch (i.mode) {
             M.Absolute => self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), operand, "" }),
@@ -428,7 +440,7 @@ pub const Cpu = struct {
                 self.cycles += 3;
             },
             M.Indirect => {
-                self.pc = Cpu.readAddress(self.bus, operand);
+                self.pc = self.readAddress(operand);
                 self.cycles += 5;
             },
             else => unreachable,
@@ -535,7 +547,7 @@ pub const Cpu = struct {
 
         switch (mode) {
             M.Absolute, M.Absolute_XIndexed, M.Absolute_YIndexed => {
-                const address = Cpu.readAddress(self.bus, self.pc + 1);
+                const address = self.readAddress(self.pc + 1);
                 switch (mode) {
                     M.Absolute => return address,
                     M.Absolute_XIndexed => return address + @as(u16, self.x),
@@ -553,8 +565,8 @@ pub const Cpu = struct {
                 }
             },
             M.Indirect => {
-                const address = Cpu.readAddress(self.bus, self.pc + 1);
-                return Cpu.readAddress(self.bus, address);
+                const address = self.readAddress(self.pc + 1);
+                return self.readAddress(address);
             },
             M.XIndexed_Indirect, M.Indirect_XIndexed, M.YIndexed_Indirect, M.Indirect_YIndexed => {
                 const operand: u8 = self.read(self.pc + 1);
@@ -565,7 +577,7 @@ pub const Cpu = struct {
                     else => unreachable,
                 };
 
-                const actualAddress = Cpu.readAddress(self.bus, address);
+                const actualAddress = self.readAddress(address);
                 switch (mode) {
                     M.XIndexed_Indirect, M.YIndexed_Indirect => return actualAddress,
                     M.Indirect_XIndexed => return actualAddress + self.x,
@@ -578,11 +590,11 @@ pub const Cpu = struct {
     }
 
     fn read(self: *const Self, address: u16) u8 {
-        return self.read(address);
+        return self.bus.read(address);
     }
 
     fn write(self: *const Self, address: u16, value: u8) void {
-        self.write(address, value);
+        self.bus.write(address, value);
     }
 
     fn updateStatusOnArithmetic(self: *Self, register: u8) void {
@@ -590,9 +602,9 @@ pub const Cpu = struct {
         self.p.negative = (register >> 7) != 0;
     }
 
-    fn readAddress(bus: *const Bus, address: u16) u16 {
-        const lowByte: u16 = bus.read(address);
-        const highByte: u16 = bus.read(address + 1);
+    fn readAddress(self: *const Self, address: u16) u16 {
+        const lowByte: u16 = self.read(address);
+        const highByte: u16 = self.read(address + 1);
         return lowByte + 256 * highByte;
     }
 
@@ -608,6 +620,10 @@ pub const Cpu = struct {
 
     pub fn log(self: Self, comptime format: []const u8, args: anytype) void {
         self.logFile.writer().print(format, args) catch {};
+    }
+
+    fn resetAddress(self: Self) u16 {
+        return self.readAddress(Cpu.resetVector);
     }
 };
 
