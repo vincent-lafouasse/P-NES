@@ -195,6 +195,8 @@ pub const Cpu = struct {
             O.STA => self.sta(instruction),
             O.STY => self.sty(instruction),
             O.STX => self.stx(instruction),
+            O.PHP => self.php(instruction),
+            O.PLA => self.pla(instruction),
             O.TAX => {
                 defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from A to X", .{self.a});
@@ -474,6 +476,23 @@ pub const Cpu = struct {
         const pch: u16 = self.popFromStack();
         self.pc = 1 + pcl + 256 * pch;
         self.log("{s:<32}", .{@tagName(i.opcode)});
+    }
+
+    fn php(self: *Self, i: Instruction) void {
+        const status: u8 = self.p.toByte() | 0b01010000;
+        self.pushOntoStack(status);
+        std.log.debug("Storing {X:02}", .{status});
+        self.log("{s:<32}", .{@tagName(i.opcode)});
+        self.pc += i.size;
+    }
+
+    fn pla(self: *Self, i: Instruction) void {
+        const newAccumulator: u8 = self.popFromStack();
+        self.a = newAccumulator;
+        self.updateStatusOnArithmetic(self.a);
+        self.log("{s:<32}", .{@tagName(i.opcode)});
+        std.log.debug("A is now {X:02}", .{self.a});
+        self.pc += i.size;
     }
 
     fn ldy(self: *Self, i: Instruction) void {
