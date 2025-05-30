@@ -543,6 +543,7 @@ pub const Cpu = struct {
         const address: u16 = self.effectiveAddress(i.mode);
         const valueThere: u8 = self.read(address);
         self.updateStatusOnArithmetic(valueThere | self.a);
+        self.p.overflowFlag = (valueThere & 0b01000000) != 0;
 
         if (i.size == 2) {
             self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, valueThere, "" });
