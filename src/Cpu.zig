@@ -198,6 +198,7 @@ pub const Cpu = struct {
             O.PHP => self.php(instruction),
             O.PLA => self.pla(instruction),
             O.AND => self.andInstruction(instruction),
+            O.CMP => self.cmp(instruction),
             O.TAX => {
                 defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from A to X", .{self.a});
@@ -438,6 +439,35 @@ pub const Cpu = struct {
             const value: u8 = self.read(self.pc + 1);
             self.a &= value;
             self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
+            return;
+        }
+
+        const address: u16 = self.effectiveAddress(i.mode);
+        const value: u8 = self.read(address);
+        self.a &= value;
+    }
+
+    fn cmp(self: *Self, i: Instruction) void {
+        const M = Instruction.AddressingMode;
+
+        defer self.pc += i.size;
+
+        if (i.mode == M.Immediate) {
+            const value: u8 = self.read(self.pc + 1);
+            self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
+            if (self.a < value) {
+                self.updateStatusOnArithmetic(self.a);
+                self.p.zero = false;
+                self.p.carry = false;
+            } else if (self.a > value) {
+                self.updateStatusOnArithmetic(self.a);
+                self.p.zero = false;
+                self.p.carry = true;
+            } else {
+                self.p.negative = false;
+                self.p.zero = true;
+                self.p.carry = true;
+            }
             return;
         }
 
