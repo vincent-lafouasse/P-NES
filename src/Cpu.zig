@@ -197,6 +197,8 @@ pub const Cpu = struct {
             O.STX => self.stx(instruction),
             O.PHP => self.php(instruction),
             O.PLA => self.pla(instruction),
+            O.PHA => self.pha(instruction),
+            O.PLP => self.plp(instruction),
             O.AND => self.andInstruction(instruction),
             O.CMP => self.cmp(instruction),
             O.TAX => {
@@ -527,10 +529,15 @@ pub const Cpu = struct {
         self.log("{s:<32}", .{@tagName(i.opcode)});
     }
 
+    fn pha(self: *Self, i: Instruction) void {
+        self.pushOntoStack(self.a);
+        self.log("{s:<32}", .{@tagName(i.opcode)});
+        self.pc += i.size;
+    }
+
     fn php(self: *Self, i: Instruction) void {
         const status: u8 = self.p.toByte() | 0x10;
         self.pushOntoStack(status);
-        std.log.debug("Storing {X:02}", .{status});
         self.log("{s:<32}", .{@tagName(i.opcode)});
         self.pc += i.size;
     }
@@ -540,7 +547,14 @@ pub const Cpu = struct {
         self.a = newAccumulator;
         self.updateStatusOnArithmetic(self.a);
         self.log("{s:<32}", .{@tagName(i.opcode)});
-        std.log.debug("A is now {X:02}", .{self.a});
+        self.pc += i.size;
+    }
+
+    fn plp(self: *Self, i: Instruction) void {
+        const newStatus: u8 = self.popFromStack();
+        self.p = CpuStatus.fromByte(newStatus);
+        self.p.unused1 = false;
+        self.log("{s:<32}", .{@tagName(i.opcode)});
         self.pc += i.size;
     }
 
