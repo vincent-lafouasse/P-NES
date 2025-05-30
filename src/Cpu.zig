@@ -650,14 +650,15 @@ pub const Cpu = struct {
     fn bit(self: *Self, i: Instruction) void {
         defer self.pc += i.size;
         const address: u16 = self.effectiveAddress(i.mode);
-        const valueThere: u8 = self.read(address);
-        self.updateStatusOnArithmetic(valueThere | self.a);
-        self.p.overflowFlag = (valueThere & 0b01000000) != 0;
+        const value: u8 = self.read(address);
+        self.p.zero = (value & self.a) == 0;
+        self.p.overflowFlag = (value & 0b01000000) != 0;
+        self.p.negative = (value & 0b10000000) != 0;
 
         if (i.size == 2) {
-            self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, valueThere, "" });
+            self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, value, "" });
         } else {
-            self.log("{s} ${X:04} = {X:02}{s:18}", .{ @tagName(i.opcode), address, valueThere, "" });
+            self.log("{s} ${X:04} = {X:02}{s:18}", .{ @tagName(i.opcode), address, value, "" });
         }
     }
 
