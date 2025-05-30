@@ -261,6 +261,7 @@ pub const Cpu = struct {
             O.BVC => self.bvc(instruction),
             O.BPL => self.bpl(instruction),
             O.BMI => self.bmi(instruction),
+            O.BIT => self.bit(instruction),
             O.NOP => self.nop(instruction),
             O.XXX => {
                 std.log.debug("Ignoring opcode {x:02}", .{data});
@@ -534,6 +535,19 @@ pub const Cpu = struct {
             self.cycles += 3;
         } else {
             self.cycles += 4;
+        }
+    }
+
+    fn bit(self: *Self, i: Instruction) void {
+        defer self.pc += i.size;
+        const address: u16 = self.effectiveAddress(i.mode);
+        const valueThere: u8 = self.read(address);
+        self.updateStatusOnArithmetic(valueThere | self.a);
+
+        if (i.size == 2) {
+            self.log("{s} ${X:02} = {X:02}{s:20}", .{ @tagName(i.opcode), address, valueThere, "" });
+        } else {
+            self.log("{s} ${X:04} = {X:02}{s:18}", .{ @tagName(i.opcode), address, valueThere, "" });
         }
     }
 
