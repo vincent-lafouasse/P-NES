@@ -197,6 +197,7 @@ pub const Cpu = struct {
             O.STX => self.stx(instruction),
             O.PHP => self.php(instruction),
             O.PLA => self.pla(instruction),
+            O.AND => self.andInstruction(instruction),
             O.TAX => {
                 defer self.pc += instruction.size;
                 std.log.debug("Writing {x:02} from A to X", .{self.a});
@@ -425,6 +426,24 @@ pub const Cpu = struct {
         const value: u8 = self.read(address);
         std.log.debug("Writing {x:02} in register X from address {x:04}", .{ value, address });
         self.x = value;
+    }
+
+    fn andInstruction(self: *Self, i: Instruction) void {
+        const M = Instruction.AddressingMode;
+
+        defer self.updateStatusOnArithmetic(self.a);
+        defer self.pc += i.size;
+
+        if (i.mode == M.Immediate) {
+            const value: u8 = self.read(self.pc + 1);
+            self.a &= value;
+            self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
+            return;
+        }
+
+        const address: u16 = self.effectiveAddress(i.mode);
+        const value: u8 = self.read(address);
+        self.a &= value;
     }
 
     fn jmp(self: *Self, i: Instruction) void {
