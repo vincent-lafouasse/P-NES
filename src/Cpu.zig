@@ -201,6 +201,7 @@ pub const Cpu = struct {
             O.PLP => self.plp(instruction),
             O.AND => self.andInstruction(instruction),
             O.ORA => self.ora(instruction),
+            O.EOR => self.eor(instruction),
             O.CMP => self.cmp(instruction),
             O.TAX => {
                 defer self.pc += instruction.size;
@@ -466,6 +467,24 @@ pub const Cpu = struct {
         const address: u16 = self.effectiveAddress(i.mode);
         const value: u8 = self.read(address);
         self.a |= value;
+    }
+
+    fn eor(self: *Self, i: Instruction) void {
+        const M = Instruction.AddressingMode;
+
+        defer self.updateStatusOnArithmetic(self.a);
+        defer self.pc += i.size;
+
+        if (i.mode == M.Immediate) {
+            const value: u8 = self.read(self.pc + 1);
+            self.a ^= value;
+            self.log("{s} #${X:02}{s:24}", .{ @tagName(i.opcode), value, "" });
+            return;
+        }
+
+        const address: u16 = self.effectiveAddress(i.mode);
+        const value: u8 = self.read(address);
+        self.a ^= value;
     }
 
     fn cmp(self: *Self, i: Instruction) void {
