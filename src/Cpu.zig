@@ -528,7 +528,7 @@ pub const Cpu = struct {
     }
 
     fn php(self: *Self, i: Instruction) void {
-        const status: u8 = self.p.toByte() | 0b01010000;
+        const status: u8 = self.p.toByte() | 0x10;
         self.pushOntoStack(status);
         std.log.debug("Storing {X:02}", .{status});
         self.log("{s:<32}", .{@tagName(i.opcode)});
