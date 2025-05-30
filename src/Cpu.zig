@@ -153,6 +153,7 @@ pub const Cpu = struct {
         switch (instruction.opcode) {
             O.JMP => self.jmp(instruction),
             O.JSR => self.jsr(instruction),
+            O.RTS => self.rts(instruction),
             O.CLC => {
                 defer self.pc += instruction.size;
                 self.log("{s:<32}", .{@tagName(instruction.opcode)});
@@ -456,8 +457,8 @@ pub const Cpu = struct {
 
         self.pc += 2;
         // where to come back to
-        const pcl: u8 = self.read(self.pc);
-        const pch: u8 = self.read(self.pc + 1);
+        const pcl: u8 = @intCast(self.pc & 0xff);
+        const pch: u8 = @intCast(self.pc >> 8);
         // const comeBackTo: u16 = @as(u16, pcl) + 256 * @as(u16, pcl);
 
         self.pushOntoStack(pch);
@@ -466,6 +467,13 @@ pub const Cpu = struct {
         self.log("{s} ${X:04}{s:23}", .{ @tagName(i.opcode), jumpTo, "" });
 
         self.pc = jumpTo;
+    }
+
+    fn rts(self: *Self, i: Instruction) void {
+        const pcl: u16 = self.popFromStack();
+        const pch: u16 = self.popFromStack();
+        self.pc = 1 + pcl + 256 * pch;
+        self.log("{s:<32}", .{@tagName(i.opcode)});
     }
 
     fn ldy(self: *Self, i: Instruction) void {
