@@ -5,10 +5,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
-	"bufio"
 )
 
 func print_cursor(x int) {
@@ -19,34 +19,34 @@ func print_cursor(x int) {
 }
 
 func main() {
-	if (len(os.Args) != 3) {
-		log.Fatal("Usage: ./log_checker expected actual");
+	if len(os.Args) != 3 {
+		log.Fatal("Usage: ./log_checker expected actual")
 	}
 
-	var expected_path = os.Args[1];
-	expected_file, err := os.Open(expected_path);
-	if (err != nil) {
-		log.Fatal("Failed to open file %s", expected_path);
+	var expected_path = os.Args[1]
+	expected_file, err := os.Open(expected_path)
+	if err != nil {
+		log.Fatal("Failed to open file %s", expected_path)
 	}
-	defer expected_file.Close();
+	defer expected_file.Close()
 
-	var actual_path = os.Args[2];
-	actual_file, err := os.Open(actual_path);
-	if (err != nil) {
-		log.Fatal("Failed to open file %s", actual_path);
+	var actual_path = os.Args[2]
+	actual_file, err := os.Open(actual_path)
+	if err != nil {
+		log.Fatal("Failed to open file %s", actual_path)
 	}
-	defer actual_file.Close();
+	defer actual_file.Close()
 
-	expected := bufio.NewScanner(expected_file);
-	actual := bufio.NewScanner(actual_file);
+	expected := bufio.NewScanner(expected_file)
+	actual := bufio.NewScanner(actual_file)
 
-	line := 1;
-	for ;;line++ {
+	line := 1
+	for ; ; line++ {
 		if !expected.Scan() {
-			break;
+			break
 		}
 		if !actual.Scan() {
-			break;
+			break
 		}
 
 		var expected_str = expected.Text()
@@ -67,14 +67,14 @@ func main() {
 		}
 
 		if len(expected_str) != len(actual_str) {
-				fmt.Println("Mismatch in line ", line)
-				fmt.Println("Expected:")
-				fmt.Println(expected_str)
-				print_cursor(l)
-				fmt.Println("Actual:")
-				fmt.Println(actual_str)
-				print_cursor(l)
-				os.Exit(1)
+			fmt.Println("Mismatch in line ", line)
+			fmt.Println("Expected:")
+			fmt.Println(expected_str)
+			print_cursor(l)
+			fmt.Println("Actual:")
+			fmt.Println(actual_str)
+			print_cursor(l)
+			os.Exit(1)
 		}
 
 	}
@@ -83,6 +83,5 @@ func main() {
 		log.Fatal("Mismatch file length: ", line)
 	}
 
-
-	fmt.Println("Logs ok");
+	fmt.Println("Logs ok")
 }
